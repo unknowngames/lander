@@ -31,7 +31,7 @@
   <Class Name="Assets.Scripts.Controllers.SpaceshipClassicControllerUI" Collapsed="true">
     <Position X="5.5" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAABAACAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAEAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Controllers\SpaceshipClassicControllerUI.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -57,18 +57,10 @@
       <FileName>Assets\Scripts\Environment\World.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Assets.Scripts.Spaceship.SpaceshipBehaviour" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="9.75" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAIAgQAAAAAQBAAAAAAAAAAACAACAAAA=</HashCode>
-      <FileName>Assets\Scripts\Spaceship\SpaceshipBehaviour.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
   <Class Name="Assets.Scripts.Spaceship.SpaceshipMoveableBehaviour" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="11.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAEEgAAABAAAAAA=</HashCode>
+      <HashCode>AAAAAAAACgAAAAAAAAAAAAAAAAAAAAEEgAAABAAAAAA=</HashCode>
       <FileName>Assets\Scripts\Spaceship\SpaceshipMoveableBehaviour.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
