@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Interfaces;
+﻿using System;
+using Assets.Scripts.Interfaces;
 using UnityEngine;
 
 namespace Assets.Scripts.Spaceship
@@ -16,5 +17,10 @@ namespace Assets.Scripts.Spaceship
         public bool RotateClockwiseButton { get; set; }
         public bool RotateCounterClockwiseButton { get; set; }
         public float ThrottleLevel { get; set; }
+
+        public void FixedUpdate()
+        {
+            //ToDo super ultra mega epic fantastic awesome physics
+        }
     }
 }
