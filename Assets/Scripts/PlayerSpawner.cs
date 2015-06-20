@@ -17,6 +17,7 @@ namespace Assets.Scripts
             {
                 spaceshipBehaviourInstance = UnityEngine.Object.Instantiate (spaceshipBehaviourPrefab);
             }
+            spaceshipBehaviourInstance.transform.position = Vector3.zero;
             spaceshipBehaviourInstance.gameObject.SetActive (true);
             return spaceshipBehaviourInstance;
         }
