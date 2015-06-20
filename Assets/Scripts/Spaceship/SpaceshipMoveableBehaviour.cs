@@ -23,7 +23,7 @@ namespace Assets.Scripts.Spaceship
 
         public void FixedUpdate ()
         {
-            //ToDo super ultra mega epic fantastic awesome physics
+            GetComponent<Rigidbody>().AddForce(Vector3.up * ThrottleLevel);
         }
     }
 }
