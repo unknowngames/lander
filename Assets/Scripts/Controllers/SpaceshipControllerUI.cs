@@ -1,11 +1,24 @@
 ﻿using Assets.Scripts.Interfaces;
-using UnityEngine.EventSystems;
+using Assets.Scripts.UI;
 
 namespace Assets.Scripts.Controllers
 {
-    public abstract class SpaceshipControllerUI : UIBehaviour
+    public abstract class SpaceshipControllerUI : MenuUI
     {
-        public ISpaceshipMoveable SpaceshipMoveable { get; set; }
+        private ISpaceshipMoveable spaceshipMoveable;
+
+        public ISpaceshipMoveable SpaceshipMoveable
+        {
+            get
+            {
+                return spaceshipMoveable ??
+                       (spaceshipMoveable = Game.PlayerSpaceship.GetComponent<ISpaceshipMoveable> ());
+            }
+            set
+            {
+                spaceshipMoveable = value;
+            }
+        }
 
         public void OnRotationClockwiseChanged (bool state)
         {

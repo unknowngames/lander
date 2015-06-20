@@ -12,5 +12,7 @@ namespace Assets.Scripts.Interfaces
 
         float Mass { get; set; }
         float RemainingFuel { get; set; }
+
+        bool IsPaused { get; set; }
     }
 }

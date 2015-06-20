@@ -1,42 +1,16 @@
-﻿using Assets.Scripts.Controllers;
-using Assets.Scripts.Interfaces;
-using UnityEngine;
-using UnityEngine.EventSystems;
+﻿using UnityEngine.EventSystems;
 
 namespace Assets.Scripts.UI
 {
-    public class MenuUI : UIBehaviour
+    public abstract class MenuUI : UIBehaviour
     {
-        private SpaceshipControllerUI controllerUIInstance;
-
-        [SerializeField]
-        private SpaceshipControllerUI controllerUIPrefab;
-
-        protected SpaceshipControllerUI ControllerUIInstance
+        public void Show()
         {
-            get
-            {
-                if (controllerUIInstance == null)
-                {
-                    controllerUIInstance = Instantiate (controllerUIPrefab);
-                    controllerUIInstance.transform.SetParent (transform, false);
-
-                    controllerUIInstance.gameObject.SetActive (false);
-                }
-
-                return controllerUIInstance;
-            }
+            gameObject.SetActive(true);
         }
-
-        public void ShowUIControllers (ISpaceshipMoveable moveable)
+        public void Hide()
         {
-            ControllerUIInstance.SpaceshipMoveable = moveable;
-            ControllerUIInstance.gameObject.SetActive (true);
-        }
-
-        public void HideUIControllers ()
-        {
-            ControllerUIInstance.gameObject.SetActive (false);
+            gameObject.SetActive(false);
         }
     }
 }
