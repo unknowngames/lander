@@ -17,8 +17,9 @@ namespace Assets.Scripts
             {
                 spaceshipBehaviourInstance = UnityEngine.Object.Instantiate (spaceshipBehaviourPrefab);
             }
-            spaceshipBehaviourInstance.transform.position = Vector3.zero;
-            spaceshipBehaviourInstance.transform.rotation = Quaternion.identity;
+            
+            spaceshipBehaviourInstance.Reset ();
+            
             spaceshipBehaviourInstance.gameObject.SetActive (true);
             return spaceshipBehaviourInstance;
         }
@@ -26,7 +27,7 @@ namespace Assets.Scripts
         public void RemovePlayer()
         {
             if (spaceshipBehaviourInstance != null)
-            {
+            {                
                 spaceshipBehaviourInstance.gameObject.SetActive(false);
             }
         }

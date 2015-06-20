@@ -14,5 +14,7 @@ namespace Assets.Scripts.Interfaces
         float RemainingFuel { get; set; }
 
         bool IsPaused { get; set; }
+
+        void Reset ();
     }
 }

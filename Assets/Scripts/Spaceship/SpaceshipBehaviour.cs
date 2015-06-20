@@ -13,5 +13,17 @@ namespace Assets.Scripts.Spaceship
         public float Mass { get; set; }
         public float RemainingFuel { get; set; }      
         public bool IsPaused { get; set; }
+        public void Reset ()
+        {
+            transform.position = Vector3.zero;
+            transform.rotation = Quaternion.identity;
+
+            Rigidbody component = GetComponent<Rigidbody>();
+            if (component != null)
+            {
+                component.velocity = Vector3.zero;
+                component.angularVelocity = Vector3.zero;
+            }
+        }
     }
 }

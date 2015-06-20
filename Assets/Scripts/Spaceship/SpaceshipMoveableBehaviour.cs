@@ -10,10 +10,12 @@ namespace Assets.Scripts.Spaceship
         private ISpaceship spaceship;
 
         [SerializeField]
-        private float force;
+        private float t;
 
         [SerializeField]
-        private float rotateSpeed;
+        private float rotationStepAngle;
+
+        private float rotationImpulse = 0.0f;
 
         public ISpaceship Spaceship
         {
@@ -23,25 +25,26 @@ namespace Assets.Scripts.Spaceship
             }
         }
 
+        public void OnEnable ()
+        {
+            rotationImpulse = 0.0f;
+        }
+
         public void SetImpulse(float impulse)
         {
-
+            rotationImpulse += impulse;
         }
 
         public float ThrottleLevel { get; set; }
 
         public void FixedUpdate ()
         {
-            if (RotateClockwiseButton)
-            {
-                GetComponent<Rigidbody>().AddTorque(transform.forward * rotateSpeed);
-            }
-            if (RotateCounterClockwiseButton)
-            {
-                GetComponent<Rigidbody>().AddTorque(-transform.forward * rotateSpeed);
-            }
+            Quaternion rotation = Quaternion.Euler(0.0f, 0.0f, rotationImpulse * rotationStepAngle);
+            rotation = Quaternion.Lerp(GetComponent<Rigidbody>().rotation, rotation, Time.fixedDeltaTime);
+            GetComponent<Rigidbody>().MoveRotation (rotation);
 
-            GetComponent<Rigidbody>().AddForce(transform.up * ThrottleLevel * force);
+            float throttle = Mathf.Pow (ThrottleLevel, 0.25f);
+            GetComponent<Rigidbody>().AddForce(transform.up * throttle * -Physics.gravity.y * GetComponent<Rigidbody>().mass * t);
         }
     }
 }
