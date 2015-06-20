@@ -51,7 +51,7 @@ ModelImporter:
     13700004: Chassis 2
     13700006: Chassis 3
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
   animations:
