@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Assets.Scripts.Common;
-using Assets.Scripts.Controllers;
+﻿using Assets.Scripts.Common;
 using Assets.Scripts.Interfaces;
 using Assets.Scripts.Spaceship;
 using Assets.Scripts.UI;
@@ -11,7 +6,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Game
 {
-	public class Game : Singleton<Game>
+    public class Game : Singleton<Game>
     {
         [SerializeField]
         private SpaceshipBehaviour spaceshipPrefab;
@@ -19,18 +14,21 @@ namespace Assets.Scripts.Game
         [SerializeField]
         private MenuUI menuUI;
 
-	    public MenuUI MenuUI
-	    {
-	        get { return menuUI ?? (menuUI = FindObjectOfType<MenuUI>()); }
-	    }
+        public MenuUI MenuUI
+        {
+            get
+            {
+                return menuUI ?? (menuUI = FindObjectOfType<MenuUI> ());
+            }
+        }
 
         private SpaceshipBehaviour spaceshipInstance;
 
-	    public void Start()
+        public void Start ()
         {
-            spaceshipInstance = Instantiate(spaceshipPrefab);
+            spaceshipInstance = Instantiate (spaceshipPrefab);
 
-            MenuUI.ShowUIControllers(spaceshipInstance.GetComponent<ISpaceshipMoveable>());
-	    }
-	}
+            MenuUI.ShowUIControllers (spaceshipInstance.GetComponent<ISpaceshipMoveable> ());
+        }
+    }
 }

@@ -1,24 +1,27 @@
-﻿using System;
-using Assets.Scripts.Interfaces;
+﻿using Assets.Scripts.Interfaces;
 using UnityEngine;
 
 namespace Assets.Scripts.Spaceship
 {
-    [RequireComponent(typeof(SpaceshipBehaviour))]
+    [RequireComponent (typeof (SpaceshipBehaviour))]
     public class SpaceshipMoveableBehaviour : MonoBehaviour, ISpaceshipMoveable
     {
-        [SerializeField] private ISpaceship spaceship;
+        [SerializeField]
+        private ISpaceship spaceship;
 
         public ISpaceship Spaceship
         {
-            get { return spaceship ?? (spaceship = GetComponent<ISpaceship>()); }
+            get
+            {
+                return spaceship ?? (spaceship = GetComponent<ISpaceship> ());
+            }
         }
 
         public bool RotateClockwiseButton { get; set; }
         public bool RotateCounterClockwiseButton { get; set; }
         public float ThrottleLevel { get; set; }
 
-        public void FixedUpdate()
+        public void FixedUpdate ()
         {
             //ToDo super ultra mega epic fantastic awesome physics
         }

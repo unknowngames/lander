@@ -7,7 +7,7 @@ namespace Assets.Scripts.Controllers
     {
         public ISpaceshipMoveable SpaceshipMoveable { get; set; }
 
-        public void OnRotationClockwiseChanged(bool state)
+        public void OnRotationClockwiseChanged (bool state)
         {
             if (SpaceshipMoveable != null)
             {
@@ -15,7 +15,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        public void OnRotationCounterClockwiseChanged(bool state)
+        public void OnRotationCounterClockwiseChanged (bool state)
         {
             if (SpaceshipMoveable != null)
             {
@@ -23,7 +23,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        public void OnThrottleChanged(float value)
+        public void OnThrottleChanged (float value)
         {
             if (SpaceshipMoveable != null)
             {

@@ -18,7 +18,7 @@ namespace Assets.Scripts.Console
 
         private ConsoleDrawMode drawMode = ConsoleDrawMode.Log;
 
-        private Rect consoleWindowRect = new Rect(0, 0, 640, 480);
+        private Rect consoleWindowRect = new Rect (0, 0, 640, 480);
         private string inputText = "";
         private string lastInputText = "";
 
@@ -28,7 +28,7 @@ namespace Assets.Scripts.Console
         private Vector2 helpScrollPos = Vector2.zero;
         private Vector2 autocompleteScrollPos = Vector2.zero;
 
-        public delegate void ConsoleVoidDelegate();
+        public delegate void ConsoleVoidDelegate (object sender, EventArgs e);
 
         public static event ConsoleVoidDelegate OnConsoleOpen;
         public static event ConsoleVoidDelegate OnConsoleClose;
@@ -39,12 +39,12 @@ namespace Assets.Scripts.Console
         private bool escPressed;
         private bool f1Pressed;
 
-        private readonly List<string> lastExecutedCommads = new List<string>();
+        private readonly List<string> lastExecutedCommads = new List<string> ();
         private int currentExecutedCommandNum;
 
         //Regex regularExpression = new Regex("^[a-zA-Z0-9_]*$");
-        private readonly Regex regularExpression = new Regex("");
-        private readonly char[] newLine = "\n\r".ToCharArray();
+        private readonly Regex regularExpression = new Regex ("");
+        private readonly char[] newLine = "\n\r".ToCharArray ();
 
         /*Regular expression, contains only upper and lowercase letters, numbers, and underscores.
  
@@ -61,42 +61,41 @@ namespace Assets.Scripts.Console
     */
 
 
-
         private string[] currentAutocompleteResult;
         private GUIStyle logBackgroundStyle;
         private bool prevCursorState;
 
         // ReSharper disable once UnusedMember.Local
-        private void Start()
+        private void Start ()
         {
-            consoleWindowRect.x = (Screen.width - consoleWindowRect.width)*0.5f;
-            consoleWindowRect.y = (Screen.height - consoleWindowRect.height)*0.5f;
+            consoleWindowRect.x = (Screen.width - consoleWindowRect.width) * 0.5f;
+            consoleWindowRect.y = (Screen.height - consoleWindowRect.height) * 0.5f;
             prevCursorState = Cursor.visible;
         }
 
         // ReSharper disable once UnusedMember.Local
-        private void OnGUI()
+        private void OnGUI ()
         {
-            InitStyles();
-            ProcessEvents();
+            InitStyles ();
+            ProcessEvents ();
 
             if (DrawConsole)
             {
-                consoleWindowRect = GUI.Window(0, consoleWindowRect, ConsoleWindowFunc, "Console");
+                consoleWindowRect = GUI.Window (0, consoleWindowRect, ConsoleWindowFunc, "Console");
             }
         }
 
-        private void ExecuteCommand(string command)
+        private void ExecuteCommand (string command)
         {
-            if (!lastExecutedCommads.Contains(command))
+            if (!lastExecutedCommads.Contains (command))
             {
-                lastExecutedCommads.Add(command);
+                lastExecutedCommads.Add (command);
             }
-            Console.Execute(command);
+            Console.Execute (command);
             inputText = "";
         }
 
-        private void ProcessEvents()
+        private void ProcessEvents ()
         {
             if (Event.current != null)
             {
@@ -107,7 +106,7 @@ namespace Assets.Scripts.Console
                     bool keyDown = e.type == EventType.KeyDown;
                     if (keyDown && e.character == '\n')
                     {
-                        ExecuteCommand(inputText);
+                        ExecuteCommand (inputText);
                     }
                     switch (e.keyCode)
                     {
@@ -121,7 +120,7 @@ namespace Assets.Scripts.Console
                                 }
 
                                 inputText = lastExecutedCommads[currentExecutedCommandNum];
-                                MoveCursorToEnd(inputText);
+                                MoveCursorToEnd (inputText);
                             }
 
                             break;
@@ -136,7 +135,7 @@ namespace Assets.Scripts.Console
                                 }
 
                                 inputText = lastExecutedCommads[currentExecutedCommandNum];
-                                MoveCursorToEnd(inputText);
+                                MoveCursorToEnd (inputText);
                             }
 
                             break;
@@ -160,13 +159,19 @@ namespace Assets.Scripts.Console
                                     prevCursorState = Cursor.visible;
                                     Cursor.visible = true;
                                     pendingFocusSet = true;
-                                    if (OnConsoleOpen != null) OnConsoleOpen();
+                                    if (OnConsoleOpen != null)
+                                    {
+                                        OnConsoleOpen (this, EventArgs.Empty);
+                                    }
                                 }
                                 else
                                 {
                                     Cursor.visible = prevCursorState;
                                     pendingFocusSet = false;
-                                    if (OnConsoleClose != null) OnConsoleClose();
+                                    if (OnConsoleClose != null)
+                                    {
+                                        OnConsoleClose(this, EventArgs.Empty);
+                                    }
                                 }
                             }
                             else if (!keyDown)
@@ -197,19 +202,22 @@ namespace Assets.Scripts.Console
                                     {
                                         if (OnConsoleOpen != null)
                                         {
-                                            OnConsoleOpen();
+                                            OnConsoleOpen(this, EventArgs.Empty);
                                         }
                                     }
                                     else
                                     {
                                         if (OnConsoleClose != null)
                                         {
-                                            OnConsoleClose();
+                                            OnConsoleClose(this, EventArgs.Empty);
                                         }
                                     }
                                 }
                             }
-                            else if (keyDown == false) escPressed = false;
+                            else if (keyDown == false)
+                            {
+                                escPressed = false;
+                            }
 
                             break;
 
@@ -223,36 +231,38 @@ namespace Assets.Scripts.Console
                                     {
                                         inputText = currentAutocompleteResult[0];
 
-                                        MoveCursorToEnd(inputText);
+                                        MoveCursorToEnd (inputText);
                                     }
                                 }
                             }
                             else
+                            {
                                 tabPressed = false;
+                            }
                             break;
                     }
                 }
             }
         }
 
-        private void MoveCursorToEnd(string text)
+        private void MoveCursorToEnd (string text)
         {
-            TextEditor editor = (TextEditor) GUIUtility.GetStateObject(typeof (TextEditor), GUIUtility.keyboardControl);
+            TextEditor editor = (TextEditor) GUIUtility.GetStateObject (typeof (TextEditor), GUIUtility.keyboardControl);
             editor.pos = text.Length;
             editor.selectPos = text.Length;
         }
 
-        private bool DrawAutoCompleteWindow(Rect rect)
+        private bool DrawAutoCompleteWindow (Rect rect)
         {
-            if (string.IsNullOrEmpty(inputText))
+            if (string.IsNullOrEmpty (inputText))
             {
                 return false;
             }
 
             if (lastInputText != inputText)
             {
-                string input = inputText.Split(' ')[0];
-                currentAutocompleteResult = Console.GetAutocompleteResult(input);
+                string input = inputText.Split (' ')[0];
+                currentAutocompleteResult = Console.GetAutocompleteResult (input);
             }
 
             if (currentAutocompleteResult == null || currentAutocompleteResult.Length == 0)
@@ -262,18 +272,18 @@ namespace Assets.Scripts.Console
 
             for (int i = 0; i < 6; i++)
             {
-                GUI.Box(rect, "");
+                GUI.Box (rect, "");
             }
 
-            GUILayout.BeginArea(rect);
-            autocompleteScrollPos = GUILayout.BeginScrollView(autocompleteScrollPos);
+            GUILayout.BeginArea (rect);
+            autocompleteScrollPos = GUILayout.BeginScrollView (autocompleteScrollPos);
 
             foreach (string result in currentAutocompleteResult)
             {
-                Dictionary<string, Type> pars = Console.GetCommandParameters(result);
+                Dictionary<string, Type> pars = Console.GetCommandParameters (result);
 
-                GUILayout.BeginHorizontal();
-                GUILayout.Label(result, GUILayout.Width(rect.width*0.45f));
+                GUILayout.BeginHorizontal ();
+                GUILayout.Label (result, GUILayout.Width (rect.width * 0.45f));
                 Color defColor = GUI.color;
 
                 string paramStr = "";
@@ -285,37 +295,41 @@ namespace Assets.Scripts.Console
                 }
 
                 GUI.color = Color.yellow;
-                GUILayout.Label(paramStr, GUILayout.Width(rect.width*0.45f));
+                GUILayout.Label (paramStr, GUILayout.Width (rect.width * 0.45f));
                 GUI.color = defColor;
 
-                GUILayout.EndHorizontal();
+                GUILayout.EndHorizontal ();
             }
 
-            GUILayout.EndScrollView();
-            GUILayout.EndArea();
+            GUILayout.EndScrollView ();
+            GUILayout.EndArea ();
 
             return true;
         }
 
         private int lastLogLen;
 
-        private void DrawLog(Rect rect)
+        private void DrawLog (Rect rect)
         {
-            GUI.Box(rect, "");
-            GUILayout.BeginArea(rect);
+            GUI.Box (rect, "");
+            GUILayout.BeginArea (rect);
 
             if (!autocompleteWindowIsOn)
-                logScrollPos = GUILayout.BeginScrollView(logScrollPos);
+            {
+                logScrollPos = GUILayout.BeginScrollView (logScrollPos);
+            }
 
             foreach (string logString in Console.LogStrings)
             {
-                GUILayout.Label(logString);
+                GUILayout.Label (logString);
             }
 
             if (!autocompleteWindowIsOn)
-                GUILayout.EndScrollView();
+            {
+                GUILayout.EndScrollView ();
+            }
 
-            GUILayout.EndArea();
+            GUILayout.EndArea ();
 
             if (lastLogLen != Console.LogStrings.Count)
             {
@@ -324,64 +338,64 @@ namespace Assets.Scripts.Console
             }
         }
 
-        private void DrawHelp(Rect rect)
+        private void DrawHelp (Rect rect)
         {
-            GUI.Box(rect, "");
-            GUILayout.BeginArea(rect);
-            helpScrollPos = GUILayout.BeginScrollView(helpScrollPos);
+            GUI.Box (rect, "");
+            GUILayout.BeginArea (rect);
+            helpScrollPos = GUILayout.BeginScrollView (helpScrollPos);
 
-            GUILayout.Label("Помощь");
-            GUILayout.Space(50.0f);
-            GUILayout.Label("Клавиши управления:");
-            GUILayout.Space(20.0f);
-            GUILayout.Label("F1 - открыть/скрыть консоль");
-            GUILayout.Label("Enter - выполнить текущую команду");
-            GUILayout.Label("Tab - автоматическое завершение наиболее подходящей команды");
-            GUILayout.Label(
-                "Esc - Если в поле комманд введен текст, нажатие удаляет его. Если поле ввода команд пусто - нажатие закрывает окно консоли");
-            GUILayout.Label("Стрелки Вверх и Вниз - выбор последних введенных команд");
+            GUILayout.Label ("Помощь");
+            GUILayout.Space (50.0f);
+            GUILayout.Label ("Клавиши управления:");
+            GUILayout.Space (20.0f);
+            GUILayout.Label ("F1 - открыть/скрыть консоль");
+            GUILayout.Label ("Enter - выполнить текущую команду");
+            GUILayout.Label ("Tab - автоматическое завершение наиболее подходящей команды");
+            GUILayout.Label (
+                        "Esc - Если в поле комманд введен текст, нажатие удаляет его. Если поле ввода команд пусто - нажатие закрывает окно консоли");
+            GUILayout.Label ("Стрелки Вверх и Вниз - выбор последних введенных команд");
 
-            GUILayout.EndScrollView();
-            GUILayout.EndArea();
+            GUILayout.EndScrollView ();
+            GUILayout.EndArea ();
         }
 
-        private IEnumerator ChangeAutocompleteWindowStateFlag(bool on)
+        private IEnumerator ChangeAutocompleteWindowStateFlag (bool on)
         {
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame ();
             autocompleteWindowIsOn = on;
         }
 
-        private void ConsoleWindowFunc(int windowId)
+        private void ConsoleWindowFunc (int windowId)
         {
-            Rect tempRect = new Rect(consoleWindowRect);
+            Rect tempRect = new Rect (consoleWindowRect);
 
             tempRect.x = 0;
             tempRect.y = 0;
 
-            GUI.Box(tempRect, "", logBackgroundStyle);
+            GUI.Box (tempRect, "", logBackgroundStyle);
 
             float padding = 5;
             float topYpadding = 20;
             float inputH = 25;
             float toolbarW = 100;
-            float logW = consoleWindowRect.width - padding*2 - toolbarW; // *0.7f - ;
+            float logW = consoleWindowRect.width - padding * 2 - toolbarW; // *0.7f - ;
             float logH = consoleWindowRect.height - (topYpadding + inputH + padding);
 
 
             // main
             tempRect.x = padding;
             tempRect.y = topYpadding;
-            tempRect.width = Mathf.Max(0, logW);
-            tempRect.height = Mathf.Max(0, logH);
+            tempRect.width = Mathf.Max (0, logW);
+            tempRect.height = Mathf.Max (0, logH);
 
             switch (drawMode)
             {
                 case ConsoleDrawMode.Log:
-                    DrawLog(tempRect);
+                    DrawLog (tempRect);
                     break;
 
                 case ConsoleDrawMode.Help:
-                    DrawHelp(tempRect);
+                    DrawHelp (tempRect);
                     break;
             }
 
@@ -393,32 +407,32 @@ namespace Assets.Scripts.Console
 
             if (currentAutocompleteResult != null && currentAutocompleteResult.Length > 0)
             {
-                string match = currentAutocompleteResult[0].ToLower();
-                if (match.StartsWith(inputText.ToLower()))
+                string match = currentAutocompleteResult[0].ToLower ();
+                if (match.StartsWith (inputText.ToLower ()))
                 {
                     string subs = currentAutocompleteResult[0];
-                    subs = subs.Remove(0, inputText.Length);
+                    subs = subs.Remove (0, inputText.Length);
                     subs = inputText + subs;
                     tempRect.x += 3;
-                    GUI.Label(tempRect, subs);
+                    GUI.Label (tempRect, subs);
                     tempRect.x -= 3;
                 }
             }
 
-            GUI.SetNextControlName("Input");
-            string temp = GUI.TextField(tempRect, inputText);
+            GUI.SetNextControlName ("Input");
+            string temp = GUI.TextField (tempRect, inputText);
 
             if (pendingFocusSet)
             {
                 pendingFocusSet = false;
-                GUI.FocusControl("Input");
+                GUI.FocusControl ("Input");
             }
 
-            if (regularExpression.IsMatch(temp))
+            if (regularExpression.IsMatch (temp))
             {
-                if (temp.IndexOfAny(newLine) != -1)
+                if (temp.IndexOfAny (newLine) != -1)
                 {
-                    ExecuteCommand(inputText);
+                    ExecuteCommand (inputText);
                 }
 
                 else
@@ -428,7 +442,7 @@ namespace Assets.Scripts.Console
             }
             else
             {
-                Debug.Log("Wrong string");
+                Debug.Log ("Wrong string");
             }
 
             // AUTOCOMPLETE
@@ -436,11 +450,11 @@ namespace Assets.Scripts.Console
             tempRect.height = AutocompleteWindowHeight;
             tempRect.y -= tempRect.height;
 
-            bool tmpFlag = DrawAutoCompleteWindow(tempRect);
+            bool tmpFlag = DrawAutoCompleteWindow (tempRect);
             if (tmpFlag != autocompleteWindowIsOn)
             {
-                StopCoroutine("changeAutocompleteWindowStateFlag");
-                StartCoroutine(ChangeAutocompleteWindowStateFlag(tmpFlag));
+                StopCoroutine ("changeAutocompleteWindowStateFlag");
+                StartCoroutine (ChangeAutocompleteWindowStateFlag (tmpFlag));
             }
 
 
@@ -450,14 +464,17 @@ namespace Assets.Scripts.Console
             tempRect.height = logH;
             tempRect.width = toolbarW;
 
-            GUI.Box(tempRect, "");
+            GUI.Box (tempRect, "");
 
-            GUILayout.BeginArea(tempRect);
+            GUILayout.BeginArea (tempRect);
 
-            string[] toolbarContent = {"Лог", "Помощь"};
-            drawMode = (ConsoleDrawMode) GUILayout.SelectionGrid((int) drawMode, toolbarContent, 1);
+            string[] toolbarContent =
+            {
+                "Лог", "Помощь"
+            };
+            drawMode = (ConsoleDrawMode) GUILayout.SelectionGrid ((int) drawMode, toolbarContent, 1);
 
-            GUILayout.EndArea();
+            GUILayout.EndArea ();
 
             // EXEC
             tempRect.x = padding + logW;
@@ -465,12 +482,12 @@ namespace Assets.Scripts.Console
             tempRect.height = inputH;
             tempRect.width = toolbarW;
 
-            if (GUI.Button(tempRect, "Выполнить"))
+            if (GUI.Button (tempRect, "Выполнить"))
             {
-                ExecuteCommand(inputText);
+                ExecuteCommand (inputText);
             }
 
-            GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+            GUI.DragWindow (new Rect (0, 0, 10000, 10000));
 
             if (lastInputText != inputText)
             {
@@ -479,25 +496,25 @@ namespace Assets.Scripts.Console
             }
         }
 
-        private void InitStyles()
+        private void InitStyles ()
         {
             if (logBackgroundStyle == null)
             {
-                logBackgroundStyle = new GUIStyle(GUI.skin.box);
-                logBackgroundStyle.normal.background = MakeTex(16, 16, new Color(0f, 0.1f, 0.1f, 1f));
+                logBackgroundStyle = new GUIStyle (GUI.skin.box);
+                logBackgroundStyle.normal.background = MakeTex (16, 16, new Color (0f, 0.1f, 0.1f, 1f));
             }
         }
 
-        private Texture2D MakeTex(int width, int height, Color col)
+        private Texture2D MakeTex (int width, int height, Color col)
         {
-            Color[] pix = new Color[width*height];
+            Color[] pix = new Color[width * height];
             for (int i = 0; i < pix.Length; ++i)
             {
                 pix[i] = col;
             }
-            Texture2D result = new Texture2D(width, height);
-            result.SetPixels(pix);
-            result.Apply();
+            Texture2D result = new Texture2D (width, height);
+            result.SetPixels (pix);
+            result.Apply ();
             return result;
         }
     }
