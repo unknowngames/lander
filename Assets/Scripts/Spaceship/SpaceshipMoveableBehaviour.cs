@@ -9,6 +9,12 @@ namespace Assets.Scripts.Spaceship
         [SerializeField]
         private ISpaceship spaceship;
 
+        [SerializeField]
+        private float force;
+
+        [SerializeField]
+        private float rotateSpeed;
+
         public ISpaceship Spaceship
         {
             get
@@ -26,7 +32,16 @@ namespace Assets.Scripts.Spaceship
 
         public void FixedUpdate ()
         {
-            GetComponent<Rigidbody>().AddForce(Vector3.up * ThrottleLevel);
+            if (RotateClockwiseButton)
+            {
+                GetComponent<Rigidbody>().AddTorque(transform.forward * rotateSpeed);
+            }
+            if (RotateCounterClockwiseButton)
+            {
+                GetComponent<Rigidbody>().AddTorque(-transform.forward * rotateSpeed);
+            }
+
+            GetComponent<Rigidbody>().AddForce(transform.up * ThrottleLevel * force);
         }
     }
 }
