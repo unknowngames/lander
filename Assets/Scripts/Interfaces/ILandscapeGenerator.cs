@@ -2,6 +2,6 @@
 {
     public interface ILandscapeGenerator
     {
-        void Generate();
+        void Generate ();
     }
 }

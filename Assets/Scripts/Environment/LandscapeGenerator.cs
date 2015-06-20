@@ -6,9 +6,9 @@ namespace Assets.Scripts.Environment
 {
     public class LandscapeGenerator : MonoBehaviour, ILandscapeGenerator
     {
-        public void Generate()
+        public void Generate ()
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException ();
         }
     }
 }

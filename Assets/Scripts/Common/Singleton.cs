@@ -13,7 +13,7 @@ namespace Assets.Scripts.Common
     {
         private static T instance;
 
-        private static object lockObject = new object();
+        private static object lockObject = new object ();
 
         public static T Instance
         {
@@ -23,41 +23,41 @@ namespace Assets.Scripts.Common
                 {
                     if (instance == null)
                     {
-                        instance = (T)FindObjectOfType(typeof(T));
+                        instance = (T) FindObjectOfType (typeof (T));
 
-                        if (FindObjectsOfType(typeof(T)).Length > 1)
+                        if (FindObjectsOfType (typeof (T)).Length > 1)
                         {
-                            Debug.LogError("[Singleton] Something went really wrong " +
-                                           " - there should never be more than 1 singleton!" +
-                                           " Reopenning the scene might fix it.");
+                            Debug.LogError ("[Singleton] Something went really wrong " +
+                                            " - there should never be more than 1 singleton!" +
+                                            " Reopenning the scene might fix it.");
                             return instance;
                         }
 
                         if (instance != null)
                         {
-                            Debug.Log("[Singleton] Using instance already created: " +
-                                      instance.gameObject.name);
+                            Debug.Log ("[Singleton] Using instance already created: " +
+                                       instance.gameObject.name);
                         }
                         else
                         {
                             if (applicationIsQuitting)
                             {
-                                Debug.LogWarning("[Singleton] Instance '" + typeof(T) +
-                                                 "' already destroyed on application quit." +
-                                                 " Won't create again - returning null.");
+                                Debug.LogWarning ("[Singleton] Instance '" + typeof (T) +
+                                                  "' already destroyed on application quit." +
+                                                  " Won't create again - returning null.");
                                 return null;
                             }
 
-                            GameObject singleton = new GameObject();
-                            instance = singleton.AddComponent<T>();
+                            GameObject singleton = new GameObject ();
+                            instance = singleton.AddComponent<T> ();
 
                             singleton.name = "(singleton) " + typeof (T);
 
-                            DontDestroyOnLoad(singleton);
+                            DontDestroyOnLoad (singleton);
 
-                            Debug.Log("[Singleton] An instance of " + typeof (T) +
-                                      " is needed in the scene, so '" + singleton +
-                                      "' was created with DontDestroyOnLoad.");
+                            Debug.Log ("[Singleton] An instance of " + typeof (T) +
+                                       " is needed in the scene, so '" + singleton +
+                                       "' was created with DontDestroyOnLoad.");
                         }
                     }
 
@@ -65,8 +65,9 @@ namespace Assets.Scripts.Common
                 }
             }
         }
-                
+
         private static bool applicationIsQuitting;
+
         /// <summary>
         /// When Unity quits, it destroys objects in a random order.
         /// In principle, a Singleton is only destroyed when application quits.
@@ -75,9 +76,9 @@ namespace Assets.Scripts.Common
         ///   even after stopping playing the Application. Really bad!
         /// So, this was made to be sure we're not creating that buggy ghost object.
         /// </summary>
-        public virtual void OnApplicationQuit()
+        public virtual void OnApplicationQuit ()
         {
             applicationIsQuitting = true;
-        }       
+        }
     }
 }

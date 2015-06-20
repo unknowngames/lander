@@ -3,14 +3,18 @@ using UnityEngine;
 
 namespace Assets.Scripts.Spaceship
 {
-    [RequireComponent(typeof(SpaceshipBehaviour))]
+    [RequireComponent (typeof (SpaceshipBehaviour))]
     public class SpaceshipMoveableBehaviour : MonoBehaviour, ISpaceshipMoveable
     {
-        [SerializeField] private ISpaceship spaceship;
+        [SerializeField]
+        private ISpaceship spaceship;
 
         public ISpaceship Spaceship
         {
-            get { return spaceship ?? (spaceship = GetComponent<ISpaceship>()); }
+            get
+            {
+                return spaceship ?? (spaceship = GetComponent<ISpaceship> ());
+            }
         }
 
         public void SetImpulse(float impulse)
@@ -19,5 +23,10 @@ namespace Assets.Scripts.Spaceship
         }
 
         public float ThrottleLevel { get; set; }
+
+        public void FixedUpdate ()
+        {
+            GetComponent<Rigidbody>().AddForce(Vector3.up * ThrottleLevel);
+        }
     }
 }

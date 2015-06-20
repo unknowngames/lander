@@ -6,7 +6,7 @@ using Object = UnityEngine.Object;
 
 namespace Assets.Scripts.Console
 {
-    [AttributeUsage(AttributeTargets.Method)]
+    [AttributeUsage (AttributeTargets.Method)]
     public class ConsoleCommand : Attribute
     {
     }
@@ -14,11 +14,11 @@ namespace Assets.Scripts.Console
     public class Console
     {
         private static Console instance;
-        private readonly Dictionary<string, MethodInfo> commandAndInfos = new Dictionary<string, MethodInfo>();
-        private readonly Dictionary<string, List<Type>> commandAndTypes = new Dictionary<string, List<Type>>();
+        private readonly Dictionary<string, MethodInfo> commandAndInfos = new Dictionary<string, MethodInfo> ();
+        private readonly Dictionary<string, List<Type>> commandAndTypes = new Dictionary<string, List<Type>> ();
 
-        private readonly List<string> log = new List<string>();
-        private readonly Dictionary<Type, List<string>> typesAndCommands = new Dictionary<Type, List<string>>();
+        private readonly List<string> log = new List<string> ();
+        private readonly Dictionary<Type, List<string>> typesAndCommands = new Dictionary<Type, List<string>> ();
 
         private static Console ConsoleInstance
         {
@@ -26,8 +26,8 @@ namespace Assets.Scripts.Console
             {
                 if (instance == null)
                 {
-                    instance = new Console();
-                    instance.Init();
+                    instance = new Console ();
+                    instance.Init ();
                 }
                 return instance;
             }
@@ -35,45 +35,48 @@ namespace Assets.Scripts.Console
 
         public static List<string> LogStrings
         {
-            get { return ConsoleInstance.log; }
+            get
+            {
+                return ConsoleInstance.log;
+            }
         }
 
-        private void Init()
+        private void Init ()
         {
-            Type[] types = Assembly.GetExecutingAssembly().GetTypes();
+            Type[] types = Assembly.GetExecutingAssembly ().GetTypes ();
 
             for (int i = 0; i < types.Length; i++)
             {
                 Type type = types[i];
 
                 MethodInfo[] methods =
-                    type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic |
-                                    BindingFlags.Static);
+                            type.GetMethods (BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic |
+                                             BindingFlags.Static);
 
                 for (int j = 0; j < methods.Length; j++)
                 {
                     MethodInfo minfo = methods[j];
 
-                    object[] attrs = minfo.GetCustomAttributes(typeof (ConsoleCommand), true);
+                    object[] attrs = minfo.GetCustomAttributes (typeof (ConsoleCommand), true);
 
                     if (attrs.Length > 0)
                     {
-                        if (commandAndTypes.ContainsKey(minfo.Name) == false)
+                        if (commandAndTypes.ContainsKey (minfo.Name) == false)
                         {
-                            commandAndTypes.Add(minfo.Name, new List<Type>());
+                            commandAndTypes.Add (minfo.Name, new List<Type> ());
                         }
 
-                        commandAndTypes[minfo.Name].Add(type);
+                        commandAndTypes[minfo.Name].Add (type);
 
 
-                        if (typesAndCommands.ContainsKey(type) == false)
+                        if (typesAndCommands.ContainsKey (type) == false)
                         {
-                            typesAndCommands.Add(type, new List<string>());
+                            typesAndCommands.Add (type, new List<string> ());
                         }
 
-                        typesAndCommands[type].Add(minfo.Name);
+                        typesAndCommands[type].Add (minfo.Name);
 
-                        commandAndInfos.Add(minfo.Name, minfo);
+                        commandAndInfos.Add (minfo.Name, minfo);
                     }
                 }
             }
@@ -81,28 +84,28 @@ namespace Assets.Scripts.Console
             Application.logMessageReceived += LogCallback;
         }
 
-        private void LogCallback(string condition, string stackTrace, LogType type)
+        private void LogCallback (string condition, string stackTrace, LogType type)
         {
-            log.Add(condition);
+            log.Add (condition);
         }
 
-        public static string[] GetAutocompleteResult(string methodName)
+        public static string[] GetAutocompleteResult (string methodName)
         {
-            return ConsoleInstance.GetAutocompleteResultInternal(methodName).ToArray();
+            return ConsoleInstance.GetAutocompleteResultInternal (methodName).ToArray ();
         }
 
-        private List<string> GetAutocompleteResultInternal(string methodName)
+        private List<string> GetAutocompleteResultInternal (string methodName)
         {
-            List<string> result = new List<string>();
+            List<string> result = new List<string> ();
 
             // ищем все имена которые начинаются с данной строки
             foreach (string key in commandAndInfos.Keys)
             {
-                if (key.ToLower().StartsWith(methodName.ToLower()))
+                if (key.ToLower ().StartsWith (methodName.ToLower ()))
                 {
-                    if (!result.Contains(key))
+                    if (!result.Contains (key))
                     {
-                        result.Add(key);
+                        result.Add (key);
                     }
                 }
             }
@@ -110,11 +113,11 @@ namespace Assets.Scripts.Console
             // ищем все имена в которых содержится данная строка
             foreach (string key in commandAndInfos.Keys)
             {
-                if (key.ToLower().Contains(methodName.ToLower()))
+                if (key.ToLower ().Contains (methodName.ToLower ()))
                 {
-                    if (!result.Contains(key))
+                    if (!result.Contains (key))
                     {
-                        result.Add(key);
+                        result.Add (key);
                     }
                 }
             }
@@ -122,34 +125,34 @@ namespace Assets.Scripts.Console
             return result;
         }
 
-        public static Dictionary<string, Type> GetCommandParameters(string command)
+        public static Dictionary<string, Type> GetCommandParameters (string command)
         {
-            ParameterInfo[] parameters = ConsoleInstance.commandAndInfos[command].GetParameters();
+            ParameterInfo[] parameters = ConsoleInstance.commandAndInfos[command].GetParameters ();
 
-            Dictionary<string, Type> result = new Dictionary<string, Type>();
+            Dictionary<string, Type> result = new Dictionary<string, Type> ();
 
             foreach (ParameterInfo par in parameters)
             {
-                result.Add(par.Name, par.ParameterType);
+                result.Add (par.Name, par.ParameterType);
             }
             return result;
         }
 
-        public static void Execute(string command)
+        public static void Execute (string command)
         {
-            ConsoleInstance.ExecuteInternal(command);
+            ConsoleInstance.ExecuteInternal (command);
         }
 
-        private void ExecuteInternal(string command)
+        private void ExecuteInternal (string command)
         {
-            if (string.IsNullOrEmpty(command))
+            if (string.IsNullOrEmpty (command))
             {
                 return;
             }
 
             try
             {
-                string[] splitted = command.Split(' ');
+                string[] splitted = command.Split (' ');
                 command = splitted[0];
 
                 object[] args = new object[splitted.Length - 1];
@@ -160,7 +163,7 @@ namespace Assets.Scripts.Console
                 }
 
 
-                if (commandAndTypes.ContainsKey(command))
+                if (commandAndTypes.ContainsKey (command))
                 {
                     List<Type> types = commandAndTypes[command];
                     foreach (Type t in types)
@@ -168,11 +171,11 @@ namespace Assets.Scripts.Console
                         MethodInfo minfo = commandAndInfos[command];
 
                         // GET PARAMS
-                        ParameterInfo[] parameters = minfo.GetParameters();
+                        ParameterInfo[] parameters = minfo.GetParameters ();
 
                         if (parameters.Length != args.Length)
                         {
-                            Debug.Log("Parameter count not match");
+                            Debug.Log ("Parameter count not match");
                             continue;
                         }
 
@@ -187,55 +190,55 @@ namespace Assets.Scripts.Console
 
                             if (par.ParameterType == typeof (int))
                             {
-                                args[i] = int.Parse(args[i].ToString());
+                                args[i] = int.Parse (args[i].ToString ());
                             }
                             else if (par.ParameterType == typeof (float))
                             {
-                                args[i] = float.Parse(args[i].ToString());
+                                args[i] = float.Parse (args[i].ToString ());
                             }
                             else if (par.ParameterType == typeof (double))
                             {
-                                args[i] = double.Parse(args[i].ToString());
+                                args[i] = double.Parse (args[i].ToString ());
                             }
                             else if (par.ParameterType == typeof (bool))
                             {
-                                args[i] = bool.Parse(args[i].ToString());
+                                args[i] = bool.Parse (args[i].ToString ());
                             }
                             else if (par.ParameterType.IsEnum)
                             {
-                                args[i] = Enum.Parse(par.ParameterType, args[i].ToString(), true);
+                                args[i] = Enum.Parse (par.ParameterType, args[i].ToString (), true);
                             }
                             else
                             {
-                                Debug.Log("Unknown parameter type: " + par.ParameterType);
+                                Debug.Log ("Unknown parameter type: " + par.ParameterType);
                             }
                         }
 
                         if (minfo.IsStatic)
                         {
-                            minfo.Invoke(null, args);
+                            minfo.Invoke (null, args);
                         }
                         else
                         {
-                            Object[] objs = Object.FindObjectsOfType(t);
+                            Object[] objs = Object.FindObjectsOfType (t);
 
                             foreach (Object o in objs)
                             {
-                                t.InvokeMember(command,
-                                    BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public |
-                                    BindingFlags.NonPublic, null, o, args);
+                                t.InvokeMember (command,
+                                            BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public |
+                                            BindingFlags.NonPublic, null, o, args);
                             }
                         }
                     }
                 }
                 else
                 {
-                    Debug.Log("no command found");
+                    Debug.Log ("no command found");
                 }
             }
             catch (Exception ex)
             {
-                Debug.Log(ex.Message);
+                Debug.Log (ex.Message);
             }
         }
     }

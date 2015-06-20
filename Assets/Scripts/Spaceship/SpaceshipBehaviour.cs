@@ -11,6 +11,7 @@ namespace Assets.Scripts.Spaceship
         public Vector3 Velosity { get; set; }
         public Vector3 AngularVelosity { get; set; }
         public float Mass { get; set; }
-        public float RemainingFuel { get; set; }
+        public float RemainingFuel { get; set; }      
+        public bool IsPaused { get; set; }
     }
 }
