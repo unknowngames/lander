@@ -2,8 +2,8 @@
 {
     public interface ISpaceshipMoveable
     {
-        bool RotateClockwiseButton { get; set; }
-        bool RotateCounterClockwiseButton { get; set; }
+        void SetImpulse(float impulse);
+
         float ThrottleLevel { get; set; }
     }
 }

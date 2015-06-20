@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Interfaces;
 using UnityEngine.EventSystems;
+using UnityEngine;
 
 namespace Assets.Scripts.Controllers
 {
@@ -7,24 +8,27 @@ namespace Assets.Scripts.Controllers
     {
         public ISpaceshipMoveable SpaceshipMoveable { get; set; }
 
-        public void OnRotationClockwiseChanged(bool state)
+        public void OnRotationClockwiseChanged(float force)
         {
+            Debug.Log("Clockwise " + force);
             if (SpaceshipMoveable != null)
             {
-                SpaceshipMoveable.RotateClockwiseButton = state;
+                SpaceshipMoveable.SetImpulse(force);
             }
         }
 
-        public void OnRotationCounterClockwiseChanged(bool state)
+        public void OnRotationCounterClockwiseChanged(float force)
         {
+            Debug.Log("Counter clockwise " + force);
             if (SpaceshipMoveable != null)
             {
-                SpaceshipMoveable.RotateCounterClockwiseButton = state;
+                SpaceshipMoveable.SetImpulse(force);
             }
         }
 
         public void OnThrottleChanged(float value)
         {
+            Debug.Log("Throttle " + value);
             if (SpaceshipMoveable != null)
             {
                 SpaceshipMoveable.ThrottleLevel = value;

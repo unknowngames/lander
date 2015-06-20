@@ -13,8 +13,11 @@ namespace Assets.Scripts.Spaceship
             get { return spaceship ?? (spaceship = GetComponent<ISpaceship>()); }
         }
 
-        public bool RotateClockwiseButton { get; set; }
-        public bool RotateCounterClockwiseButton { get; set; }
+        public void SetImpulse(float impulse)
+        {
+
+        }
+
         public float ThrottleLevel { get; set; }
     }
 }
