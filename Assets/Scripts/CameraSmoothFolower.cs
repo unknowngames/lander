@@ -10,7 +10,23 @@ namespace Assets.Scripts
     {
         public Transform Target;
         [SerializeField]
-        private float distance;
+        private float distance = 750;
+
+        [SerializeField]
+        private float zoomViewDistance = 50;
+
+        [SerializeField]
+        private float zoomStartDistance = 50;
+
+        [SerializeField]
+        private float zoomSpeed = 10;
+
+        private float currentZoomDistance = 0.0f;
+        private float targetZoomDistance = 0.0f;
+
+        [SerializeField]
+        private string zoomObjectTag = "ZoomTarget";
+
         [SerializeField]
         private float heightDamping;
         [SerializeField]
@@ -20,12 +36,58 @@ namespace Assets.Scripts
 
         private float FixedDeltaTime;
 
+        GameObject[] zoomTargets;
+
+
+        void Start()
+        {
+            var zoomTargets = GameObject.FindGameObjectsWithTag(zoomObjectTag);
+
+            if (zoomTargets != null)
+                Debug.Log("Zoom targets found: " + zoomTargets.Length);
+            else
+                Debug.Log("No zoom targets");
+
+            targetZoomDistance = distance;
+            currentZoomDistance = distance;
+        }
+
 
         public void Update ()
         {
             if (Game.PlayerSpaceship != null)
             {
                 Target = Game.PlayerSpaceship.transform;
+            }
+
+            if(Target != null && zoomTargets != null)
+            {
+                Transform closestTarget = null;
+                float closestDistance = float.MaxValue;
+
+                for (int i=0; i<zoomTargets.Length; i++)
+                {
+                    var zoomTarget = zoomTargets[i];
+
+                    var dist = Vector3.Distance(Target.position, zoomTarget.transform.position);
+
+                    if(dist <= zoomStartDistance && dist < closestDistance)
+                    {
+                        closestDistance = dist;
+                        closestTarget = zoomTarget.transform;
+                    }
+                }
+
+                if(closestTarget != null)
+                {
+                    targetZoomDistance = zoomViewDistance;
+                }
+                else
+                {
+                    targetZoomDistance = distance;
+                }
+
+                currentZoomDistance = Mathf.Lerp(currentZoomDistance, targetZoomDistance, Time.deltaTime * zoomSpeed);
             }
         }
 
@@ -62,7 +124,7 @@ namespace Assets.Scripts
                 // Set the position of the camera on the x-z plane to:
                 // distance meters behind the target
                 Vector3 position = Target.position;
-                position -= currentRotation * Vector3.forward * distance;
+                position -= currentRotation * Vector3.forward * currentZoomDistance;
 
                 // Set the height of the camera
                 transform.position = new Vector3(position.x, currentHeight, position.z);
