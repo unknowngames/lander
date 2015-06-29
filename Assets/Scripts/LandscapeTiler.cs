@@ -1,59 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts
 {
-    public class LandscapeArray
-    {
-        private List<Landscape> landscapes = new List<Landscape> ();
-        private Bounds bounds;
-
-        public Bounds Bounds
-        {
-            get
-            {
-                return bounds;
-            }
-        }
-
-        public LandscapeArray ()
-        {
-            bounds = new Bounds();
-        }
-
-        public void Add (Landscape landscape)
-        {
-            if (!landscapes.Contains (landscape))
-            {
-                landscapes.Add(landscape);
-                ResetBounds();
-            }
-        }
-
-        public void Remove (Landscape landscape)
-        {
-            if (landscapes.Contains(landscape))
-            {
-                landscapes.Remove(landscape);
-                ResetBounds ();
-            }
-        }
-
-        private void ResetBounds ()
-        {   
-            Bounds b = new Bounds();
-            foreach (Landscape landscape in landscapes)
-            {
-                b.Encapsulate (landscape.Bounds);
-            }
-        }
-    }
-
     public class LandscapeTiler : MonoBehaviour
     {
-        private LandscapeArray allLandscapes = new LandscapeArray ();
-        private List<Landscape> visibleLandscapes = new List<Landscape> ();
-        private List<Landscape> cachedLandscapes = new List<Landscape> ();
+        [SerializeField]
+        private Landscape landscapeTemplate;
+
+        private readonly List<Landscape> landscapes = new List<Landscape>();
 
         private Camera mainCamera;
 
@@ -64,26 +20,64 @@ namespace Assets.Scripts
 
         public void Start ()
         {
-            FillVisibleLandscapeAtStart ();
+            Landscape copyLeft = Instantiate(landscapeTemplate);
+            Landscape copyRight = Instantiate(landscapeTemplate);
+            copyLeft.transform.parent = transform;
+            copyRight.transform.parent = transform;
+
+            landscapes.Add(copyLeft);
+            landscapes.Add(landscapeTemplate);
+            landscapes.Add(copyRight);
+
+
+            Vector3 position = landscapes[1].Position;
+
+            Vector3 newPosition = new Vector3(position.x - landscapeTemplate.Bounds.size.x, position.y, position.z);
+
+            landscapes[0].Position = newPosition;
+
+            newPosition = new Vector3(position.x + landscapeTemplate.Bounds.size.x, position.y, position.z);
+
+            landscapes[2].Position = newPosition;
         }
 
-        private void FillVisibleLandscapeAtStart ()
+        private void TileToRight()
         {
-            Landscape[] landscapes = GetComponentsInChildren<Landscape>();
-            visibleLandscapes.Clear ();
-            foreach (Landscape landscape in landscapes)
-            {
-                allLandscapes.Add (landscape);
+            Landscape landscape = landscapes[0];
+            landscapes.Remove(landscape);
+            landscapes.Insert(2, landscape);
 
-                if (landscape.IsInViewport (mainCamera))
-                {
-                    visibleLandscapes.Add (landscape);
-                }
-            }
+            Vector3 position = landscapes[1].Position;
+
+            Vector3 newPosition = new Vector3(position.x + landscape.Bounds.size.x, position.y, position.z);
+            landscape.Position = newPosition;
+        }
+
+        private void TileToLeft()
+        {
+            Landscape landscape = landscapes[2];
+            landscapes.Remove(landscape);
+            landscapes.Insert(0, landscape);
+
+            Vector3 position = landscapes[1].Position;
+
+            Vector3 newPosition = new Vector3(position.x - landscape.Bounds.size.x, position.y, position.z);
+            landscape.Position = newPosition;
         }
 
         public void Update ()
         {
+            ERelativePosition relativePosition = landscapes[1].GetRelativePosition(mainCamera);
+
+            switch (relativePosition)
+            {
+                case ERelativePosition.Left:
+                    TileToRight();
+                    break;
+                case ERelativePosition.Right:
+                    TileToLeft();
+                    break;
+            }
         }
     }
 }
