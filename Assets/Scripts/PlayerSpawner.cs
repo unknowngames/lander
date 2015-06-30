@@ -9,16 +9,23 @@ namespace Assets.Scripts
     {
         [SerializeField]
         private SpaceshipBehaviour spaceshipBehaviourPrefab;
+
+        [SerializeField]
+        private Transform spawnPosition;
+
         private SpaceshipBehaviour spaceshipBehaviourInstance;
 
         public SpaceshipBehaviour CreatePlayer()
         {
             if (spaceshipBehaviourInstance == null)
             {
-                spaceshipBehaviourInstance = UnityEngine.Object.Instantiate (spaceshipBehaviourPrefab);
+                spaceshipBehaviourInstance = UnityEngine.Object.Instantiate(spaceshipBehaviourPrefab);            
             }
             
             spaceshipBehaviourInstance.Reset ();
+
+            spaceshipBehaviourInstance.transform.position = spawnPosition.position;
+            spaceshipBehaviourInstance.transform.rotation = spawnPosition.rotation;
             
             spaceshipBehaviourInstance.gameObject.SetActive (true);
             return spaceshipBehaviourInstance;

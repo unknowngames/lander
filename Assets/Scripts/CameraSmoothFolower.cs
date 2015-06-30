@@ -41,7 +41,7 @@ namespace Assets.Scripts
 
         void Start()
         {
-            var zoomTargets = GameObject.FindGameObjectsWithTag(zoomObjectTag);
+            zoomTargets = GameObject.FindGameObjectsWithTag(zoomObjectTag);
 
             if (zoomTargets != null)
                 Debug.Log("Zoom targets found: " + zoomTargets.Length);
