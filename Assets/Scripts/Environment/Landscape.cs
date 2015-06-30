@@ -1,14 +1,7 @@
 using UnityEngine;
 
-namespace Assets.Scripts
+namespace Assets.Scripts.Environment
 {
-    public enum ERelativePosition
-    {
-        InViewport,
-        Left,
-        Right
-    }
-
     public class Landscape : MonoBehaviour
     {
         [SerializeField]
@@ -30,28 +23,6 @@ namespace Assets.Scripts
         {
             get { return transform.position; }
             set { transform.position = value; }
-        }
-
-
-        public ERelativePosition GetRelativePosition(Camera camera)
-        {
-            Vector3 min = Bounds.min;
-            Vector3 max = Bounds.max;
-
-            Vector3 minInViewport = camera.WorldToViewportPoint(min);
-            Vector3 maxInViewport = camera.WorldToViewportPoint(max);
-
-            if (minInViewport.x > 1.0f)
-            {
-                return ERelativePosition.Right;
-            }
-               
-            if (maxInViewport.x < 0.0f)
-            {
-                return ERelativePosition.Left;
-            }
-
-            return ERelativePosition.InViewport;
         }
 
         public void OnDrawGizmos()

@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Assets.Scripts
+namespace Assets.Scripts.Environment
 {
     public class LandscapeTiler : MonoBehaviour
     {
         [SerializeField]
         private Landscape landscapeTemplate;
 
-        private readonly List<Landscape> landscapes = new List<Landscape>();
+        [Range(2,10)]
+        [SerializeField]
+        private int partitionCount=3;
+
+        private readonly LandscapeArray landscapes = new LandscapeArray();
 
         private Camera mainCamera;
 
@@ -20,64 +22,67 @@ namespace Assets.Scripts
 
         public void Start ()
         {
-            Landscape copyLeft = Instantiate(landscapeTemplate);
-            Landscape copyRight = Instantiate(landscapeTemplate);
-            copyLeft.transform.parent = transform;
-            copyRight.transform.parent = transform;
-
-            landscapes.Add(copyLeft);
-            landscapes.Add(landscapeTemplate);
-            landscapes.Add(copyRight);
-
-
-            Vector3 position = landscapes[1].Position;
-
-            Vector3 newPosition = new Vector3(position.x - landscapeTemplate.Bounds.size.x, position.y, position.z);
-
-            landscapes[0].Position = newPosition;
-
-            newPosition = new Vector3(position.x + landscapeTemplate.Bounds.size.x, position.y, position.z);
-
-            landscapes[2].Position = newPosition;
+            Init ();
         }
 
-        private void TileToRight()
+        private void Init ()
         {
-            Landscape landscape = landscapes[0];
-            landscapes.Remove(landscape);
-            landscapes.Insert(2, landscape);
+            Vector3 position = landscapeTemplate.Position;
+            landscapes.PushLeft (landscapeTemplate);
 
-            Vector3 position = landscapes[1].Position;
+            int il = 1;
+            int ir = 1;
 
-            Vector3 newPosition = new Vector3(position.x + landscape.Bounds.size.x, position.y, position.z);
-            landscape.Position = newPosition;
-        }
+            for (int i = 0; i < partitionCount - 1; i++)
+            {
+                Landscape copy = Instantiate (landscapeTemplate);
+                copy.transform.parent = transform;
 
-        private void TileToLeft()
-        {
-            Landscape landscape = landscapes[2];
-            landscapes.Remove(landscape);
-            landscapes.Insert(0, landscape);
+                if (i % 2 == 0)
+                {
+                    Vector3 newPosition = new Vector3(position.x - landscapeTemplate.Bounds.size.x * il, position.y, position.z);
+                    copy.Position = newPosition;
 
-            Vector3 position = landscapes[1].Position;
+                    landscapes.PushLeft(copy);
+                    il++;
+                }
+                else
+                {
+                    Vector3 newPosition = new Vector3(position.x + landscapeTemplate.Bounds.size.x * ir, position.y, position.z);
+                    copy.Position = newPosition;
 
-            Vector3 newPosition = new Vector3(position.x - landscape.Bounds.size.x, position.y, position.z);
-            landscape.Position = newPosition;
+                    landscapes.PushRight(copy);
+                    ir++;
+                }
+            }
         }
 
         public void Update ()
         {
-            ERelativePosition relativePosition = landscapes[1].GetRelativePosition(mainCamera);
+            float relativePosition = GetXPositionInViewport (landscapes.Center, mainCamera);
 
-            switch (relativePosition)
+            if (relativePosition <= 0.0f)
             {
-                case ERelativePosition.Left:
-                    TileToRight();
-                    break;
-                case ERelativePosition.Right:
-                    TileToLeft();
-                    break;
+                landscapes.TileToRight();
             }
+            else if (relativePosition >= 1.0f)
+            {
+                landscapes.TileToLeft ();
+            }
+        }
+
+        private float GetXPositionInViewport (Vector3 position, Camera camera)
+        {
+            Vector3 positionInViewport = camera.WorldToViewportPoint (position);
+            return positionInViewport.x;
+        }
+
+        public void OnDrawGizmos ()
+        {
+            Color color = Gizmos.color;
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube (landscapes.Bounds.center, landscapes.Bounds.size);
+            Gizmos.color = color;
         }
     }
 }
