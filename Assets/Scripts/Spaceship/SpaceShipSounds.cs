@@ -32,16 +32,20 @@ namespace Assets.Scripts.Spaceship
 			engineAudioSource = GetComponent<AudioSource> ();
 			spaceshipMoveable = Game.PlayerSpaceship.GetComponent<ISpaceshipMoveable> ();
 		}
-		void Update () 
+		void Update() 
+		{
+			UpdateEngineSound();
+		}
+		private void UpdateEngineSound()
 		{
 			if (spaceshipMoveable.ThrottleLevel == 0.0f) 
 			{
 				engineAudioSource.volume = 0.0f;
 				return;
 			}
-
-			engineAudioSource.pitch = Mathf.Clamp(spaceshipMoveable.ThrottleLevel * configPitchMultiplier, configMinPitchMultiplier, configMaxPitchMultiplier) ;
-			engineAudioSource.volume = Mathf.Clamp(spaceshipMoveable.ThrottleLevel * configVolumeMultiplier, configMinVolumeMultiplier, configMaxVolumeMultiplier) ;;
+			
+			engineAudioSource.pitch = Mathf.Clamp(spaceshipMoveable.ThrottleLevel * configPitchMultiplier, configMinPitchMultiplier, configMaxPitchMultiplier);
+			engineAudioSource.volume = Mathf.Clamp(spaceshipMoveable.ThrottleLevel * configVolumeMultiplier, configMinVolumeMultiplier, configMaxVolumeMultiplier);
 		}
 	}
 }
