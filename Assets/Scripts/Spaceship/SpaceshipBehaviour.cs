@@ -78,9 +78,34 @@ namespace Assets.Scripts.Spaceship
             }
         }
 
+		private bool isCrashed(Collision collision)
+		{
+			return false;
+		}
+		private bool isLanded(Collision collision)
+		{
+			if(collision.gameObject.layer.Equals(LayerMask.NameToLayer("Landing place")))
+			{
+				return true;
+			}
+			return false;
+		}
+
+
         public void OnCollisionEnter(Collision collision)
         {
-            Debug.Log("Bump");
+			if (isCrashed (collision)) 
+			{
+				OnCrashed();
+			}
+			else if (isLanded (collision)) 
+			{
+				OnLanded();
+			}
+			else 
+			{
+				OnBumped();
+			}
         } 
     }
 }

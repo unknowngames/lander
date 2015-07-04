@@ -16,6 +16,9 @@ namespace Assets.Scripts.Spaceship
         public AudioSource[] bumpSounds;
         [SerializeField]
         public AudioSource[] crashSounds;
+		[SerializeField]
+		public AudioSource landedSound;
+
     }
 
 	[RequireComponent(typeof(SpaceshipBehaviour))]
@@ -48,28 +51,15 @@ namespace Assets.Scripts.Spaceship
 		
 		// звуки
 		private AudioSource engineAudioSource;
-		private List<AudioSource> bumpAudioSources;
-
-
 
 		public void Awake()
 		{
 			spaceshipBehaviour = GetComponent<SpaceshipBehaviour> ();
-
-			AudioSource[] audioSources = GetComponents<AudioSource>();
-			engineAudioSource = audioSources[0];
-
-			bumpAudioSources = new List<AudioSource> ();
-			
-			for (int i = 1; i <  audioSources.Length; i++) 
-			{
-				bumpAudioSources.Add(audioSources[i]);
-			}
+			engineAudioSource = spaceshipSounds.engineSounds[0];
 		}                     
 
 		public void Start () 
 		{
-
 			spaceshipBehaviour.OnLanded += OnLandedEventHandler;
 			spaceshipBehaviour.OnBumped += OnBumpedEventHandler;
 			spaceshipBehaviour.OnCrashed += OnCrashedEventHandler;
@@ -101,12 +91,12 @@ namespace Assets.Scripts.Spaceship
 
 		private void OnLandedEventHandler()
 		{
-			Debug.Log ("OnLandedEventHandler");
+			spaceshipSounds.landedSound.Play();
 		}
 		private void OnBumpedEventHandler()
 		{
-			int rnd = Random.Range(0, bumpAudioSources.Count);
-			bumpAudioSources [rnd].Play ();
+			int rnd = Random.Range(0, spaceshipSounds.bumpSounds.Length);
+			spaceshipSounds.bumpSounds[rnd].Play();
 		}
 
 		private void OnCrashedEventHandler()
