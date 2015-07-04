@@ -89,7 +89,7 @@ namespace Assets.Scripts.Spaceship
 
 		private void UpdateEngineSound()
 		{
-            if (Math.Abs (spaceshipBehaviour.ThrottleLevel) < 0.01f) 
+            if (Math.Abs (spaceshipBehaviour.EnginePower) < 0.01f) 
 			{
 				engineAudioSource.volume = 0.0f;
 				return;

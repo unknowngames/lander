@@ -5,6 +5,9 @@ namespace Assets.Scripts.Spaceship
 {
     public class SpaceshipBehaviour : MonoBehaviour, ISpaceship
     {
+        [SerializeField]
+        private float initialFuel;
+
         public string Name { get; set; }
         public Vector3 Position { get; set; }
         public Quaternion Rotation { get; set; }
@@ -62,7 +65,7 @@ namespace Assets.Scripts.Spaceship
 
         public void Reset ()
         {
-            RemainingFuel = 750;
+            RemainingFuel = initialFuel;
 
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
