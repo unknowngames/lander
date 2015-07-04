@@ -49,12 +49,12 @@ namespace Assets.Scripts
                 text.text = format;
 
                 if (fps < 30)
-                    text.material.color = Color.yellow;
+                    text.color = Color.yellow;
                 else
                     if (fps < 10)
-                        text.material.color = Color.red;
+                        text.color = Color.red;
                     else
-                        text.material.color = Color.green;
+                        text.color = Color.green;
                 timeleft = updateInterval;
                 accum = 0.0F;
                 frames = 0;
