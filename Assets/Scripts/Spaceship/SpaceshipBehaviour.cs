@@ -23,6 +23,8 @@ namespace Assets.Scripts.Spaceship
 
         public void Reset ()
         {
+            RemainingFuel = 750;
+
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
 
@@ -33,5 +35,10 @@ namespace Assets.Scripts.Spaceship
                 component.angularVelocity = Vector3.zero;
             }
         }
+
+        public void OnCollisionEnter(Collision collision)
+        {
+            Debug.Log("Bump");
+        } 
     }
 }

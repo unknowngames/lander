@@ -56,9 +56,14 @@ namespace Assets.Scripts.Spaceship
         public float ThrottleLevel { get; set; }
 
         public void FixedUpdate ()
-        {                                                         
-            float throttle = Mathf.Pow (ThrottleLevel, 0.25f);
-            rigidbody.AddForce(transform.up * throttle * -Physics.gravity.y * rigidbody.mass * tw);
+        {
+            if (Spaceship.RemainingFuel > 0.0f)
+            {
+                float throttle = Mathf.Pow (ThrottleLevel, 0.25f);
+                rigidbody.AddForce (transform.up * throttle * -Physics.gravity.y * rigidbody.mass * tw);
+
+                Spaceship.RemainingFuel -= Time.fixedDeltaTime * throttle * 2;
+            }
         }
     }
 }
