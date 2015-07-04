@@ -61,10 +61,10 @@ public class RadialSlider : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
         direction.Normalize();
 
         Handle.position = mainPos + direction * Radius;
-        float angle = Vector2.Angle(Vector2.up, direction);
+        float angle = Vector2.Angle(Vector2.up, direction) * (direction.x > 0.0f ? -1.0f : 1.0f);
         Handle.rotation = Quaternion.Euler(0, 0, angle);
 
-        Debug.Log("Angle: " + angle);
+        Debug.Log("Angle: " + angle + "Direction: " + direction);
         //Debug.Log("Direction: " + direction.x + " " + direction.y);
 
         //Debug.Log("Anchor: " + rectTransform.anchoredPosition + " HandlePos " + Handle.anchoredPosition);
