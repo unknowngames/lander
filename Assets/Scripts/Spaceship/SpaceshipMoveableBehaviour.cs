@@ -19,10 +19,13 @@ namespace Assets.Scripts.Spaceship
 
         [SerializeField]
         [Tooltip("Max angular velocity")]
-        private float maxAngularVelocity=7;
-
+        private float maxAngularVelocity=7;       
 
         private Rigidbody rigidbody;
+        private bool doRotationStabilize;
+
+
+        public float ThrottleLevel { get; set; }
 
         public ISpaceship Spaceship
         {
@@ -45,7 +48,7 @@ namespace Assets.Scripts.Spaceship
 
         public void RotationStabilize ()
         {
-            rigidbody.angularVelocity = Vector3.zero;
+            doRotationStabilize = true;
         }
 
         public void SetImpulse(float impulse)
@@ -53,12 +56,25 @@ namespace Assets.Scripts.Spaceship
             rigidbody.AddTorque(transform.forward * impulse * rigidbody.mass * rotationImpulseMultiplyer, ForceMode.Impulse);
         }
 
-        public float ThrottleLevel { get; set; }
-
         public void FixedUpdate ()
-        {                                                         
-            float throttle = Mathf.Pow (ThrottleLevel, 0.25f);
-            rigidbody.AddForce(transform.up * throttle * -Physics.gravity.y * rigidbody.mass * tw);
+        {
+            if (doRotationStabilize)
+            {
+                rigidbody.AddTorque (-rigidbody.angularVelocity * rotationImpulseMultiplyer * 5.0f * rigidbody.mass);
+                if (rigidbody.angularVelocity.sqrMagnitude<0.1f)
+                {
+                    rigidbody.angularVelocity = Vector3.zero;
+                    doRotationStabilize = false;
+                }
+            }     
+
+            if (Spaceship.RemainingFuel > 0.0f)
+            {
+                float throttle = Mathf.Pow (ThrottleLevel, 0.25f);
+                rigidbody.AddForce (transform.up * throttle * -Physics.gravity.y * rigidbody.mass * tw);
+
+                Spaceship.RemainingFuel -= Time.fixedDeltaTime * throttle * 2;
+            }
         }
     }
 }
