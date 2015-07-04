@@ -31,6 +31,7 @@ namespace Assets.Scripts.Spaceship
 		{
 			engineAudioSource = GetComponent<AudioSource> ();
 			spaceshipMoveable = Game.PlayerSpaceship.GetComponent<ISpaceshipMoveable> ();
+			SpaceshipBehaviour.OnLanded += OnLandedEventHandler;
 		}
 		void Update() 
 		{
@@ -46,6 +47,13 @@ namespace Assets.Scripts.Spaceship
 			
 			engineAudioSource.pitch = Mathf.Clamp(spaceshipMoveable.ThrottleLevel * configPitchMultiplier, configMinPitchMultiplier, configMaxPitchMultiplier);
 			engineAudioSource.volume = Mathf.Clamp(spaceshipMoveable.ThrottleLevel * configVolumeMultiplier, configMinVolumeMultiplier, configMaxVolumeMultiplier);
+		}
+		private void OnLandedEventHandler(LandedType type)
+		{
+		}
+		void OnDestroy()
+		{
+			SpaceshipBehaviour.OnLanded -= OnLandedEventHandler;
 		}
 	}
 }
