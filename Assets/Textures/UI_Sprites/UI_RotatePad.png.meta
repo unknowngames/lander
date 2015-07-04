@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/Textures/T_Menu_Moon_N.png.meta
+guid: 012a6f063ceb2d346ab748702a182055
+timeCreated: 1435866432
+=======
 guid: 68170f300dacdb14489fc83e2791a71d
 timeCreated: 1435991572
+>>>>>>> f13c675fb2f4710473e64e5ead4184a7e24aab91:Assets/Textures/UI_Sprites/UI_RotatePad.png.meta
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName: {}
