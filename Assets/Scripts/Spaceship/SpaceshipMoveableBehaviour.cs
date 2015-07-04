@@ -10,12 +10,19 @@ namespace Assets.Scripts.Spaceship
         private ISpaceship spaceship;
 
         [SerializeField]
-        private float t;
+        [Tooltip("Thrust to weight ratio")]
+        private float tw;
 
         [SerializeField]
-        private float rotationStepAngle;
+        [Tooltip("Rotation impulse multiplyer")]
+        private float rotationImpulseMultiplyer;
 
-        private float rotationImpulse = 0.0f;
+        [SerializeField]
+        [Tooltip("Max angular velocity")]
+        private float maxAngularVelocity=7;
+
+
+        private Rigidbody rigidbody;
 
         public ISpaceship Spaceship
         {
@@ -25,26 +32,33 @@ namespace Assets.Scripts.Spaceship
             }
         }
 
-        public void OnEnable ()
+        public void Awake ()
         {
-            rotationImpulse = 0.0f;
+            rigidbody = GetComponent<Rigidbody> ();
+        }
+
+        public void OnEnable ()
+        {                                                     
+            rigidbody.maxAngularVelocity = maxAngularVelocity;
+            RotationStabilize ();
+        }
+
+        public void RotationStabilize ()
+        {
+            rigidbody.angularVelocity = Vector3.zero;
         }
 
         public void SetImpulse(float impulse)
         {
-            rotationImpulse += impulse;
+            rigidbody.AddTorque(transform.forward * impulse * rigidbody.mass * rotationImpulseMultiplyer, ForceMode.Impulse);
         }
 
         public float ThrottleLevel { get; set; }
 
         public void FixedUpdate ()
-        {
-            Quaternion rotation = Quaternion.Euler(0.0f, 0.0f, rotationImpulse * rotationStepAngle);
-            rotation = Quaternion.Lerp(GetComponent<Rigidbody>().rotation, rotation, Time.fixedDeltaTime);
-            GetComponent<Rigidbody>().MoveRotation (rotation);
-
+        {                                                         
             float throttle = Mathf.Pow (ThrottleLevel, 0.25f);
-            GetComponent<Rigidbody>().AddForce(transform.up * throttle * -Physics.gravity.y * GetComponent<Rigidbody>().mass * t);
+            rigidbody.AddForce(transform.up * throttle * -Physics.gravity.y * rigidbody.mass * tw);
         }
     }
 }
