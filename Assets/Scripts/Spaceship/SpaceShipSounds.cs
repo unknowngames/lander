@@ -7,9 +7,22 @@ using Random = UnityEngine.Random;
 
 namespace Assets.Scripts.Spaceship
 {
+    [Serializable]
+    public class SpaceshipSoundStorage
+    {
+        [SerializeField]
+        public AudioSource[] engineSounds;
+        [SerializeField]
+        public AudioSource[] bumpSounds;
+        [SerializeField]
+        public AudioSource[] crashSounds;
+    }
+
 	[RequireComponent(typeof(SpaceshipBehaviour))]
 	public class SpaceShipSounds : MonoBehaviour 
 	{
+        [SerializeField]
+        private SpaceshipSoundStorage spaceshipSounds;
 
 		/** Настройка частоты звука работающего двигателя*/
 		[SerializeField] 
@@ -45,6 +58,7 @@ namespace Assets.Scripts.Spaceship
 
 			AudioSource[] audioSources = GetComponents<AudioSource>();
 			engineAudioSource = audioSources[0];
+
 			bumpAudioSources = new List<AudioSource> ();
 			
 			for (int i = 1; i <  audioSources.Length; i++) 

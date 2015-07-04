@@ -25,7 +25,17 @@ namespace Assets.Scripts.Spaceship
         private bool doRotationStabilize;
 
 
-        public float ThrottleLevel { get; set; }
+        public float ThrottleLevel
+        {
+            get
+            {
+                return Spaceship.ThrottleLevel;
+            }
+            set
+            {
+                Spaceship.ThrottleLevel = value;
+            }
+        }
 
         public ISpaceship Spaceship
         {
@@ -54,11 +64,6 @@ namespace Assets.Scripts.Spaceship
         public void SetImpulse(float impulse)
         {
             rigidbody.AddTorque(transform.forward * impulse * rigidbody.mass * rotationImpulseMultiplyer, ForceMode.Impulse);
-        }
-
-        public void Update ()
-        {
-            Spaceship.ThrottleLevel = ThrottleLevel;
         }
 
         public void FixedUpdate ()
