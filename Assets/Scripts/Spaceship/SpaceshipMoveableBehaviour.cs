@@ -56,6 +56,11 @@ namespace Assets.Scripts.Spaceship
             rigidbody.AddTorque(transform.forward * impulse * rigidbody.mass * rotationImpulseMultiplyer, ForceMode.Impulse);
         }
 
+        public void Update ()
+        {
+            Spaceship.ThrottleLevel = ThrottleLevel;
+        }
+
         public void FixedUpdate ()
         {
             if (doRotationStabilize)

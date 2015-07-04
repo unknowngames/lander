@@ -12,6 +12,8 @@ namespace Assets.Scripts.Interfaces
 
         float Mass { get; set; }
         float RemainingFuel { get; set; }
+        float ThrottleLevel { get; set; }
+        float EnginePower { get; }
 
         bool IsPaused { get; set; }
 

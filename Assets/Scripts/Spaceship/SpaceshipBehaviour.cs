@@ -11,10 +11,14 @@ namespace Assets.Scripts.Spaceship
         public Vector3 Velosity { get; set; }
         public Vector3 AngularVelosity { get; set; }
         public float Mass { get; set; }
-        public float RemainingFuel { get; set; }      
-        public bool IsPaused { get; set; }
+        public float RemainingFuel { get; set; }  
+        public float ThrottleLevel { get; set; }
 
-		public delegate void LandedEventHandler();
+
+        public bool IsPaused { get; set; }
+        public float EnginePower { get; private set; }
+
+        public delegate void LandedEventHandler();
 		public event LandedEventHandler OnLanded;
 
 		public delegate void CrashedEventHandler();
@@ -25,6 +29,8 @@ namespace Assets.Scripts.Spaceship
 
 		public void Update()
 		{
+		    ProcessEngine ();
+
 			// тут всякие проверки и вызов OnLanded, OnCrashed, OnBumped
 			if (Input.GetKeyDown(KeyCode.L)) 
 			{
@@ -48,6 +54,11 @@ namespace Assets.Scripts.Spaceship
 				}
 			}
 		}
+
+        private void ProcessEngine ()
+        {
+            EnginePower = RemainingFuel > 0.0f ? ThrottleLevel : 0.0f;
+        }
 
         public void Reset ()
         {

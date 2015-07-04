@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using Assets.Scripts.Interfaces;
 using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
 namespace Assets.Scripts.Spaceship
 {
-	[RequireComponent(typeof(ISpaceshipMoveable))]
 	[RequireComponent(typeof(SpaceshipBehaviour))]
 	public class SpaceShipSounds : MonoBehaviour 
 	{
@@ -28,7 +29,7 @@ namespace Assets.Scripts.Spaceship
 		[SerializeField]
 		private float configMaxVolumeMultiplier	= 1.0f;
 
-		private ISpaceshipMoveable spaceshipMoveable;
+		//private ISpaceshipMoveable spaceshipMoveable;
 		private	SpaceshipBehaviour spaceshipBehaviour;
 		private const int bumpAudioSourcesCount = 3;
 		
@@ -41,7 +42,6 @@ namespace Assets.Scripts.Spaceship
 		public void Awake()
 		{
 			spaceshipBehaviour = GetComponent<SpaceshipBehaviour> ();
-			spaceshipMoveable = GetComponent<ISpaceshipMoveable> ();
 
 			AudioSource[] audioSources = GetComponents<AudioSource>();
 			engineAudioSource = audioSources[0];
@@ -75,14 +75,14 @@ namespace Assets.Scripts.Spaceship
 
 		private void UpdateEngineSound()
 		{
-			if (spaceshipMoveable.ThrottleLevel == 0.0f) 
+            if (Math.Abs (spaceshipBehaviour.ThrottleLevel) < 0.01f) 
 			{
 				engineAudioSource.volume = 0.0f;
 				return;
 			}
-			
-			engineAudioSource.pitch = Mathf.Clamp(spaceshipMoveable.ThrottleLevel * configPitchMultiplier, configMinPitchMultiplier, configMaxPitchMultiplier);
-			engineAudioSource.volume = Mathf.Clamp(spaceshipMoveable.ThrottleLevel * configVolumeMultiplier, configMinVolumeMultiplier, configMaxVolumeMultiplier);
+
+            engineAudioSource.pitch = Mathf.Clamp(spaceshipBehaviour.ThrottleLevel * configPitchMultiplier, configMinPitchMultiplier, configMaxPitchMultiplier);
+            engineAudioSource.volume = Mathf.Clamp(spaceshipBehaviour.ThrottleLevel * configVolumeMultiplier, configMinVolumeMultiplier, configMaxVolumeMultiplier);
 		}
 
 		private void OnLandedEventHandler()
