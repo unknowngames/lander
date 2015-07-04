@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Assets.Scripts.Interfaces;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.Spaceship
 {
+	[RequireComponent(typeof(ISpaceshipMoveable))]
+	[RequireComponent(typeof(SpaceshipBehaviour))]
 	public class SpaceShipSounds : MonoBehaviour 
 	{
+
 		/** Настройка частоты звука работающего двигателя*/
 		[SerializeField] 
 		private float configPitchMultiplier	= 1.0f;
@@ -24,19 +28,51 @@ namespace Assets.Scripts.Spaceship
 		[SerializeField]
 		private float configMaxVolumeMultiplier	= 1.0f;
 
-
-		private AudioSource engineAudioSource;
 		private ISpaceshipMoveable spaceshipMoveable;
-		void Start () 
+		private	SpaceshipBehaviour spaceshipBehaviour;
+		private const int bumpAudioSourcesCount = 3;
+		
+		// звуки
+		private AudioSource engineAudioSource;
+		private List<AudioSource> bumpAudioSources;
+
+
+
+		public void Awake()
 		{
-			engineAudioSource = GetComponent<AudioSource> ();
-			spaceshipMoveable = Game.PlayerSpaceship.GetComponent<ISpaceshipMoveable> ();
-			SpaceshipBehaviour.OnLanded += OnLandedEventHandler;
+			spaceshipBehaviour = GetComponent<SpaceshipBehaviour> ();
+			spaceshipMoveable = GetComponent<ISpaceshipMoveable> ();
+
+			AudioSource[] audioSources = GetComponents<AudioSource>();
+			engineAudioSource = audioSources[0];
+			bumpAudioSources = new List<AudioSource> ();
+			
+			for (int i = 1; i <  audioSources.Length; i++) 
+			{
+				bumpAudioSources.Add(audioSources[i]);
+			}
+		}                     
+
+		public void Start () 
+		{
+
+			spaceshipBehaviour.OnLanded += OnLandedEventHandler;
+			spaceshipBehaviour.OnBumped += OnBumpedEventHandler;
+			spaceshipBehaviour.OnCrashed += OnCrashedEventHandler;
 		}
+
+		public void OnDestroy()
+		{
+			spaceshipBehaviour.OnLanded -= OnLandedEventHandler;
+			spaceshipBehaviour.OnBumped -= OnBumpedEventHandler;
+			spaceshipBehaviour.OnCrashed -= OnCrashedEventHandler;
+		}
+
 		void Update() 
 		{
 			UpdateEngineSound();
 		}
+
 		private void UpdateEngineSound()
 		{
 			if (spaceshipMoveable.ThrottleLevel == 0.0f) 
@@ -48,12 +84,20 @@ namespace Assets.Scripts.Spaceship
 			engineAudioSource.pitch = Mathf.Clamp(spaceshipMoveable.ThrottleLevel * configPitchMultiplier, configMinPitchMultiplier, configMaxPitchMultiplier);
 			engineAudioSource.volume = Mathf.Clamp(spaceshipMoveable.ThrottleLevel * configVolumeMultiplier, configMinVolumeMultiplier, configMaxVolumeMultiplier);
 		}
-		private void OnLandedEventHandler(LandedType type)
+
+		private void OnLandedEventHandler()
 		{
+			Debug.Log ("OnLandedEventHandler");
 		}
-		void OnDestroy()
+		private void OnBumpedEventHandler()
 		{
-			SpaceshipBehaviour.OnLanded -= OnLandedEventHandler;
+			int rnd = Random.Range(0, bumpAudioSources.Count);
+			bumpAudioSources [rnd].Play ();
+		}
+
+		private void OnCrashedEventHandler()
+		{
+			Debug.Log ("OnCrashedEventHandler");
 		}
 	}
 }

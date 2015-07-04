@@ -3,10 +3,6 @@ using UnityEngine;
 
 namespace Assets.Scripts.Spaceship
 {
-	public enum LandedType
-	{
-		Norm, Bumped, Crashed
-	};
     public class SpaceshipBehaviour : MonoBehaviour, ISpaceship
     {
         public string Name { get; set; }
@@ -18,8 +14,40 @@ namespace Assets.Scripts.Spaceship
         public float RemainingFuel { get; set; }      
         public bool IsPaused { get; set; }
 
-		public delegate void LandedEventHandler(LandedType e);
-		public static event LandedEventHandler OnLanded;
+		public delegate void LandedEventHandler();
+		public event LandedEventHandler OnLanded;
+
+		public delegate void CrashedEventHandler();
+		public event CrashedEventHandler OnCrashed;
+
+		public delegate void BumpedEventHandler();
+		public event BumpedEventHandler OnBumped;
+
+		public void Update()
+		{
+			// тут всякие проверки и вызов OnLanded, OnCrashed, OnBumped
+			if (Input.GetKeyDown(KeyCode.L)) 
+			{
+				if (OnLanded != null) 
+				{
+					OnLanded ();
+				}
+			}
+			if (Input.GetKeyDown(KeyCode.B)) 
+			{
+				if (OnBumped != null) 
+				{
+					OnBumped ();
+				}
+			}
+			if (Input.GetKeyDown(KeyCode.C)) 
+			{
+				if (OnCrashed != null) 
+				{
+					OnCrashed ();
+				}
+			}
+		}
 
         public void Reset ()
         {
