@@ -17,6 +17,9 @@ namespace Assets.Scripts.Spaceship
         public float RemainingFuel { get; set; }  
         public float ThrottleLevel { get; set; }
 
+		// высота полета
+		public float FlyHeight { get; private set; }
+
 
         public bool IsPaused { get; set; }
         public float EnginePower { get; private set; }
@@ -33,6 +36,16 @@ namespace Assets.Scripts.Spaceship
 		public void Update()
 		{
 		    ProcessEngine ();
+
+			RaycastHit hit;
+			if (Physics.Raycast (transform.position, Vector3.down, out hit)) 
+			{
+				FlyHeight = hit.distance;
+			} 
+			else 
+			{
+				FlyHeight = float.MaxValue;
+			}
 
 			// тут всякие проверки и вызов OnLanded, OnCrashed, OnBumped
 			if (Input.GetKeyDown(KeyCode.L)) 
