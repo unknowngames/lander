@@ -126,6 +126,7 @@ namespace Assets.Scripts.Spaceship
             IsCrashed = true;
             BlowUp ();
 
+            CrashEvent.Invoke ();
             BumpEvent.Invoke(new BumpInfo
             {
                 IsCrashed = true,
