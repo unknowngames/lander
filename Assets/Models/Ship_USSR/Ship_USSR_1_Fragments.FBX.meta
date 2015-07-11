@@ -1,0 +1,141 @@
+fileFormatVersion: 2
+guid: 5141686849cb70b4688c54d46b1bfb7c
+timeCreated: 1436613661
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: C_USSR_1_HeadEngines
+    100002: C_USSR_1_LandingBase
+    100004: C_USSR_1_Leg1
+    100006: C_USSR_1_Leg2
+    100008: C_USSR_1_Leg3
+    100010: C_USSR_1_Leg4
+    100012: C_USSR_1_Ship
+    100014: //RootNode
+    100016: USSR_1_HeadEngines
+    100018: USSR_1_LandingBase
+    100020: USSR_1_Leg1
+    100022: USSR_1_Leg2
+    100024: USSR_1_Leg3
+    100026: USSR_1_Leg4
+    100028: USSR_1_Ship
+    400000: C_USSR_1_HeadEngines
+    400002: C_USSR_1_LandingBase
+    400004: C_USSR_1_Leg1
+    400006: C_USSR_1_Leg2
+    400008: C_USSR_1_Leg3
+    400010: C_USSR_1_Leg4
+    400012: C_USSR_1_Ship
+    400014: //RootNode
+    400016: USSR_1_HeadEngines
+    400018: USSR_1_LandingBase
+    400020: USSR_1_Leg1
+    400022: USSR_1_Leg2
+    400024: USSR_1_Leg3
+    400026: USSR_1_Leg4
+    400028: USSR_1_Ship
+    2300000: C_USSR_1_HeadEngines
+    2300002: C_USSR_1_LandingBase
+    2300004: C_USSR_1_Leg1
+    2300006: C_USSR_1_Leg2
+    2300008: C_USSR_1_Leg3
+    2300010: C_USSR_1_Leg4
+    2300012: C_USSR_1_Ship
+    2300014: USSR_1_HeadEngines
+    2300016: USSR_1_LandingBase
+    2300018: USSR_1_Leg1
+    2300020: USSR_1_Leg2
+    2300022: USSR_1_Leg3
+    2300024: USSR_1_Leg4
+    2300026: USSR_1_Ship
+    3300000: C_USSR_1_HeadEngines
+    3300002: C_USSR_1_LandingBase
+    3300004: C_USSR_1_Leg1
+    3300006: C_USSR_1_Leg2
+    3300008: C_USSR_1_Leg3
+    3300010: C_USSR_1_Leg4
+    3300012: C_USSR_1_Ship
+    3300014: USSR_1_HeadEngines
+    3300016: USSR_1_LandingBase
+    3300018: USSR_1_Leg1
+    3300020: USSR_1_Leg2
+    3300022: USSR_1_Leg3
+    3300024: USSR_1_Leg4
+    3300026: USSR_1_Ship
+    4300000: USSR_1_LandingBase
+    4300002: C_USSR_1_LandingBase
+    4300004: USSR_1_HeadEngines
+    4300006: C_USSR_1_HeadEngines
+    4300008: USSR_1_Ship
+    4300010: C_USSR_1_Ship
+    4300012: USSR_1_Leg1
+    4300014: C_USSR_1_Leg1
+    4300016: USSR_1_Leg2
+    4300018: C_USSR_1_Leg2
+    4300020: USSR_1_Leg3
+    4300022: C_USSR_1_Leg3
+    4300024: USSR_1_Leg4
+    4300026: C_USSR_1_Leg4
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
