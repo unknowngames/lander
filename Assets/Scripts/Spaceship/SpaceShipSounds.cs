@@ -110,8 +110,6 @@ namespace Assets.Scripts.Spaceship
             if (!bumpInfo.IsLanded && bumpInfo.IsCrashed)
             {
 				float volumeMultiplier = bumpInfo.mcollision.relativeVelocity.magnitude * 0.01f * spaceshipBehaviour.RemainingFuel * configCrashFuelVolumeMultiplier;
-				Debug.Log (volumeMultiplier);
-				
 				volumeMultiplier = Mathf.Clamp(volumeMultiplier, 0.0f, 1.0f);
 				PlayRandomSound(spaceshipSounds.crashSounds, volumeMultiplier);
             }    
