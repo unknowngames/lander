@@ -9,8 +9,11 @@ namespace Assets.Scripts.UI
         [SerializeField]
         private Text throttleText;
 
-		[SerializeField]
-		private Text heightText;
+        [SerializeField]
+        private Text heightText;
+
+        [SerializeField]
+        private Text speedText;
 
         public void Update ()
         {
@@ -20,7 +23,10 @@ namespace Assets.Scripts.UI
                 throttleText.text = format;
 
                 format = System.String.Format("Height : {0:F0}", GameHelper.PlayerSpaceship.FlyHeight);
-				heightText.text = format;
+                heightText.text = format;
+
+                format = System.String.Format("Speed : {0:F0}", GameHelper.PlayerSpaceship.Velosity.magnitude);
+                speedText.text = format;
             }
         }    
     }

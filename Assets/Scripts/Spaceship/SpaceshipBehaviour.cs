@@ -8,68 +8,73 @@ namespace Assets.Scripts.Spaceship
         [SerializeField]
         private float initialFuel;
 
-        public string Name { get; set; }
-        public Vector3 Position { get; set; }
-        public Quaternion Rotation { get; set; }
-        public Vector3 Velosity { get; set; }
-        public Vector3 AngularVelosity { get; set; }
-        public float Mass { get; set; }
-        public float RemainingFuel { get; set; }  
-        public float ThrottleLevel { get; set; }
+        [SerializeField]
+        private float safeSpeed;
+                                            
+        [SerializeField]
+        private SpaceshipGhost spaceshipGhost;     
+        [SerializeField]
+        private SpaceshipModel spaceshipModel;  
 
-		// высота полета
-		public float FlyHeight { get; private set; }
+        public string Name { get; set; }
+        public Vector3 Position { get; private set; }
+        public Quaternion Rotation { get; private  set; }
+        public Vector3 Velosity { get; private  set; }
+        public Vector3 AngularVelosity { get; private set; }
+        public float Mass { get; set; }
+        public float RemainingFuel { get; set; }
+        public float ThrottleLevel { get; set; }
+        public float FlyHeight { get; private set; }  
+        public bool IsCrashed { get; private set; }
 
 
         public bool IsPaused { get; set; }
         public float EnginePower { get; private set; }
 
-        public delegate void LandedEventHandler();
-		public event LandedEventHandler OnLanded;
+        public OnBumpEvent BumpEvent = new OnBumpEvent();
 
-		public delegate void CrashedEventHandler();
-		public event CrashedEventHandler OnCrashed;
+        public OnCrashEvent CrashEvent = new OnCrashEvent();
+        public OnLandEvent LandEvent = new OnLandEvent();
 
-		public delegate void BumpedEventHandler();
-		public event BumpedEventHandler OnBumped;
+        private Rigidbody cachedRigidbody;
 
-		public void Update()
-		{
-		    ProcessEngine ();
+        public void Update ()
+        {
+            ProcessEngine (); 
+            ProcessState ();
+        }
 
-			RaycastHit hit;
-			if (Physics.Raycast (transform.position, Vector3.down, out hit)) 
-			{
-				FlyHeight = hit.distance;
-			} 
-			else 
-			{
-				FlyHeight = float.MaxValue;
-			}
+        private void ProcessState ()
+        {
+            ProcessHeight ();
+            ProcessRigidbodyState();
+        }
 
-			// тут всякие проверки и вызов OnLanded, OnCrashed, OnBumped
-			if (Input.GetKeyDown(KeyCode.L)) 
-			{
-				if (OnLanded != null) 
-				{
-					OnLanded ();
-				}
-			}
-			if (Input.GetKeyDown(KeyCode.B)) 
-			{
-				if (OnBumped != null) 
-				{
-					OnBumped ();
-				}
-			}
-			if (Input.GetKeyDown(KeyCode.C)) 
-			{
-				if (OnCrashed != null) 
-				{
-					OnCrashed ();
-				}
-			}
-		}
+        private void ProcessRigidbodyState ()
+        {
+            if (cachedRigidbody == null)
+            {
+                cachedRigidbody = GetComponent<Rigidbody> ();
+            }
+
+            Velosity = cachedRigidbody.velocity;
+            Position = cachedRigidbody.position;
+            Rotation = cachedRigidbody.rotation;     
+            AngularVelosity = cachedRigidbody.angularVelocity;
+        }
+
+        private void ProcessHeight ()
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit))
+            {
+                FlyHeight = hit.distance;
+            }
+            else
+            {
+                FlyHeight = float.MaxValue;
+            }
+        }
 
         private void ProcessEngine ()
         {
@@ -83,42 +88,83 @@ namespace Assets.Scripts.Spaceship
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
 
-            Rigidbody component = GetComponent<Rigidbody>();
+            Rigidbody component = GetComponent<Rigidbody> ();
             if (component != null)
             {
                 component.velocity = Vector3.zero;
                 component.angularVelocity = Vector3.zero;
             }
+            IsCrashed = false;
+            spaceshipModel.Reset ();
+            spaceshipGhost.Reset ();
         }
 
-		private bool isCrashed(Collision collision)
-		{
-			return false;
-		}
-		private bool isLanded(Collision collision)
-		{
-			if(collision.gameObject.layer.Equals(LayerMask.NameToLayer("Landing place")))
-			{
-				return true;
-			}
-			return false;
-		}
-
-
-        public void OnCollisionEnter(Collision collision)
+        public void OnCollisionEnter (Collision collision)
         {
-			if (isCrashed (collision)) 
-			{
-				OnCrashed();
-			}
-			else if (isLanded (collision)) 
-			{
-				OnLanded();
-			}
-			else 
-			{
-				OnBumped();
-			}
-        } 
+            ProcessCollisionEvent (collision);
+        }
+
+        private void ProcessCollisionEvent (Collision collision)
+        {   
+            if (!LandingPlaceTest (collision))
+            {
+                Crash ();
+                return;
+            }
+
+            if (!VelosityTest(collision))
+            {
+                Crash();
+                return;
+            }
+
+            Bump ();
+        }
+
+        private void Crash()
+        {
+            IsCrashed = true;
+            BlowUp ();
+
+            BumpEvent.Invoke(new BumpInfo
+            {
+                IsCrashed = true,
+                IsLanded = false
+            });
+        }
+
+        private void Bump()
+        {
+            BumpEvent.Invoke(new BumpInfo
+            {
+                IsCrashed = false,
+                IsLanded = false
+            });
+        }
+
+        private void Landed()
+        {
+            BumpEvent.Invoke(new BumpInfo
+            {
+                IsCrashed = false,
+                IsLanded = true
+            });
+        }
+
+        private bool VelosityTest (Collision collision)
+        {
+            return collision.relativeVelocity.magnitude < safeSpeed;
+        }       
+
+        private bool LandingPlaceTest(Collision collision)
+        {
+            return collision.gameObject.layer == LayerMask.NameToLayer("Landing place");
+        }
+
+        private void BlowUp ()
+        {
+            spaceshipModel.Hide();
+            spaceshipGhost.BlowUp ();
+        }
     }
 }

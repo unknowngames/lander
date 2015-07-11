@@ -97,6 +97,8 @@ namespace Assets.Scripts
         public void Begin()
         {
             PlayerSpaceship = playerSpawner.CreatePlayer();
+            PlayerSpaceship.CrashEvent.AddListener(Finish);
+            PlayerSpaceship.LandEvent.AddListener(Finish);
         }
 
         public void Abort()
@@ -129,6 +131,9 @@ namespace Assets.Scripts
 
         private void Clean ()
         {
+            PlayerSpaceship.CrashEvent.RemoveListener(Finish);
+            PlayerSpaceship.LandEvent.RemoveListener(Finish);
+
             PlayerSpaceship = null;
             playerSpawner.RemovePlayer ();
         }

@@ -67,11 +67,21 @@ namespace Assets.Scripts.Spaceship
 
         public void SetImpulse(float impulse)
         {
+            if (Spaceship.IsCrashed)
+            {
+                return;
+            }
+
             cachedRigidbody.AddTorque(transform.forward * impulse * cachedRigidbody.mass * rotationImpulseMultiplyer, ForceMode.Impulse);
         }
 
         public void FixedUpdate ()
         {
+            if (Spaceship.IsCrashed)
+            {
+                return;
+            }
+
             if (Spaceship.IsPaused != isPaused)
             {
                 isPaused = Spaceship.IsPaused;
