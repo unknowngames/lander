@@ -15,7 +15,7 @@ namespace Assets.Scripts.Controllers
             get
             {
                 return spaceshipMoveable ??
-                       (spaceshipMoveable = Game.PlayerSpaceship.GetComponent<ISpaceshipMoveable> ());
+                       (spaceshipMoveable = GameHelper.PlayerSpaceship.GetComponent<ISpaceshipMoveable>());
             }
             set
             {

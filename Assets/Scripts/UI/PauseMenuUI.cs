@@ -4,12 +4,12 @@ namespace Assets.Scripts.UI
     {
         public void OnUnpause()
         {
-            Game.Unpause();
+            GameHelper.Unpause();
         }
 
         public void OnAbort()
         {
-            Game.Abort();
+            GameHelper.Abort();
         }
     }
 }

@@ -5,18 +5,13 @@ using UnityEngine.EventSystems;
 
 namespace Assets.Scripts.UI
 {
-    public class UINavigator : UIBehaviour
-    {                                                            
+    public class GameUINavigator : UIBehaviour
+    {                                        
         [SerializeField]
         private SpaceshipControllerUI controllerUIPrefab;
 
         private SpaceshipControllerUI controllerUIInstance;
-
-        [SerializeField]
-        private MainMenuUI mainMenuUIPrefab;
-
-        private MainMenuUI mainMenuUIInstance;
-
+                                             
         [SerializeField]
         private PauseMenuUI pauseMenuUIPrefab;
 
@@ -45,14 +40,11 @@ namespace Assets.Scripts.UI
 
             resultMenuUIInstance = Instantiate(resultMenuUIPrefab);
             resultMenuUIInstance.transform.SetParent(transform, false);
-
-            mainMenuUIInstance = Instantiate(mainMenuUIPrefab);
-            mainMenuUIInstance.transform.SetParent(transform, false);
-
+                                                                       
             gameMenuUIInstance = Instantiate(gameMenuUIPrefab);
             gameMenuUIInstance.transform.SetParent(transform, false);
 
-            Show (mainMenuUIInstance);
+            Show(gameMenuUIInstance, controllerUIInstance);
         }
 
         private void Show (params MenuUI[] menus)
@@ -70,7 +62,6 @@ namespace Assets.Scripts.UI
             controllerUIInstance.Hide();
             pauseMenuUIInstance.Hide();
             resultMenuUIInstance.Hide();
-            mainMenuUIInstance.Hide();
             gameMenuUIInstance.Hide ();
         }
 
@@ -79,52 +70,25 @@ namespace Assets.Scripts.UI
             base.OnEnable ();
             Subscribe ();
         }
-
-        protected override void OnDisable ()
-        {
-            base.OnDisable ();
-            Unsubscribe ();
-        }
-
+             
         private void Subscribe()
         {
-            Game.OnBegin += OnBeginGame;
-            Game.OnAbort += OnAbortGame;
-            Game.OnFinish += OnFinishGame;
-            Game.OnPause += OnPauseGame;
-            Game.OnUnpause += OnUnpauseGame;
+            GameHelper.OnFinish.AddListener (OnFinishGame);
+            GameHelper.OnPause.AddListener ( OnPauseGame);
+            GameHelper.OnUnpause.AddListener (OnUnpauseGame);
         }
-
-        private void Unsubscribe()
-        {
-            Game.OnBegin -= OnBeginGame;
-            Game.OnAbort -= OnAbortGame;
-            Game.OnFinish -= OnFinishGame;
-            Game.OnPause -= OnPauseGame;
-            Game.OnUnpause -= OnUnpauseGame;  
-        }
-
-        private void OnBeginGame(object sender, EventArgs eventArgs)
-        {          
-            Show(gameMenuUIInstance, controllerUIInstance);
-        }
-
-        private void OnAbortGame(object sender, EventArgs e)
-        {
-            Show (mainMenuUIInstance);
-        }
-
-        private void OnFinishGame(object sender, EventArgs e)
+                
+        private void OnFinishGame()
         {
             Show (resultMenuUIInstance);
         }
 
-        private void OnPauseGame (object sender, EventArgs e)
+        private void OnPauseGame ()
         {
             Show(pauseMenuUIInstance);
         }
 
-        private void OnUnpauseGame(object sender, EventArgs e)
+        private void OnUnpauseGame()
         {
             Show(gameMenuUIInstance, controllerUIInstance);
         }

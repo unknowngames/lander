@@ -1,10 +1,12 @@
+using UnityEngine;
+
 namespace Assets.Scripts.UI
 {
     public class MainMenuUI : MenuUI
     {
         public void OnStart()
-        {    
-            Game.Begin ();
+        {
+            Application.LoadLevelAsync (1);
         }
     }
 }

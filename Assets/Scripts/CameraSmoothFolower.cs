@@ -55,9 +55,9 @@ namespace Assets.Scripts
 
         public void Update ()
         {
-            if (Game.PlayerSpaceship != null)
+            if (GameHelper.PlayerSpaceship != null)
             {
-                Target = Game.PlayerSpaceship.transform;
+                Target = GameHelper.PlayerSpaceship.transform;
             }
 
             if(Target != null && zoomTargets != null)

@@ -4,7 +4,7 @@ namespace Assets.Scripts.UI
     {
         public void OnPause()
         {
-            Game.Pause();
+            GameHelper.Pause();
         }
     }
 }

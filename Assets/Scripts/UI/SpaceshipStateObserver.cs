@@ -14,12 +14,12 @@ namespace Assets.Scripts.UI
 
         public void Update ()
         {
-            if (Game.PlayerSpaceship != null)
+            if (GameHelper.PlayerSpaceship != null)
             {
-                string format = System.String.Format("Fuel remain: {0:F0}", Game.PlayerSpaceship.RemainingFuel);
+                string format = System.String.Format("Fuel remain: {0:F0}", GameHelper.PlayerSpaceship.RemainingFuel);
                 throttleText.text = format;
 
-				format = System.String.Format("Height : {0:F0}", Game.PlayerSpaceship.FlyHeight);
+                format = System.String.Format("Height : {0:F0}", GameHelper.PlayerSpaceship.FlyHeight);
 				heightText.text = format;
             }
         }    
