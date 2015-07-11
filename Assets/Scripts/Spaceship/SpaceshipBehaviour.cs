@@ -73,7 +73,7 @@ namespace Assets.Scripts.Spaceship
 
         private void ProcessEngine ()
         {
-            EnginePower = RemainingFuel > 0.0f ? ThrottleLevel : 0.0f;
+            EnginePower = IsPaused ? 0.0f : (RemainingFuel > 0.0f ? ThrottleLevel : 0.0f);
         }
 
         public void Reset ()
