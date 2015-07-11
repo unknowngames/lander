@@ -36,10 +36,19 @@ namespace Assets.Scripts
         private PlayerSpawner playerSpawner = new PlayerSpawner();
         public SpaceshipBehaviour PlayerSpaceship { get; private set; }
 
+        private UnityEvent onBegin; 
         private UnityEvent onPause;
         private UnityEvent onUnpause;
         private UnityEvent onFinish;
-                                                                          
+
+        public UnityEvent OnBegin
+        {
+            get
+            {
+                return onBegin ?? (onBegin = new UnityEvent());
+            }
+        }
+                 
         public UnityEvent OnPause
         {
             get
@@ -64,6 +73,13 @@ namespace Assets.Scripts
             }
         }
 
+        private void OnBeginCall()
+        {
+            if (OnBegin != null)
+            {
+                OnBegin.Invoke();
+            }
+        }
 
         private void OnPauseCall()
         {
@@ -99,6 +115,7 @@ namespace Assets.Scripts
             PlayerSpaceship = playerSpawner.CreatePlayer();
             PlayerSpaceship.CrashEvent.AddListener(Finish);
             PlayerSpaceship.LandEvent.AddListener(Finish);
+            OnBeginCall ();
         }
 
         public void Abort()

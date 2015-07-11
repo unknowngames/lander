@@ -73,11 +73,17 @@ namespace Assets.Scripts.UI
              
         private void Subscribe()
         {
+            GameHelper.OnBegin.AddListener (OnBeginGame);
             GameHelper.OnFinish.AddListener (OnFinishGame);
-            GameHelper.OnPause.AddListener ( OnPauseGame);
+            GameHelper.OnPause.AddListener (OnPauseGame);
             GameHelper.OnUnpause.AddListener (OnUnpauseGame);
         }
-                
+
+        private void OnBeginGame ()
+        {          
+            Show(gameMenuUIInstance, controllerUIInstance);
+        }
+
         private void OnFinishGame()
         {
             Show (resultMenuUIInstance);

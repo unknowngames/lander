@@ -100,7 +100,7 @@ namespace Assets.Scripts.Spaceship
 
             if (!bumpInfo.IsLanded && bumpInfo.IsCrashed)
             {
-                Debug.Log("OnCrashedEventHandler");
+                //Debug.Log("OnCrashedEventHandler");
             }    
 		}
 	}

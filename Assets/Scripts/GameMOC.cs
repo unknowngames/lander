@@ -6,10 +6,19 @@ namespace Assets.Scripts
 {
     public class GameMOC : IGame
     {
+        private UnityEvent onBegin;
         private UnityEvent onPause;
         private UnityEvent onUnpause;
         private UnityEvent onFinish;
-                                                                            
+
+        public UnityEvent OnBegin
+        {
+            get
+            {
+                return onBegin ?? (onBegin = new UnityEvent());
+            }
+        }
+
         public UnityEvent OnPause
         {
             get

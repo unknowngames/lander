@@ -88,12 +88,16 @@ namespace Assets.Scripts.Spaceship
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
 
-            Rigidbody component = GetComponent<Rigidbody> ();
-            if (component != null)
+            if (cachedRigidbody == null)
             {
-                component.velocity = Vector3.zero;
-                component.angularVelocity = Vector3.zero;
+                cachedRigidbody = GetComponent<Rigidbody> ();
             }
+
+            cachedRigidbody.velocity = Vector3.zero;
+            cachedRigidbody.angularVelocity = Vector3.zero;
+            cachedRigidbody.isKinematic = false;
+
+
             IsCrashed = false;
             spaceshipModel.Reset ();
             spaceshipGhost.Reset ();
@@ -163,7 +167,13 @@ namespace Assets.Scripts.Spaceship
         }
 
         private void BlowUp ()
-        {
+        {                                      
+            if (cachedRigidbody == null)
+            {
+                cachedRigidbody = GetComponent<Rigidbody>();
+            }
+
+            cachedRigidbody.isKinematic = true;
             spaceshipModel.Hide();
             spaceshipGhost.BlowUp ();
         }

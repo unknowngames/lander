@@ -5,6 +5,14 @@ namespace Assets.Scripts
 {
     public static class GameHelper
     {
+        public static UnityEvent OnBegin
+        {
+            get
+            {
+                return Game.Instance.OnBegin;
+            }
+        }
+
         public static UnityEvent OnPause
         {
             get
