@@ -78,6 +78,11 @@ namespace Assets.Scripts.Spaceship
 
         private void ProcessEngine ()
         {
+			if (IsCrashed) 
+			{
+				EnginePower = 0.0f;
+				return;
+			}
             EnginePower = IsPaused ? 0.0f : (RemainingFuel > 0.0f ? ThrottleLevel : 0.0f);
         }
 
@@ -112,47 +117,51 @@ namespace Assets.Scripts.Spaceship
         {   
             if (!LandingPlaceTest (collision))
             {
-                Crash ();
+				Crash (collision);
                 return;
             }
 
             if (!VelosityTest(collision))
             {
-                Crash();
+				Crash(collision);
                 return;
             }
 
-            Bump ();
+			Bump (collision);
         }
 
-        private void Crash()
+		private void Crash(Collision collision)
         {
             IsCrashed = true;
-            BlowUp ();
+			BlowUp (collision, RemainingFuel);
 
             CrashEvent.Invoke ();
             BumpEvent.Invoke(new BumpInfo
             {
                 IsCrashed = true,
-                IsLanded = false
+                IsLanded = false,
+				mcollision = collision
             });
         }
 
-        private void Bump()
+		private void Bump(Collision collision)
         {
             BumpEvent.Invoke(new BumpInfo
             {
                 IsCrashed = false,
-                IsLanded = false
+                IsLanded = false,
+				mcollision = collision
             });
         }
 
-        private void Landed()
+		private void Landed(Collision collision)
         {
             BumpEvent.Invoke(new BumpInfo
             {
                 IsCrashed = false,
-                IsLanded = true
+                IsLanded = true,
+				mcollision = collision
+				
             });
         }
 
@@ -166,7 +175,7 @@ namespace Assets.Scripts.Spaceship
             return collision.gameObject.layer == LayerMask.NameToLayer("Landing place");
         }
 
-        private void BlowUp ()
+		private void BlowUp (Collision collision, float remainingFuel)
         {                                      
             if (cachedRigidbody == null)
             {
@@ -175,7 +184,7 @@ namespace Assets.Scripts.Spaceship
 
             cachedRigidbody.isKinematic = true;
             spaceshipModel.Hide();
-            spaceshipGhost.BlowUp ();
+			spaceshipGhost.BlowUp (collision, remainingFuel);
         }
     }
 }

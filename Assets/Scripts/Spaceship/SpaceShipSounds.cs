@@ -44,11 +44,18 @@ namespace Assets.Scripts.Spaceship
 		private float configMinVolumeMultiplier	= 0.3f;
 		[SerializeField]
 		private float configMaxVolumeMultiplier	= 1.0f;
+		[SerializeField]
+		private float configBumpVolumeMultiplier = 0.01f;
 
-		//private ISpaceshipMoveable spaceshipMoveable;
+		[SerializeField]
+		private float configCrashFuelVolumeMultiplier = 0.01f;
+
+		[SerializeField]
+		private float configCrashForceVolumeMultiplier = 0.01f;
+
+
 		private	SpaceshipBehaviour spaceshipBehaviour;
-		private const int bumpAudioSourcesCount = 3;
-		
+
 		// звуки
 		private AudioSource engineAudioSource;
 
@@ -89,8 +96,10 @@ namespace Assets.Scripts.Spaceship
 		{
             if (!bumpInfo.IsLanded && !bumpInfo.IsCrashed)
             {
-                int rnd = Random.Range (0, spaceshipSounds.bumpSounds.Length);
-                spaceshipSounds.bumpSounds[rnd].Play ();
+				float volumeMultiplier = bumpInfo.mcollision.relativeVelocity.magnitude * configBumpVolumeMultiplier;
+				volumeMultiplier = Mathf.Clamp(volumeMultiplier, 0.0f, 1.0f);
+				
+				PlayRandomSound(spaceshipSounds.bumpSounds, volumeMultiplier);
             }
 
             if (bumpInfo.IsLanded && !bumpInfo.IsCrashed)
@@ -100,8 +109,19 @@ namespace Assets.Scripts.Spaceship
 
             if (!bumpInfo.IsLanded && bumpInfo.IsCrashed)
             {
-                //Debug.Log("OnCrashedEventHandler");
+				float volumeMultiplier = bumpInfo.mcollision.relativeVelocity.magnitude * 0.01f * spaceshipBehaviour.RemainingFuel * configCrashFuelVolumeMultiplier;
+				Debug.Log (volumeMultiplier);
+				
+				volumeMultiplier = Mathf.Clamp(volumeMultiplier, 0.0f, 1.0f);
+				PlayRandomSound(spaceshipSounds.crashSounds, volumeMultiplier);
             }    
+		}
+
+		private void PlayRandomSound(AudioSource[] audioSorces, float volumeMultiplier)
+		{
+			int rnd = Random.Range (0, audioSorces.Length);
+			audioSorces[rnd].volume = volumeMultiplier;
+			audioSorces[rnd].Play ();
 		}
 	}
 }
