@@ -5,15 +5,15 @@ namespace Assets.Scripts.Environment
     public class Landscape : MonoBehaviour
     {
         [SerializeField]
-        private Renderer renderer;
+        private Renderer landscapeRenderer;
 
         public Bounds Bounds
         {
             get
             {
-                if (renderer != null)
+                if (landscapeRenderer != null)
                 {
-                    return renderer.bounds;
+                    return landscapeRenderer.bounds;
                 }
                 return new Bounds();
             }

@@ -1,49 +1,75 @@
 ﻿using System;
-using Assets.Scripts.Common;
-using Assets.Scripts.Interfaces;
 using Assets.Scripts.Spaceship;
-using Assets.Scripts.UI;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Assets.Scripts
 {
-    public class Game : Singleton<Game>
+    public class Game : MonoBehaviour, IGame
     {
+        private static Game cachedGame;
+
+        public static IGame Instance
+        {
+            get
+            {
+                if (cachedGame == null)
+                {
+                    Game[] objects = FindObjectsOfType<Game>();
+                    if (objects.Length > 1)
+                    {
+                        Debug.LogError("На сцене находится более одного объекта Game!");
+                        return new GameMOC();
+                    } 
+                    if (objects.Length == 0)
+                    {
+                        Debug.LogError("На сцене не найдено ни одного объекта Game!");
+                        return new GameMOC ();
+                    }
+                    cachedGame = objects[0];
+                }
+                return cachedGame;
+            }
+        }
+
         [SerializeField]
-        private PlayerSpawner playerSpawner = new PlayerSpawner ();
+        private PlayerSpawner playerSpawner = new PlayerSpawner();
+        public SpaceshipBehaviour PlayerSpaceship { get; private set; }
 
-        public static SpaceshipBehaviour PlayerSpaceship { get; private set; }
-
-        public delegate void GameEventDelegate (object sender, EventArgs e);
-
-        public static GameEventDelegate OnBegin;
-        public static GameEventDelegate OnAbort;
-        public static GameEventDelegate OnPause;
-        public static GameEventDelegate OnUnpause;
-        public static GameEventDelegate OnFinish;
-
-        private void OnBeginCall()
+        private UnityEvent onPause;
+        private UnityEvent onUnpause;
+        private UnityEvent onFinish;
+                                                                          
+        public UnityEvent OnPause
         {
-            if (OnBegin != null)
+            get
             {
-                OnBegin(this, EventArgs.Empty);
+                return onPause ?? (onPause = new UnityEvent());
             }
         }
 
-        private void OnAbortCall()
+        public UnityEvent OnUnpause
         {
-            if (OnAbort != null)
+            get
             {
-                OnAbort(this, EventArgs.Empty);
+                return onUnpause ?? (onUnpause = new UnityEvent());
             }
         }
+
+        public UnityEvent OnFinish
+        {
+            get
+            {
+                return onFinish ?? (onFinish = new UnityEvent ());
+            }
+        }
+
 
         private void OnPauseCall()
         {
             if (OnPause != null)
             {
-                OnPause(this, EventArgs.Empty);
+                OnPause.Invoke ();
             }
         }
 
@@ -51,7 +77,7 @@ namespace Assets.Scripts
         {
             if (OnUnpause != null)
             {
-                OnUnpause(this, EventArgs.Empty);
+                OnUnpause.Invoke();
             }
         }
 
@@ -59,46 +85,55 @@ namespace Assets.Scripts
         {
             if (OnFinish != null)
             {
-                OnFinish(this, EventArgs.Empty);
+                OnFinish.Invoke();
             }
         }
 
-        public static void Begin()
+        public void Start ()
         {
-            PlayerSpaceship = Instance.playerSpawner.CreatePlayer();
-            Instance.OnBeginCall ();
+            Begin ();
         }
 
-        public static void Abort()
+        public void Begin()
         {
-            Instance.Clean ();
-            Instance.OnAbortCall();
+            PlayerSpaceship = playerSpawner.CreatePlayer();
+            PlayerSpaceship.CrashEvent.AddListener(Finish);
+            PlayerSpaceship.LandEvent.AddListener(Finish);
         }
 
-        public static void Pause()
+        public void Abort()
+        {
+            Clean();
+            Application.LoadLevelAsync(0);
+        }
+
+        public void Pause()
         {
             SetPlayerPause(true);
-            Instance.OnPauseCall ();
+            OnPauseCall();
         }
 
-        public static void Unpause()
+        public void Unpause()
         {
-            SetPlayerPause (false);
-            Instance.OnUnpauseCall();
+            SetPlayerPause(false);
+            OnUnpauseCall();
         }
 
-        public static void Finish()
+        public void Finish()
         {
-            Instance.OnFinishCall();
+            OnFinishCall();
         }
 
-        private static void SetPlayerPause (bool state)
+        private void SetPlayerPause (bool state)
         {
             PlayerSpaceship.IsPaused = state;
         }
 
         private void Clean ()
         {
+            PlayerSpaceship.CrashEvent.RemoveListener(Finish);
+            PlayerSpaceship.LandEvent.RemoveListener(Finish);
+
             PlayerSpaceship = null;
             playerSpawner.RemovePlayer ();
         }

@@ -21,9 +21,13 @@ namespace Assets.Scripts.Spaceship
         [Tooltip("Max angular velocity")]
         private float maxAngularVelocity=7;       
 
-        private Rigidbody rigidbody;
+        private Rigidbody cachedRigidbody;
         private bool doRotationStabilize;
 
+
+        private bool isPaused; 
+        private Vector3 savedVelocity;
+        private Vector3 savedAngularVelocity;
 
         public float ThrottleLevel
         {
@@ -47,12 +51,12 @@ namespace Assets.Scripts.Spaceship
 
         public void Awake ()
         {
-            rigidbody = GetComponent<Rigidbody> ();
+            cachedRigidbody = GetComponent<Rigidbody> ();
         }
 
         public void OnEnable ()
         {                                                     
-            rigidbody.maxAngularVelocity = maxAngularVelocity;
+            cachedRigidbody.maxAngularVelocity = maxAngularVelocity;
             RotationStabilize ();
         }
 
@@ -63,17 +67,43 @@ namespace Assets.Scripts.Spaceship
 
         public void SetImpulse(float impulse)
         {
-            rigidbody.AddTorque(transform.forward * impulse * rigidbody.mass * rotationImpulseMultiplyer, ForceMode.Impulse);
+            if (Spaceship.IsCrashed)
+            {
+                return;
+            }
+
+            cachedRigidbody.AddTorque(transform.forward * impulse * cachedRigidbody.mass * rotationImpulseMultiplyer, ForceMode.Impulse);
         }
 
         public void FixedUpdate ()
         {
+            if (Spaceship.IsCrashed)
+            {
+                return;
+            }
+
+            if (Spaceship.IsPaused != isPaused)
+            {
+                isPaused = Spaceship.IsPaused;
+
+                if (isPaused)
+                {
+                    StoreRigidbody ();
+                }
+                else
+                {
+                    RestoreRigidbody ();
+                }
+
+                return;
+            }
+
             if (doRotationStabilize)
             {
-                rigidbody.AddTorque (-rigidbody.angularVelocity * rotationImpulseMultiplyer * 5.0f * rigidbody.mass);
-                if (rigidbody.angularVelocity.sqrMagnitude<0.1f)
+                cachedRigidbody.AddTorque (-cachedRigidbody.angularVelocity * rotationImpulseMultiplyer * 5.0f * cachedRigidbody.mass);
+                if (cachedRigidbody.angularVelocity.sqrMagnitude<0.1f)
                 {
-                    rigidbody.angularVelocity = Vector3.zero;
+                    cachedRigidbody.angularVelocity = Vector3.zero;
                     doRotationStabilize = false;
                 }
             }     
@@ -81,10 +111,24 @@ namespace Assets.Scripts.Spaceship
             if (Spaceship.RemainingFuel > 0.0f)
             {
                 float throttle = Mathf.Pow (ThrottleLevel, 0.25f);
-                rigidbody.AddForce (transform.up * throttle * -Physics.gravity.y * rigidbody.mass * tw);
+                cachedRigidbody.AddForce (transform.up * throttle * -Physics.gravity.y * cachedRigidbody.mass * tw);
 
                 Spaceship.RemainingFuel -= Time.fixedDeltaTime * throttle * 2;
             }
+        }
+
+        private void StoreRigidbody()
+        {
+            savedVelocity = cachedRigidbody.velocity;
+            savedAngularVelocity = cachedRigidbody.angularVelocity;
+            cachedRigidbody.isKinematic = true;
+        }
+
+        private void RestoreRigidbody()
+        {
+            cachedRigidbody.isKinematic = false;
+            cachedRigidbody.AddForce(savedVelocity, ForceMode.VelocityChange);
+            cachedRigidbody.AddTorque(savedAngularVelocity, ForceMode.VelocityChange);
         }
     }
 }

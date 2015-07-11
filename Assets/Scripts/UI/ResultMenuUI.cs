@@ -4,12 +4,12 @@
     {
         public void OnStart()
         {      
-            Game.Begin ();
+            GameHelper.Begin ();
         }
 
         public void OnAbort()
         {
-            Game.Abort ();
+            GameHelper.Abort();
         }
     }
 }

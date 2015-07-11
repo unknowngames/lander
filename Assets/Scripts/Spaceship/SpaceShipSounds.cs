@@ -56,21 +56,17 @@ namespace Assets.Scripts.Spaceship
 		{
 			spaceshipBehaviour = GetComponent<SpaceshipBehaviour> ();
 			engineAudioSource = spaceshipSounds.engineSounds[0];
-		}                     
-
-		public void Start () 
-		{
-			spaceshipBehaviour.OnLanded += OnLandedEventHandler;
-			spaceshipBehaviour.OnBumped += OnBumpedEventHandler;
-			spaceshipBehaviour.OnCrashed += OnCrashedEventHandler;
 		}
 
-		public void OnDestroy()
-		{
-			spaceshipBehaviour.OnLanded -= OnLandedEventHandler;
-			spaceshipBehaviour.OnBumped -= OnBumpedEventHandler;
-			spaceshipBehaviour.OnCrashed -= OnCrashedEventHandler;
-		}
+	    public void Start ()
+	    {
+	        spaceshipBehaviour.BumpEvent.AddListener (OnBumpedEventHandler);
+	    }
+
+	    public void OnDestroy()
+	    {
+	        spaceshipBehaviour.BumpEvent.RemoveListener (OnBumpedEventHandler);
+	    }
 
 		void Update() 
 		{
@@ -89,19 +85,23 @@ namespace Assets.Scripts.Spaceship
             engineAudioSource.volume = Mathf.Clamp(spaceshipBehaviour.ThrottleLevel * configVolumeMultiplier, configMinVolumeMultiplier, configMaxVolumeMultiplier);
 		}
 
-		private void OnLandedEventHandler()
+        private void OnBumpedEventHandler(BumpInfo bumpInfo)
 		{
-			spaceshipSounds.landedSound.Play();
-		}
-		private void OnBumpedEventHandler()
-		{
-			int rnd = Random.Range(0, spaceshipSounds.bumpSounds.Length);
-			spaceshipSounds.bumpSounds[rnd].Play();
-		}
+            if (!bumpInfo.IsLanded && !bumpInfo.IsCrashed)
+            {
+                int rnd = Random.Range (0, spaceshipSounds.bumpSounds.Length);
+                spaceshipSounds.bumpSounds[rnd].Play ();
+            }
 
-		private void OnCrashedEventHandler()
-		{
-			Debug.Log ("OnCrashedEventHandler");
+            if (bumpInfo.IsLanded && !bumpInfo.IsCrashed)
+            {
+                spaceshipSounds.landedSound.Play();
+            }
+
+            if (!bumpInfo.IsLanded && bumpInfo.IsCrashed)
+            {
+                Debug.Log("OnCrashedEventHandler");
+            }    
 		}
 	}
 }
