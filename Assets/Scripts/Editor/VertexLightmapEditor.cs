@@ -71,12 +71,12 @@ public class VertexLightmapEditor : EditorWindow
 			finalColor = inShadow ? ambientLight : ambientLight + finalColor;
 		
 
-			if(finalColor.r > 1.0f)
+			/*if(finalColor.r > 1.0f)
 				finalColor.r = 1.0f;
 			if(finalColor.g > 1.0f)
 				finalColor.g = 1.0f;
 			if(finalColor.b > 1.0f)
-				finalColor.b = 1.0f;
+				finalColor.b = 1.0f;*/
 
 			colors[i] = finalColor;
 			//colors[i] = new Color(tV.x, tV.y, tV.z);
