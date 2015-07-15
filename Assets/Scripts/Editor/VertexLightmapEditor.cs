@@ -36,12 +36,14 @@ public class VertexLightmapEditor : EditorWindow
 		//mc.sharedMesh = mf.sharedMesh;
 
 		//Vector3 lightDir = new Vector3 (1,-0.5f,1).normalized;// light.transform.forward;
+
+		var mesh = mf.mesh;
 		Vector3 lightDir = light.transform.forward;
 
-		var vertices = mf.sharedMesh.vertices;
+		var vertices = mesh.vertices;
 		var length = vertices.Length;
 		Color[] colors = new Color[length];
-		var normals = mf.sharedMesh.normals;
+		var normals = mesh.normals;
 	
 		var transform = mf.transform;
 
@@ -57,7 +59,7 @@ public class VertexLightmapEditor : EditorWindow
 
 			RaycastHit hit;
 
-			if(Physics.Raycast(tV + tN*0.05f, -lightDir, out hit))
+			if(Physics.Raycast(tV + tN*0.01f, -lightDir, out hit))
 			{
 				Debug.Log(hit.collider.name);
 				inShadow = true;
@@ -67,7 +69,7 @@ public class VertexLightmapEditor : EditorWindow
 
 			dot = Mathf.Clamp(dot, 0.0f, 1.0f);
 
-			var finalColor = ambientLight + dot * light.intensity * light.color;
+			var finalColor = ambientLight + dot * light.intensity * Color.white;
 			finalColor = inShadow ? ambientLight : ambientLight + finalColor;
 		
 
@@ -82,7 +84,9 @@ public class VertexLightmapEditor : EditorWindow
 			//colors[i] = new Color(tV.x, tV.y, tV.z);
 		}
 
-		mf.sharedMesh.colors = colors;
+		mesh.colors = colors;
+
+		EditorUtility.SetDirty (mesh);
 
 		//GameObject.DestroyImmediate (mc);
 	}
