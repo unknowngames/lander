@@ -37,7 +37,7 @@ public class VertexLightmapEditor : EditorWindow
 
 		//Vector3 lightDir = new Vector3 (1,-0.5f,1).normalized;// light.transform.forward;
 
-		var mesh = mf.mesh;
+		var mesh = mf.sharedMesh;
 		Vector3 lightDir = light.transform.forward;
 
 		var vertices = mesh.vertices;
