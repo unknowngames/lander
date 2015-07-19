@@ -30,7 +30,7 @@ namespace Assets.Scripts.UI
 			{
 				GameObject pointer = new GameObject("Pointer");
 				var rect = pointer.AddComponent<RectTransform>();
-				rect.parent = parent;
+				rect.SetParent(parent);
 				pointer.AddComponent<CanvasRenderer>();
 				var image = pointer.AddComponent<UnityEngine.UI.Image>();
 
