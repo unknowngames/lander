@@ -67,8 +67,6 @@ namespace Assets.Scripts.Spaceship
 
         public void SetImpulse(float impulse)
         {
-            Debug.Log("Impulse: " + impulse);
-            Debug.Log("Angular speed: " + cachedRigidbody.angularVelocity);
             if (impulse < -0.0f)
             {
                 spaceship.LeftStabilizerThrottleLevel = -impulse;
