@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections;
 using Assets.Scripts.Controllers;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -47,10 +47,23 @@ namespace Assets.Scripts.UI
             Show(gameMenuUIInstance, controllerUIInstance);
         }
 
-        private void Show (params MenuUI[] menus)
+
+        private void Show(params MenuUI[] menus)
+        {
+            Show(0.0f, menus);
+        }
+
+        private void Show(float timeout, params MenuUI[] menus)
+        {
+            StartCoroutine(ShowIE(timeout, menus));
+        }
+        
+        private IEnumerator ShowIE (float timeout, params MenuUI[] menus)
         {   
             HideAll ();
 
+            yield return new WaitForSeconds(timeout);
+            
             foreach (MenuUI menuUI in menus)
             {
                 menuUI.Show ();
@@ -86,7 +99,7 @@ namespace Assets.Scripts.UI
 
         private void OnFinishGame()
         {
-            Show (resultMenuUIInstance);
+            Show(1.5f, resultMenuUIInstance);
         }
 
         private void OnPauseGame ()
