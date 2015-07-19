@@ -5,16 +5,16 @@ namespace Assets.Scripts.Spaceship
 {
     public class SpaceshipBehaviour : MonoBehaviour, ISpaceship
     {
-        [SerializeField]
+        [SerializeField] 
         private float initialFuel;
-        [SerializeField]
+        [SerializeField] 
         private float safeSpeed;
-                                            
-        [SerializeField]
-        private SpaceshipGhost spaceshipGhost;     
-        [SerializeField]
+
+        [SerializeField] 
+        private SpaceshipGhost spaceshipGhost;
+        [SerializeField] 
         private SpaceshipModel spaceshipModel;
-        [SerializeField]
+        [SerializeField] 
         private TouchdownTrigger touchdownTrigger;
 
         public string Name { get; set; }
@@ -22,49 +22,30 @@ namespace Assets.Scripts.Spaceship
         public float RemainingFuel { get; set; }
         public bool IsPaused { get; set; }
 
+        public float ThrottleLevel { get; set; }
+        public float LeftStabilizerThrottleLevel { get; set; }
+        public float RightStabilizerThrottleLevel { get; set; }
+
         public Vector3 Position { get; private set; }
-        public Quaternion Rotation { get; private  set; }
-        public Vector3 Velosity { get; private  set; }
+        public Quaternion Rotation { get; private set; }
+        public Vector3 Velosity { get; private set; }
         public Vector3 AngularVelosity { get; private set; }
         public float FlyHeight { get; private set; }
         public bool IsCrashed { get; private set; }
-        public float EnginePower { get; private set; }
-        public float RightStabilizerEnginePower { get; private set; }
-        public float LeftStabilizerEnginePower { get; private set; }
 
-
-        private float throttleLevel;
-        private float leftStabilizerThrottleLevel;
-        private float rightStabilizerThrottleLevel;
-
-        public float ThrottleLevel
+        public float EnginePower
         {
-            get { return throttleLevel; }
-            set
-            {
-                throttleLevel = value;
-                EnginePower = IsPaused || IsCrashed ? 0.0f : (RemainingFuel > 0.0f ? ThrottleLevel : 0.0f);
-            }
+            get { return IsPaused || IsCrashed ? 0.0f : (RemainingFuel > 0.0f ? ThrottleLevel : 0.0f); }
         }
 
-        public float LeftStabilizerThrottleLevel
+        public float RightStabilizerEnginePower
         {
-            get { return leftStabilizerThrottleLevel; }
-            set
-            {
-                leftStabilizerThrottleLevel = value;
-                LeftStabilizerEnginePower = IsPaused || IsCrashed ? 0.0f : leftStabilizerThrottleLevel;
-            }
+            get { return IsPaused || IsCrashed ? 0.0f : RightStabilizerThrottleLevel; }
         }
 
-        public float RightStabilizerThrottleLevel
+        public float LeftStabilizerEnginePower
         {
-            get { return rightStabilizerThrottleLevel; }
-            set
-            {
-                rightStabilizerThrottleLevel = value;
-                RightStabilizerEnginePower = IsPaused || IsCrashed ? 0.0f : rightStabilizerThrottleLevel;
-            }
+            get { return IsPaused || IsCrashed ? 0.0f : LeftStabilizerThrottleLevel; }
         }
 
         public OnBumpEvent BumpEvent = new OnBumpEvent();
@@ -74,14 +55,14 @@ namespace Assets.Scripts.Spaceship
 
         private Rigidbody cachedRigidbody;
 
-        public void Update ()
+        public void Update()
         {
-            ProcessState ();
+            ProcessState();
         }
 
-        private void ProcessState ()
+        private void ProcessState()
         {
-            ProcessHeight ();
+            ProcessHeight();
             ProcessRigidbodyState();
             ProcessTouchdown();
         }
@@ -95,35 +76,38 @@ namespace Assets.Scripts.Spaceship
             }
         }
 
-        private void ProcessRigidbodyState ()
+        private void ProcessRigidbodyState()
         {
             if (cachedRigidbody == null)
             {
-                cachedRigidbody = GetComponent<Rigidbody> ();
+                cachedRigidbody = GetComponent<Rigidbody>();
             }
 
             Velosity = cachedRigidbody.velocity;
             Position = cachedRigidbody.position;
-            Rotation = cachedRigidbody.rotation;     
+            Rotation = cachedRigidbody.rotation;
             AngularVelosity = cachedRigidbody.angularVelocity;
         }
 
-        private void ProcessHeight ()
+        private void ProcessHeight()
         {
             RaycastHit hit;
             FlyHeight = Physics.Raycast(transform.position, Vector3.down, out hit) ? hit.distance : float.MaxValue;
         }
 
-        public void Reset ()
+        public void Reset()
         {
             RemainingFuel = initialFuel;
+            ThrottleLevel = 0.0f;
+            LeftStabilizerThrottleLevel = 0.0f;
+            RightStabilizerThrottleLevel = 0.0f;
 
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
 
             if (cachedRigidbody == null)
             {
-                cachedRigidbody = GetComponent<Rigidbody> ();
+                cachedRigidbody = GetComponent<Rigidbody>();
             }
 
             cachedRigidbody.velocity = Vector3.zero;
@@ -133,57 +117,57 @@ namespace Assets.Scripts.Spaceship
 
             IsCrashed = false;
             IsPaused = false;
-            spaceshipModel.Reset ();
-            spaceshipGhost.Reset ();
+            spaceshipModel.Reset();
+            spaceshipGhost.Reset();
         }
 
-        public void OnCollisionEnter (Collision collision)
+        public void OnCollisionEnter(Collision collision)
         {
-            ProcessCollisionEvent (collision);
+            ProcessCollisionEvent(collision);
         }
 
-        private void ProcessCollisionEvent (Collision collision)
-        {   
-            if (!LandingPlaceTest (collision))
+        private void ProcessCollisionEvent(Collision collision)
+        {
+            if (!LandingPlaceTest(collision))
             {
-				Crash (collision);
+                Crash(collision);
                 return;
             }
 
             if (!VelosityTest(collision))
             {
-				Crash(collision);
+                Crash(collision);
                 return;
             }
 
-			Bump (collision);
+            Bump(collision);
         }
 
-		private void Crash(Collision collision)
+        private void Crash(Collision collision)
         {
             IsCrashed = true;
-			BlowUp (collision, RemainingFuel);
+            BlowUp(collision, RemainingFuel);
 
-            CrashEvent.Invoke ();
+            CrashEvent.Invoke();
             BumpEvent.Invoke(new BumpInfo
             {
                 IsCrashed = true,
                 IsLanded = false,
-				mcollision = collision
+                mcollision = collision
             });
         }
 
-		private void Bump(Collision collision)
+        private void Bump(Collision collision)
         {
             BumpEvent.Invoke(new BumpInfo
             {
                 IsCrashed = false,
                 IsLanded = false,
-				mcollision = collision
+                mcollision = collision
             });
         }
 
-		private void Landed()
+        private void Landed()
         {
             BumpEvent.Invoke(new BumpInfo
             {
@@ -192,18 +176,18 @@ namespace Assets.Scripts.Spaceship
             });
         }
 
-        private bool VelosityTest (Collision collision)
+        private bool VelosityTest(Collision collision)
         {
             return collision.relativeVelocity.magnitude < safeSpeed;
-        }       
+        }
 
         private bool LandingPlaceTest(Collision collision)
         {
             return collision.gameObject.layer == LayerMask.NameToLayer("Landing place");
         }
 
-		private void BlowUp (Collision collision, float remainingFuel)
-        {                                      
+        private void BlowUp(Collision collision, float remainingFuel)
+        {
             if (cachedRigidbody == null)
             {
                 cachedRigidbody = GetComponent<Rigidbody>();
@@ -211,7 +195,7 @@ namespace Assets.Scripts.Spaceship
 
             cachedRigidbody.isKinematic = true;
             spaceshipModel.Hide();
-			spaceshipGhost.BlowUp (collision, remainingFuel);
+            spaceshipGhost.BlowUp(collision, remainingFuel);
         }
     }
 }
