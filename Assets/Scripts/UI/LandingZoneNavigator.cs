@@ -19,6 +19,12 @@ namespace Assets.Scripts.UI
 		[SerializeField]
 		private float radius = 200;
 
+		[SerializeField]
+		float fadeOutStartDistance = 300;
+
+		[SerializeField]
+		float minDistance = 50;
+
 		private UnityEngine.UI.Image[] pointers;
 
 		void Start()
@@ -89,7 +95,8 @@ namespace Assets.Scripts.UI
 			}
 			);	
 
-
+			var sqrFadeOutDistance = this.fadeOutStartDistance * this.fadeOutStartDistance;
+			var sqrMinDistance = minDistance * minDistance;
 			for (int i=0; i<maxPointersCount; i++) 
 			{
 				var pointer = pointers[i];
@@ -100,6 +107,7 @@ namespace Assets.Scripts.UI
 					var zone = landingZones[i];
 
 					var dir = zone.transform.position - GameHelper.PlayerSpaceship.transform.position;
+					var sqrDist = dir.sqrMagnitude;
 
 					dir.z = 0;
 					dir.Normalize();
@@ -113,7 +121,18 @@ namespace Assets.Scripts.UI
 					var rot = Quaternion.Euler(0,0,180 * dot);
 					pointer.rectTransform.rotation = rot;
 
-					c.a = 1;
+					if(sqrDist < sqrMinDistance)
+					{
+						c.a = 0;
+					}
+					else if(sqrDist > sqrFadeOutDistance)
+					{
+						c.a = sqrFadeOutDistance / sqrDist;
+					}
+					else
+					{
+						c.a = 1;
+					}
 				}
 				else
 				{
