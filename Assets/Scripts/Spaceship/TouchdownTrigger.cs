@@ -25,7 +25,7 @@ public class TouchdownTrigger : MonoBehaviour
         return result;
     }
 
-	void Update ()
+	public void Update ()
     {
         if (IsAllTriggered() && !isTouchdownTimerStarted)
 	    {
