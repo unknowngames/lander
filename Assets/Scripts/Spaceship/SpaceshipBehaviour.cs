@@ -23,13 +23,52 @@ namespace Assets.Scripts.Spaceship
         public Vector3 AngularVelosity { get; private set; }
         public float Mass { get; set; }
         public float RemainingFuel { get; set; }
-        public float ThrottleLevel { get; set; }
-        public float FlyHeight { get; private set; }  
+
+        public float FlyHeight { get; private set; }
+
         public bool IsCrashed { get; private set; }
 
-
         public bool IsPaused { get; set; }
+
+
         public float EnginePower { get; private set; }
+        public float RightStabilizerEnginePower { get; private set; }
+        public float LeftStabilizerEnginePower { get; private set; }
+
+
+        private float throttleLevel;
+        private float leftStabilizerThrottleLevel;
+        private float rightStabilizerThrottleLevel;
+
+        public float ThrottleLevel
+        {
+            get { return throttleLevel; }
+            set
+            {
+                throttleLevel = value;
+                EnginePower = IsPaused || IsCrashed ? 0.0f : (RemainingFuel > 0.0f ? ThrottleLevel : 0.0f);
+            }
+        }
+
+        public float LeftStabilizerThrottleLevel
+        {
+            get { return leftStabilizerThrottleLevel; }
+            set
+            {
+                leftStabilizerThrottleLevel = value;
+                LeftStabilizerEnginePower = IsPaused || IsCrashed ? 0.0f : leftStabilizerThrottleLevel;
+            }
+        }
+
+        public float RightStabilizerThrottleLevel
+        {
+            get { return rightStabilizerThrottleLevel; }
+            set
+            {
+                rightStabilizerThrottleLevel = value;
+                RightStabilizerEnginePower = IsPaused || IsCrashed ? 0.0f : rightStabilizerThrottleLevel;
+            }
+        }
 
         public OnBumpEvent BumpEvent = new OnBumpEvent();
 
@@ -40,7 +79,6 @@ namespace Assets.Scripts.Spaceship
 
         public void Update ()
         {
-            ProcessEngine (); 
             ProcessState ();
         }
 
@@ -74,16 +112,6 @@ namespace Assets.Scripts.Spaceship
             {
                 FlyHeight = float.MaxValue;
             }
-        }
-
-        private void ProcessEngine ()
-        {
-			if (IsCrashed) 
-			{
-				EnginePower = 0.0f;
-				return;
-			}
-            EnginePower = IsPaused ? 0.0f : (RemainingFuel > 0.0f ? ThrottleLevel : 0.0f);
         }
 
         public void Reset ()

@@ -67,12 +67,35 @@ namespace Assets.Scripts.Spaceship
 
         public void SetImpulse(float impulse)
         {
+            Debug.Log("Impulse: " + impulse);
+            Debug.Log("Angular speed: " + cachedRigidbody.angularVelocity);
+            if (impulse < -0.0f)
+            {
+                spaceship.LeftStabilizerThrottleLevel = -impulse;
+                spaceship.RightStabilizerThrottleLevel = 0.0f;
+            }
+            else if (impulse > 0.0f)
+            {
+                spaceship.LeftStabilizerThrottleLevel = 0.0f;
+                spaceship.RightStabilizerThrottleLevel = impulse;
+            }
+            else
+            {
+                spaceship.LeftStabilizerThrottleLevel = 0.0f;
+                spaceship.RightStabilizerThrottleLevel = 0.0f; 
+            }
+        }
+
+        private void AddTorque(Vector3 impulse)
+        {
             if (Spaceship.IsCrashed)
             {
                 return;
             }
 
-            cachedRigidbody.AddTorque(transform.forward * impulse * cachedRigidbody.mass * rotationImpulseMultiplyer, ForceMode.Impulse);
+            Vector3 totalImpulse = impulse*cachedRigidbody.mass*rotationImpulseMultiplyer;
+
+            cachedRigidbody.AddTorque(totalImpulse, ForceMode.Impulse);
         }
 
         public void FixedUpdate ()
@@ -100,9 +123,13 @@ namespace Assets.Scripts.Spaceship
 
             if (doRotationStabilize)
             {
-                cachedRigidbody.AddTorque (-cachedRigidbody.angularVelocity * rotationImpulseMultiplyer * 5.0f * cachedRigidbody.mass);
-                if (cachedRigidbody.angularVelocity.sqrMagnitude<0.1f)
+                float impulse = -Mathf.Clamp(cachedRigidbody.angularVelocity.z, -1.0f, 1.0f);
+                
+                SetImpulse(impulse);
+
+                if (cachedRigidbody.angularVelocity.sqrMagnitude<0.05f)
                 {
+                    SetImpulse(0.0f);
                     cachedRigidbody.angularVelocity = Vector3.zero;
                     doRotationStabilize = false;
                 }
@@ -115,6 +142,9 @@ namespace Assets.Scripts.Spaceship
 
                 Spaceship.RemainingFuel -= Time.fixedDeltaTime * throttle * 2;
             }
+            
+            AddTorque(transform.forward * -spaceship.LeftStabilizerEnginePower);
+            AddTorque(transform.forward * spaceship.RightStabilizerEnginePower);
         }
 
         private void StoreRigidbody()

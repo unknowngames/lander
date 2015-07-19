@@ -2,7 +2,7 @@
 using System.Collections;
 using Assets.Scripts.Spaceship;
 
-public class EngineAnimator : MonoBehaviour 
+public class SimpleEngineAnimator : MonoBehaviour 
 {
     [SerializeField]
     private SpaceshipBehaviour spaceship;

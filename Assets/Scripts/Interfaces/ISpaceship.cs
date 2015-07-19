@@ -13,7 +13,15 @@ namespace Assets.Scripts.Interfaces
         float Mass { get; set; }
         float RemainingFuel { get; set; }
         float ThrottleLevel { get; set; }
+
+        float LeftStabilizerThrottleLevel { get; set; }
+        float RightStabilizerThrottleLevel { get; set; }
+
         float EnginePower { get; }
+
+        float LeftStabilizerEnginePower { get; }
+        float RightStabilizerEnginePower { get; }
+
         bool IsCrashed { get; }
 
         bool IsPaused { get; set; }
