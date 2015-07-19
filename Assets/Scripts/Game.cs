@@ -138,6 +138,7 @@ namespace Assets.Scripts
 
         public void Finish()
         {
+            SetPlayerPause(true);
             OnFinishCall();
         }
 

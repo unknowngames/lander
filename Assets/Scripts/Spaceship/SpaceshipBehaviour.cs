@@ -7,30 +7,27 @@ namespace Assets.Scripts.Spaceship
     {
         [SerializeField]
         private float initialFuel;
-
         [SerializeField]
         private float safeSpeed;
                                             
         [SerializeField]
         private SpaceshipGhost spaceshipGhost;     
         [SerializeField]
-        private SpaceshipModel spaceshipModel;  
+        private SpaceshipModel spaceshipModel;
+        [SerializeField]
+        private TouchdownTrigger touchdownTrigger;
 
         public string Name { get; set; }
+        public float Mass { get; set; }
+        public float RemainingFuel { get; set; }
+        public bool IsPaused { get; set; }
+
         public Vector3 Position { get; private set; }
         public Quaternion Rotation { get; private  set; }
         public Vector3 Velosity { get; private  set; }
         public Vector3 AngularVelosity { get; private set; }
-        public float Mass { get; set; }
-        public float RemainingFuel { get; set; }
-
         public float FlyHeight { get; private set; }
-
         public bool IsCrashed { get; private set; }
-
-        public bool IsPaused { get; set; }
-
-
         public float EnginePower { get; private set; }
         public float RightStabilizerEnginePower { get; private set; }
         public float LeftStabilizerEnginePower { get; private set; }
@@ -86,6 +83,16 @@ namespace Assets.Scripts.Spaceship
         {
             ProcessHeight ();
             ProcessRigidbodyState();
+            ProcessTouchdown();
+        }
+
+        private void ProcessTouchdown()
+        {
+            if (touchdownTrigger.Landed)
+            {
+                Landed();
+                GameHelper.Finish();
+            }
         }
 
         private void ProcessRigidbodyState ()
@@ -104,14 +111,7 @@ namespace Assets.Scripts.Spaceship
         private void ProcessHeight ()
         {
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, Vector3.down, out hit))
-            {
-                FlyHeight = hit.distance;
-            }
-            else
-            {
-                FlyHeight = float.MaxValue;
-            }
+            FlyHeight = Physics.Raycast(transform.position, Vector3.down, out hit) ? hit.distance : float.MaxValue;
         }
 
         public void Reset ()
@@ -132,6 +132,7 @@ namespace Assets.Scripts.Spaceship
 
 
             IsCrashed = false;
+            IsPaused = false;
             spaceshipModel.Reset ();
             spaceshipGhost.Reset ();
         }
@@ -182,14 +183,12 @@ namespace Assets.Scripts.Spaceship
             });
         }
 
-		private void Landed(Collision collision)
+		private void Landed()
         {
             BumpEvent.Invoke(new BumpInfo
             {
                 IsCrashed = false,
                 IsLanded = true,
-				mcollision = collision
-				
             });
         }
 
