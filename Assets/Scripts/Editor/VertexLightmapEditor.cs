@@ -28,6 +28,17 @@ public class VertexLightmapEditor : EditorWindow
 		{
 			calculate(targetLight, targetMesh);
 		}
+
+		if (GUILayout.Button ("Save mesh to file")) 
+		{
+			var path = EditorUtility.SaveFilePanelInProject ("Save mesh", "mesh", "asset", "save me please");
+			
+			if(string.IsNullOrEmpty(path) == false)
+			{
+				AssetDatabase.CreateAsset(targetMesh.mesh, path);
+				AssetDatabase.SaveAssets();
+			}
+		}
 	}
 
 	void calculate(Light light, MeshFilter mf)
