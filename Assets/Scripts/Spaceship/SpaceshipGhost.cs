@@ -31,14 +31,19 @@ namespace Assets.Scripts.Spaceship
             }
         }
 
-		public void BlowUp(Collision collision, float remainingFuel)
+        public void BlowUp(Collision collision, float remainingFuel)
         {
+            if (transform.parent == null)
+            {
+                return;
+            }
+
             gameObject.SetActive(true);
 
             foreach (SpaceshipPart part in spaceshipParts)
-			{
-                part.Rigidbody.AddExplosionForce(collision.relativeVelocity.magnitude * crashExplosionForceMultiplier * remainingFuel, transform.parent.position, crashExplosionRadius);
-			}
+            {
+                part.Rigidbody.AddExplosionForce(collision.relativeVelocity.magnitude*crashExplosionForceMultiplier*remainingFuel, transform.parent.position, crashExplosionRadius);
+            }
             transform.parent = null;
         }
 
