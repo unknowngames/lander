@@ -11,7 +11,7 @@ public class Trigger : MonoBehaviour
         isHereAnybody = true;
     }
 
-    public void Update()
+    public void FixedUpdate()
     {
         IsTriggered = isHereAnybody;
         isHereAnybody = false;
