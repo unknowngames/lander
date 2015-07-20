@@ -23,6 +23,7 @@ namespace Assets.Scripts.Interfaces
         float RightStabilizerEnginePower { get; }
 
         bool IsCrashed { get; }
+        bool IsLanded { get; }
 
         bool IsPaused { get; set; }
 

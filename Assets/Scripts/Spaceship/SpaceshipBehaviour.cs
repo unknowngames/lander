@@ -32,6 +32,7 @@ namespace Assets.Scripts.Spaceship
         public Vector3 AngularVelosity { get; private set; }
         public float FlyHeight { get; private set; }
         public bool IsCrashed { get; private set; }
+        public bool IsLanded { get; private set; }
 
         public float EnginePower
         {
@@ -69,8 +70,9 @@ namespace Assets.Scripts.Spaceship
 
         private void ProcessTouchdown()
         {
-            if (touchdownTrigger.Landed)
+            if (touchdownTrigger.Landed && !IsLanded)
             {
+                IsLanded = true;
                 Landed();
                 GameHelper.Finish();
             }
@@ -101,6 +103,7 @@ namespace Assets.Scripts.Spaceship
             ThrottleLevel = 0.0f;
             LeftStabilizerThrottleLevel = 0.0f;
             RightStabilizerThrottleLevel = 0.0f;
+            IsLanded = false;
 
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
