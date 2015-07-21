@@ -25,6 +25,8 @@ namespace Assets.Scripts.Interfaces
         bool IsCrashed { get; }
         bool IsLanded { get; }
 
+        TouchdownTrigger TouchdownTrigger { get; }
+
         bool IsPaused { get; set; }
 
         void Reset ();

@@ -33,6 +33,7 @@ namespace Assets.Scripts.Spaceship
         public float FlyHeight { get; private set; }
         public bool IsCrashed { get; private set; }
         public bool IsLanded { get; private set; }
+        public TouchdownTrigger TouchdownTrigger { get { return touchdownTrigger; } }
 
         public float EnginePower
         {
