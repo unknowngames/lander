@@ -202,5 +202,10 @@ namespace Assets.Scripts.Spaceship
             spaceshipModel.Hide();
             spaceshipGhost.BlowUp(collision, remainingFuel);
         }
+
+		public void SetVelocity(Vector3 vel)
+		{
+			cachedRigidbody.velocity = vel;
+		}
     }
 }

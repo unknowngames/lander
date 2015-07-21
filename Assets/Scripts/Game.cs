@@ -36,6 +36,9 @@ namespace Assets.Scripts
         private PlayerSpawner playerSpawner = new PlayerSpawner();
         public SpaceshipBehaviour PlayerSpaceship { get; private set; }
 
+		[SerializeField]
+		private float playerStartImpulsePower = 500;
+
         private UnityEvent onBegin; 
         private UnityEvent onPause;
         private UnityEvent onUnpause;
@@ -113,6 +116,12 @@ namespace Assets.Scripts
         public void Begin()
         {
             PlayerSpaceship = playerSpawner.CreatePlayer();
+
+			Vector3 randomDirection = Vector3.right;
+			randomDirection *= UnityEngine.Random.Range (0, 2) == 0 ? -1 : 1;
+			randomDirection *= playerStartImpulsePower;
+			PlayerSpaceship.SetVelocity(randomDirection);
+
             PlayerSpaceship.CrashEvent.AddListener(Finish);
             PlayerSpaceship.LandEvent.AddListener(Finish);
             OnBeginCall ();
