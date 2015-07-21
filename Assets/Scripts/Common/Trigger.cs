@@ -22,4 +22,10 @@ public class Trigger : MonoBehaviour
         IsTriggered = (Objects.Count!=0);
         objects.Clear();
     }
+
+    public void Reset()
+    {
+        IsTriggered = false;
+        objects.Clear();
+    }
 }

@@ -123,6 +123,7 @@ namespace Assets.Scripts.Spaceship
             IsPaused = false;
             spaceshipModel.Reset();
             spaceshipGhost.Reset();
+            touchdownTrigger.Reset();
         }
 
         public void OnCollisionEnter(Collision collision)

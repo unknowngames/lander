@@ -59,9 +59,22 @@ public class TouchdownTrigger : MonoBehaviour
         else if (!IsAllTriggered())
 	    {
 	        Landed = false;
+	        Zone = null;    
 	        StopTouchdownTimer ();
 	    }
 	}
+
+    public void Reset()
+    {
+        Landed = false;
+        Zone = null;
+        StopTouchdownTimer();
+
+        foreach (Trigger trigger in triggers)
+        {
+            trigger.Reset();
+        }
+    }
 
     private void BeginTouchdownTimer()
     {
