@@ -1,17 +1,18 @@
 ﻿using UnityEngine;
-using System.Collections;
-using Assets.Scripts.Spaceship;
 
-public class SimpleEngineAnimator : MonoBehaviour 
+namespace Assets.Scripts.Spaceship
 {
-    [SerializeField]
-    private SpaceshipBehaviour spaceship;
-
-    [SerializeField]
-    private ParticleEmitter emitter;
-
-    public void Update ()
+    public class SimpleEngineAnimator : MonoBehaviour 
     {
-        emitter.maxEmission = spaceship.EnginePower * 10000.0f;
-    }   
+        [SerializeField]
+        private SpaceshipBehaviour spaceship;
+
+        [SerializeField]
+        private ParticleEmitter emitter;
+
+        public void Update ()
+        {
+            emitter.maxEmission = spaceship.EnginePower * 10000.0f;
+        }   
+    }
 }

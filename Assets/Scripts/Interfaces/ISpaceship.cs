@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Spaceship;
+using UnityEngine;
 
 namespace Assets.Scripts.Interfaces
 {

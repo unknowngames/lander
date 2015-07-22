@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class SpaceshipPlanetRotation : MonoBehaviour 
+namespace Assets.Scripts.UI
 {
-    public float Speed = 5.0f;
-    public Transform Axis;
-
-	void LateUpdate () 
+    public class SpaceshipPlanetRotation : MonoBehaviour 
     {
-        transform.Rotate(Axis.transform.forward, Time.deltaTime * Speed);
-	}
+        public float Speed = 5.0f;
+        public Transform Axis;
+
+        void LateUpdate () 
+        {
+            transform.Rotate(Axis.transform.forward, Time.deltaTime * Speed);
+        }
+    }
 }

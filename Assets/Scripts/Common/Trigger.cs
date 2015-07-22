@@ -2,30 +2,33 @@
 using System.Collections.ObjectModel;
 using UnityEngine;
 
-public class Trigger : MonoBehaviour
+namespace Assets.Scripts.Common
 {
-    public bool IsTriggered=false;
-    private List<GameObject> objects = new List<GameObject>(10);
-
-    public ReadOnlyCollection<GameObject> Objects
+    public class Trigger : MonoBehaviour
     {
-        get { return new ReadOnlyCollection<GameObject>(objects); }
-    }
+        public bool IsTriggered=false;
+        private List<GameObject> objects = new List<GameObject>(10);
 
-    public void OnTriggerStay(Collider other)
-    {
-        objects.Add(other.gameObject);
-    }
+        public ReadOnlyCollection<GameObject> Objects
+        {
+            get { return new ReadOnlyCollection<GameObject>(objects); }
+        }
 
-    public void FixedUpdate()
-    {
-        IsTriggered = (Objects.Count!=0);
-        objects.Clear();
-    }
+        public void OnTriggerStay(Collider other)
+        {
+            objects.Add(other.gameObject);
+        }
 
-    public void Reset()
-    {
-        IsTriggered = false;
-        objects.Clear();
+        public void FixedUpdate()
+        {
+            IsTriggered = (Objects.Count!=0);
+            objects.Clear();
+        }
+
+        public void Reset()
+        {
+            IsTriggered = false;
+            objects.Clear();
+        }
     }
 }

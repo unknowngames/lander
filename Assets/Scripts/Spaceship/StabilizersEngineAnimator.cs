@@ -1,22 +1,23 @@
 ﻿using UnityEngine;
-using System.Collections;
-using Assets.Scripts.Spaceship;
 
-public class StabilizersEngineAnimator : MonoBehaviour
+namespace Assets.Scripts.Spaceship
 {
-    [SerializeField]
-    private SpaceshipBehaviour spaceship;
-
-    [SerializeField]
-    private ParticleSystem leftStabilizer;
-
-    [SerializeField]
-    private ParticleSystem rightStabilizer;
-
-
-    public void Update ()
+    public class StabilizersEngineAnimator : MonoBehaviour
     {
-        leftStabilizer.enableEmission = (spaceship.LeftStabilizerEnginePower > 0.0f);
-        rightStabilizer.enableEmission = (spaceship.RightStabilizerEnginePower > 0.0f);
-    }   
+        [SerializeField]
+        private SpaceshipBehaviour spaceship;
+
+        [SerializeField]
+        private ParticleSystem leftStabilizer;
+
+        [SerializeField]
+        private ParticleSystem rightStabilizer;
+
+
+        public void Update ()
+        {
+            leftStabilizer.enableEmission = (spaceship.LeftStabilizerEnginePower > 0.0f);
+            rightStabilizer.enableEmission = (spaceship.RightStabilizerEnginePower > 0.0f);
+        }   
+    }
 }
