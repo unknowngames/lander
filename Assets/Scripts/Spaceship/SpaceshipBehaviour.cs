@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.Interfaces;
+﻿using System.Diagnostics;
+using Assets.Scripts.Common;
+using Assets.Scripts.Interfaces;
 using UnityEngine;
 
 namespace Assets.Scripts.Spaceship
@@ -16,6 +18,8 @@ namespace Assets.Scripts.Spaceship
         private SpaceshipModel spaceshipModel;
         [SerializeField] 
         private TouchdownTrigger touchdownTrigger;
+        [SerializeField]
+        private TriggerArray crashTrigger;
 
         public string Name { get; set; }
         public float Mass { get; set; }
@@ -64,17 +68,25 @@ namespace Assets.Scripts.Spaceship
 
         private void ProcessState()
         {
+            ProcessCrashTriggers();
             ProcessHeight();
             ProcessRigidbodyState();
             ProcessTouchdown();
+        }
+
+        private void ProcessCrashTriggers()
+        {
+            if (crashTrigger.IsTriggered)
+            {
+                Crash();
+            }
         }
 
         private void ProcessTouchdown()
         {
             if (touchdownTrigger.Landed && !IsLanded)
             {
-                IsLanded = true;
-                Landed();
+                DoLand();
                 GameHelper.Finish();
             }
         }
@@ -104,7 +116,6 @@ namespace Assets.Scripts.Spaceship
             ThrottleLevel = 0.0f;
             LeftStabilizerThrottleLevel = 0.0f;
             RightStabilizerThrottleLevel = 0.0f;
-            IsLanded = false;
 
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
@@ -118,12 +129,14 @@ namespace Assets.Scripts.Spaceship
             cachedRigidbody.angularVelocity = Vector3.zero;
             cachedRigidbody.isKinematic = false;
 
-
+            IsLanded = false;
             IsCrashed = false;
             IsPaused = false;
+
             spaceshipModel.Reset();
             spaceshipGhost.Reset();
             touchdownTrigger.Reset();
+            crashTrigger.Reset();
         }
 
         public void OnCollisionEnter(Collision collision)
@@ -135,31 +148,33 @@ namespace Assets.Scripts.Spaceship
         {
             if (!LandingPlaceTest(collision))
             {
-                Crash(collision);
+                Crash();
                 return;
             }
 
             if (!VelosityTest(collision))
             {
-                Crash(collision);
+                Crash();
                 return;
             }
 
             Bump(collision);
         }
 
-        private void Crash(Collision collision)
+        private void Crash()
         {
-            IsCrashed = true;
-            BlowUp(collision, RemainingFuel);
-
-            CrashEvent.Invoke();
-            BumpEvent.Invoke(new BumpInfo
+            if (!IsCrashed)
             {
-                IsCrashed = true,
-                IsLanded = false,
-                mcollision = collision
-            });
+                IsCrashed = true;
+                BlowUp();
+
+                CrashEvent.Invoke();
+                BumpEvent.Invoke(new BumpInfo
+                {
+                    IsCrashed = true,
+                    IsLanded = false
+                });
+            }
         }
 
         private void Bump(Collision collision)
@@ -168,8 +183,17 @@ namespace Assets.Scripts.Spaceship
             {
                 IsCrashed = false,
                 IsLanded = false,
-                mcollision = collision
+                RelativeVelocity = collision.relativeVelocity.magnitude
             });
+        }
+
+        private void DoLand()
+        {
+            if (!IsLanded)
+            {
+                IsLanded = true;
+                Landed();
+            }
         }
 
         private void Landed()
@@ -177,7 +201,7 @@ namespace Assets.Scripts.Spaceship
             BumpEvent.Invoke(new BumpInfo
             {
                 IsCrashed = false,
-                IsLanded = true,
+                IsLanded = true
             });
         }
 
@@ -191,7 +215,7 @@ namespace Assets.Scripts.Spaceship
             return collision.gameObject.layer == LayerMask.NameToLayer("Landing place");
         }
 
-        private void BlowUp(Collision collision, float remainingFuel)
+        private void BlowUp()
         {
             if (cachedRigidbody == null)
             {
@@ -200,7 +224,7 @@ namespace Assets.Scripts.Spaceship
 
             cachedRigidbody.isKinematic = true;
             spaceshipModel.Hide();
-            spaceshipGhost.BlowUp(collision, remainingFuel);
+            spaceshipGhost.BlowUp(Velosity.magnitude, RemainingFuel);
         }
 
 		public void SetVelocity(Vector3 vel)

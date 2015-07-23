@@ -5,6 +5,6 @@ namespace Assets.Scripts.Spaceship
     {
         public bool IsCrashed;
         public bool IsLanded;
-		public Collision mcollision;
+        public float RelativeVelocity;
     }
 }

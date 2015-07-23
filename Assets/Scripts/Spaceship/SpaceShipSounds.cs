@@ -96,7 +96,7 @@ namespace Assets.Scripts.Spaceship
 		{
             if (!bumpInfo.IsLanded && !bumpInfo.IsCrashed)
             {
-				float volumeMultiplier = bumpInfo.mcollision.relativeVelocity.magnitude * configBumpVolumeMultiplier;
+				float volumeMultiplier = bumpInfo.RelativeVelocity * configBumpVolumeMultiplier;
 				volumeMultiplier = Mathf.Clamp(volumeMultiplier, 0.0f, 1.0f);
 				
 				PlayRandomSound(spaceshipSounds.bumpSounds, volumeMultiplier);
@@ -109,7 +109,7 @@ namespace Assets.Scripts.Spaceship
 
             if (!bumpInfo.IsLanded && bumpInfo.IsCrashed)
             {
-				float volumeMultiplier = bumpInfo.mcollision.relativeVelocity.magnitude * 0.01f * spaceshipBehaviour.RemainingFuel * configCrashFuelVolumeMultiplier;
+                float volumeMultiplier = bumpInfo.RelativeVelocity * 0.01f * spaceshipBehaviour.RemainingFuel * configCrashFuelVolumeMultiplier;
 				volumeMultiplier = Mathf.Clamp(volumeMultiplier, 0.0f, 1.0f);
 				PlayRandomSound(spaceshipSounds.crashSounds, volumeMultiplier);
             }    

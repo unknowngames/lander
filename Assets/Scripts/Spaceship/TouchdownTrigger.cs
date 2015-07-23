@@ -56,11 +56,13 @@ namespace Assets.Scripts.Spaceship
 
         public void Update ()
         {
-            if (IsAllTriggered() && !isTouchdownTimerStarted)
+            bool isAllTriggered = IsAllTriggered();
+
+            if (isAllTriggered && !isTouchdownTimerStarted)
             {
                 BeginTouchdownTimer ();
             }
-            else if (!IsAllTriggered())
+            else if (!isAllTriggered)
             {
                 Landed = false;
                 Zone = null;    
