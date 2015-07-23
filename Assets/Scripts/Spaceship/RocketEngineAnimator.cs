@@ -9,11 +9,6 @@ namespace Assets.Scripts.Spaceship
         private class ParticleSystemParameters
         {
             [SerializeField]
-            private float minStartSize;
-            [SerializeField]
-            private float maxStartSize;
-
-            [SerializeField]
             private float minStartSpeed;
             [SerializeField]
             private float maxStartSpeed;
@@ -22,18 +17,7 @@ namespace Assets.Scripts.Spaceship
             private float initialYPozition;
             [SerializeField]
             private float deltaYPozition;
-
-
-            public float MinStartSize
-            {
-                get { return minStartSize; }
-            }
-
-            public float MaxStartSize
-            {
-                get { return maxStartSize; }
-            }
-
+            
             public float MinStartSpeed
             {
                 get { return minStartSpeed; }
@@ -83,7 +67,6 @@ namespace Assets.Scripts.Spaceship
             }
 
             main.startSpeed = (mainParameters.MaxStartSpeed - mainParameters.MinStartSpeed) * throttleLevel;
-            main.startSize = (mainParameters.MaxStartSize - mainParameters.MinStartSize) * throttleLevel;
 
             Vector3 mainLocalPosition = main.transform.localPosition;
             mainLocalPosition.y = mainParameters.InitialYPozition + mainParameters.DeltaYPozition * throttleLevel;
@@ -91,7 +74,6 @@ namespace Assets.Scripts.Spaceship
 
         
             glow.startSpeed = (glowParameters.MaxStartSpeed - glowParameters.MinStartSpeed) * throttleLevel;
-            glow.startSize = (glowParameters.MaxStartSize - glowParameters.MinStartSize) * throttleLevel;
 
             Vector3 glowLocalPosition = glow.transform.localPosition;
             glowLocalPosition.y = glowParameters.InitialYPozition + glowParameters.DeltaYPozition * throttleLevel;
