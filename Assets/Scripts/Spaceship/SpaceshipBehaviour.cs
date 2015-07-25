@@ -54,8 +54,6 @@ namespace Assets.Scripts.Spaceship
             get { return IsPaused || IsCrashed ? 0.0f : LeftStabilizerThrottleLevel; }
         }
 
-        public OnBumpEvent BumpEvent = new OnBumpEvent();
-
         public OnCrashEvent CrashEvent = new OnCrashEvent();
         public OnLandEvent LandEvent = new OnLandEvent();
 
@@ -157,8 +155,6 @@ namespace Assets.Scripts.Spaceship
                 Crash();
                 return;
             }
-
-            Bump(collision);
         }
 
         private void Crash()
@@ -169,22 +165,7 @@ namespace Assets.Scripts.Spaceship
                 BlowUp();
 
                 CrashEvent.Invoke();
-                BumpEvent.Invoke(new BumpInfo
-                {
-                    IsCrashed = true,
-                    IsLanded = false
-                });
             }
-        }
-
-        private void Bump(Collision collision)
-        {
-            BumpEvent.Invoke(new BumpInfo
-            {
-                IsCrashed = false,
-                IsLanded = false,
-                RelativeVelocity = collision.relativeVelocity.magnitude
-            });
         }
 
         private void DoLand()
@@ -198,11 +179,6 @@ namespace Assets.Scripts.Spaceship
 
         private void Landed()
         {
-            BumpEvent.Invoke(new BumpInfo
-            {
-                IsCrashed = false,
-                IsLanded = true
-            });
         }
 
         private bool VelosityTest(Collision collision)

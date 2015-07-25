@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Assets.Scripts.Spaceship
+namespace Assets.Scripts.Spaceship.Effects.Animators
 {
     public class RocketEngineAnimator : MonoBehaviour 
     {
