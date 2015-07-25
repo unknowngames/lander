@@ -7,10 +7,7 @@ namespace Assets.Scripts.Controllers
     {              
         public void OnStabilizeClick()
         {
-            if (SpaceshipMoveable != null)
-            {
-                SpaceshipMoveable.RotationStabilize ();
-            }
+            SpaceshipController.Stabilize();
         }
 
         protected override void OnEnable()

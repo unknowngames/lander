@@ -4,7 +4,7 @@
     {
         void RotationStabilize();
 
-        void SetImpulse(float impulse);
+        void SetStabilizerThrottleLevel(float impulse);
 
         float ThrottleLevel { get; set; }
     }

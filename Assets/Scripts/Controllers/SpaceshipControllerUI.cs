@@ -7,8 +7,11 @@ using UnityEngine;
 namespace Assets.Scripts.Controllers
 {
     public abstract class SpaceshipControllerUI : MenuUI
-    {                                                               
+    {
+        protected SpaceshipController SpaceshipController { get; private set; }        
+   
         private ISpaceshipMoveable spaceshipMoveable;
+
 
         public ISpaceshipMoveable SpaceshipMoveable
         {
@@ -23,28 +26,25 @@ namespace Assets.Scripts.Controllers
             }
         }
 
+        protected override void Start()
+        {
+            base.Start();
+            SpaceshipController = new SpaceshipController(SpaceshipMoveable);
+        }
+
         public void OnRotationClockwiseChanged(float force)
         {
-            if (SpaceshipMoveable != null)
-            {
-                SpaceshipMoveable.SetImpulse(force);
-            }
+            SpaceshipController.ClockwiseRotate(force);
         }
 
         public void OnRotationCounterClockwiseChanged(float force)
         {
-            if (SpaceshipMoveable != null)
-            {
-                SpaceshipMoveable.SetImpulse(force);
-            }
+            SpaceshipController.CounterClockwiseRotate(force);
         }
 
         public void OnThrottleChanged(float value)
         {
-            if (SpaceshipMoveable != null)
-            {
-                SpaceshipMoveable.ThrottleLevel = value;
-            }
+            SpaceshipController.ChangeThrottle(value);
         }
     }
 }             

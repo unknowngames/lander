@@ -65,7 +65,7 @@ namespace Assets.Scripts.Spaceship
             doRotationStabilize = true;
         }
 
-        public void SetImpulse(float impulse)
+        public void SetStabilizerThrottleLevel(float impulse)
         {
             if (impulse < -0.0f)
             {
@@ -123,11 +123,11 @@ namespace Assets.Scripts.Spaceship
             {
                 float impulse = -Mathf.Clamp(cachedRigidbody.angularVelocity.z, -1.0f, 1.0f);
                 
-                SetImpulse(impulse);
+                SetStabilizerThrottleLevel(impulse);
 
                 if (cachedRigidbody.angularVelocity.sqrMagnitude<0.05f)
                 {
-                    SetImpulse(0.0f);
+                    SetStabilizerThrottleLevel(0.0f);
                     cachedRigidbody.angularVelocity = Vector3.zero;
                     doRotationStabilize = false;
                 }
