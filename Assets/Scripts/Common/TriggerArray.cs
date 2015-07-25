@@ -47,6 +47,7 @@ namespace Assets.Scripts.Common
 
         public void Reset()
         {
+            IsTriggered = false;
             foreach (Trigger trigger in triggers)
             {
                 trigger.Reset();
