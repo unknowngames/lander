@@ -224,7 +224,7 @@ namespace Assets.Scripts.Spaceship
 
             cachedRigidbody.isKinematic = true;
             spaceshipModel.Hide();
-            spaceshipGhost.BlowUp(Velosity.magnitude, RemainingFuel);
+            spaceshipGhost.BlowUp(Velosity, RemainingFuel);
         }
 
 		public void SetVelocity(Vector3 vel)

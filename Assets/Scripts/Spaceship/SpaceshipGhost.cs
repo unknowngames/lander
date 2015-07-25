@@ -31,7 +31,7 @@ namespace Assets.Scripts.Spaceship
             }
         }
 
-        public void BlowUp(float spaceshipSpeed, float remainingFuel)
+        public void BlowUp(Vector3 spaceshipVelocity, float remainingFuel)
         {
             if (transform.parent == null)
             {
@@ -42,7 +42,8 @@ namespace Assets.Scripts.Spaceship
 
             foreach (SpaceshipPart part in spaceshipParts)
             {
-                part.Rigidbody.AddExplosionForce(spaceshipSpeed * crashExplosionForceMultiplier * remainingFuel, transform.parent.position, crashExplosionRadius);
+                part.Rigidbody.velocity = spaceshipVelocity;
+                part.Rigidbody.AddExplosionForce(spaceshipVelocity.magnitude * crashExplosionForceMultiplier * remainingFuel, transform.parent.position, crashExplosionRadius);
             }
             transform.parent = null;
         }
