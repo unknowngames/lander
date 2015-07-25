@@ -6,25 +6,32 @@ public class ShadowMapReceiver : MonoBehaviour
 {
 	public Camera shadowProjector;
 	private Material material;
-	Matrix4x4 m;
+
 
 	void Start()
 	{
 		var mr = GetComponent<MeshRenderer> ();
 		material = mr.sharedMaterial;
 
+		if (shadowProjector == null)
+			tryFindShadowProjector ();
+	}
 
-		m = Matrix4x4.Ortho (-10, 10, -10, 10, 0.3f, 50);
+	void tryFindShadowProjector()
+	{
+		var go = GameObject.FindGameObjectWithTag ("ShadowMapCamera");
+		shadowProjector = go.GetComponent<Camera> ();
 	}
 
 	void Update()
 	{
+		if (shadowProjector == null)
+			tryFindShadowProjector ();
+
 		if (shadowProjector == null || material == null)
 			return;
 
-		shadowProjector.projectionMatrix = m;
-		shadowProjector.Render ();
-		material.SetMatrix ("_ProjectionMatrix", shadowProjector.projectionMatrix * shadowProjector.worldToCameraMatrix /* * shadowProjector.transform.localToWorldMatrix*/);
-
+		var pv = shadowProjector.projectionMatrix * shadowProjector.worldToCameraMatrix;
+		material.SetMatrix ("_ProjectionMatrix", pv);
 	}
 }
