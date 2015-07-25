@@ -9,33 +9,18 @@ namespace Assets.Scripts.Spaceship
         private class ParticleSystemParameters
         {
             [SerializeField]
-            private float minStartSpeed;
+            private float minSpeedScale;
             [SerializeField]
-            private float maxStartSpeed;
+            private float maxSpeedScale;
 
-            [SerializeField]
-            private float initialYPozition;
-            [SerializeField]
-            private float deltaYPozition;
-            
-            public float MinStartSpeed
+            public float MinSpeedScale
             {
-                get { return minStartSpeed; }
+                get { return minSpeedScale; }
             }
 
-            public float MaxStartSpeed
+            public float MaxSpeedScale
             {
-                get { return maxStartSpeed; }
-            }
-
-            public float InitialYPozition
-            {
-                get { return initialYPozition; }
-            }
-
-            public float DeltaYPozition
-            {
-                get { return deltaYPozition; }
+                get { return maxSpeedScale; }
             }
         }
 
@@ -52,6 +37,19 @@ namespace Assets.Scripts.Spaceship
         [SerializeField]
         private ParticleSystemParameters glowParameters;
 
+
+        private ParticleSystemRenderer mainRenderer;
+        private ParticleSystemRenderer MainRenderer
+        {
+            get { return mainRenderer ?? (mainRenderer = main.GetComponent<ParticleSystemRenderer>()); }
+        }
+        
+        private ParticleSystemRenderer glowRenderer;
+        private ParticleSystemRenderer GlowRenderer
+        {
+            get { return glowRenderer ?? (glowRenderer = glow.GetComponent<ParticleSystemRenderer>()); }
+        }
+
         [SerializeField]
         private bool debugMode;
 
@@ -66,18 +64,8 @@ namespace Assets.Scripts.Spaceship
                 throttleLevel = spaceship.EnginePower;
             }
 
-            main.startSpeed = (mainParameters.MaxStartSpeed - mainParameters.MinStartSpeed) * throttleLevel;
-
-            Vector3 mainLocalPosition = main.transform.localPosition;
-            mainLocalPosition.y = mainParameters.InitialYPozition + mainParameters.DeltaYPozition * throttleLevel;
-            main.transform.localPosition = mainLocalPosition;
-
-        
-            glow.startSpeed = (glowParameters.MaxStartSpeed - glowParameters.MinStartSpeed) * throttleLevel;
-
-            Vector3 glowLocalPosition = glow.transform.localPosition;
-            glowLocalPosition.y = glowParameters.InitialYPozition + glowParameters.DeltaYPozition * throttleLevel;
-            glow.transform.localPosition = glowLocalPosition;
+            MainRenderer.velocityScale = (mainParameters.MaxSpeedScale - mainParameters.MinSpeedScale) * throttleLevel;
+            GlowRenderer.velocityScale = (glowParameters.MaxSpeedScale - glowParameters.MinSpeedScale) * throttleLevel;
         }   
     }
 }
