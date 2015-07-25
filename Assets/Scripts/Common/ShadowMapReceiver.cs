@@ -6,20 +6,17 @@ public class ShadowMapReceiver : MonoBehaviour
 {
 	public Camera shadowProjector;
 	public Texture ShadowMap;
-	private Material material;
 
+	private Material[] mats;
 
 	void Start()
 	{
-		var mr = GetComponent<MeshRenderer> ();
-		material = mr.sharedMaterial;
-
 		if (shadowProjector == null)
 			tryFindShadowProjector ();
 
 		var renderer = GetComponent<Renderer> ();
 
-		var mats = renderer.materials;
+		mats = renderer.materials;
 
 		foreach (var m in mats) 
 		{
@@ -45,10 +42,14 @@ public class ShadowMapReceiver : MonoBehaviour
 		if (shadowProjector == null)
 			tryFindShadowProjector ();
 
-		if (shadowProjector == null || material == null)
+		if (shadowProjector == null || mats == null || mats.Length == 0)
 			return;
 
 		var pv = shadowProjector.projectionMatrix * shadowProjector.worldToCameraMatrix;
-		material.SetMatrix ("_ProjectionMatrix", pv);
+
+		foreach (var m in mats) 
+		{
+			m.SetMatrix ("_ProjectionMatrix", pv);
+		}
 	}
 }

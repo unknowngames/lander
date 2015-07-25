@@ -15,6 +15,6 @@ public class ShadowMapTransform : MonoBehaviour
 
 	void LateUpdate () 
 	{
-		transform.position = target.position;
+		transform.position = target.position + positionOffset;
 	}
 }
