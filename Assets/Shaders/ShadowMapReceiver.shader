@@ -34,6 +34,30 @@
                 o.shadowPos = mul(_ProjectionMatrix, posWorld);
                 return o;
             }
+            
+            float calculateShadowFactor(float4 shadowPos)
+            {
+            	float4 sh = shadowPos;
+            	
+            	sh.xyz /= sh.w;
+            	sh.x = 0.5 * sh.x + 0.5;
+            	sh.y = 0.5 * sh.y + 0.5;
+            	
+            	float depth = sh.z;
+            	
+            	float4 shadow = tex2D(_ShadowMap, sh.xy);
+            	
+            	float shadowFactor = 1.0;
+            	
+            	depth = clamp(depth, 0.0, 1.0);
+            	
+            	if(shadow.r < depth)
+	            {
+	            	shadowFactor = 0.2;
+	            }
+	            
+                return shadowFactor;
+            }
 
             fixed4 frag(vertOut i) : SV_Target 
             {

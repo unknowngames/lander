@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[ExecuteInEditMode]
+//[ExecuteInEditMode]
 public class ShadowMapReceiver : MonoBehaviour 
 {
 	public Camera shadowProjector;
+	public Texture ShadowMap;
 	private Material material;
 
 
@@ -15,11 +16,27 @@ public class ShadowMapReceiver : MonoBehaviour
 
 		if (shadowProjector == null)
 			tryFindShadowProjector ();
+
+		var renderer = GetComponent<Renderer> ();
+
+		var mats = renderer.materials;
+
+		foreach (var m in mats) 
+		{
+			if(m.HasProperty("_ShadowMap"))
+			{
+				m.SetTexture("_ShadowMap", ShadowMap);
+			}
+		}
 	}
 
 	void tryFindShadowProjector()
 	{
 		var go = GameObject.FindGameObjectWithTag ("ShadowMapCamera");
+
+		if (go == null)
+			return;
+
 		shadowProjector = go.GetComponent<Camera> ();
 	}
 

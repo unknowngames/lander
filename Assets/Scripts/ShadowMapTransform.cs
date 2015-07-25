@@ -13,7 +13,7 @@ public class ShadowMapTransform : MonoBehaviour
 		transform.parent = null;
 	}
 
-	void Update () 
+	void LateUpdate () 
 	{
 		transform.position = target.position;
 	}
