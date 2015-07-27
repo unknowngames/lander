@@ -76,8 +76,7 @@ SubShader {
             fresnel = pow(fresnel, _FresnelPower);
             o.color.a = fresnel;
             
-            float4 posWorld = mul (_Object2World, float4(v.vertex.xyz,1));
-            o.shadowPos = mul(_ProjectionMatrix, posWorld);
+            o.shadowPos = mul(_ProjectionMatrix, wPos);
             
             return o;
         }
@@ -88,6 +87,7 @@ SubShader {
         	fixed4 texColor = tex2D(_MainTex, i.uv * _MainTex_ST.xy);
         	fixed4 detailColor = tex2D(_DetailTex, i.uv * _DetailTex_ST.xy); 
         	float3 diff = i.color.xyz * texColor.xyz * detailColor.xyz; 
+        	
         	return float4(lerp(diff, _FresnelColor.xyz, i.color.a * _FresnelColor.a) * shadow, 1.0);
         	
         }
