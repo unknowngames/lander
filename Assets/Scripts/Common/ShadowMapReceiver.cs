@@ -37,7 +37,7 @@ public class ShadowMapReceiver : MonoBehaviour
 		shadowProjector = go.GetComponent<Camera> ();
 	}
 
-	void Update()
+	void LateUpdate()
 	{
 		if (shadowProjector == null)
 			tryFindShadowProjector ();

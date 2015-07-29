@@ -35,7 +35,7 @@ public class VertexLightmapEditor : EditorWindow
 			
 			if(string.IsNullOrEmpty(path) == false)
 			{
-				AssetDatabase.CreateAsset(targetMesh.mesh, path);
+				AssetDatabase.CreateAsset(targetMesh.sharedMesh, path);
 				AssetDatabase.SaveAssets();
 			}
 		}
