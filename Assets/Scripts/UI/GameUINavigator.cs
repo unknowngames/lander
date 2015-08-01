@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Assets.Scripts.Controllers;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -89,7 +90,8 @@ namespace Assets.Scripts.UI
             GameHelper.OnBegin.AddListener (OnBeginGame);
             GameHelper.OnFinish.AddListener (OnFinishGame);
             GameHelper.OnPause.AddListener (OnPauseGame);
-            GameHelper.OnUnpause.AddListener (OnUnpauseGame);
+            GameHelper.OnUnpause.AddListener(OnUnpauseGame);
+            GameHelper.OnAbort.AddListener(OnAbortGame);
         }
 
         private void OnBeginGame ()
@@ -110,6 +112,11 @@ namespace Assets.Scripts.UI
         private void OnUnpauseGame()
         {
             Show(gameMenuUIInstance, controllerUIInstance);
+        }
+
+        private void OnAbortGame()
+        {
+            HideAll();
         }
     }
 }

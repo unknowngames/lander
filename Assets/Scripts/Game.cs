@@ -43,6 +43,7 @@ namespace Assets.Scripts
         private UnityEvent onPause;
         private UnityEvent onUnpause;
         private UnityEvent onFinish;
+        private UnityEvent onAbort;
 
         public UnityEvent OnBegin
         {
@@ -73,6 +74,14 @@ namespace Assets.Scripts
             get
             {
                 return onFinish ?? (onFinish = new UnityEvent ());
+            }
+        }
+
+        public UnityEvent OnAbort
+        {
+            get
+            {
+                return onAbort ?? (onAbort = new UnityEvent());
             }
         }
 
@@ -108,6 +117,14 @@ namespace Assets.Scripts
             }
         }
 
+        private void OnAbortCall()
+        {
+            if (OnAbort != null)
+            {
+                OnAbort.Invoke();
+            }
+        }
+
         public void Start ()
         {
             Begin ();
@@ -130,6 +147,7 @@ namespace Assets.Scripts
         public void Abort()
         {
             Clean();
+            OnAbortCall();
             Application.LoadLevelAsync(0);
         }
 

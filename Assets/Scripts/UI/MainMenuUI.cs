@@ -6,6 +6,7 @@ namespace Assets.Scripts.UI
     {
         public void OnStart()
         {
+            Hide();
             Application.LoadLevelAsync (1);
         }
     }

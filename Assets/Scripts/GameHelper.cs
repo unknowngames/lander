@@ -28,11 +28,19 @@ namespace Assets.Scripts
                 return Game.Instance.OnUnpause;
             }
         }
+
         public static UnityEvent OnFinish
         {
             get
             {
                 return Game.Instance.OnFinish;
+            }
+        }
+        public static UnityEvent OnAbort
+        {
+            get
+            {
+                return Game.Instance.OnAbort;
             }
         }
 

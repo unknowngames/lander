@@ -10,6 +10,7 @@ namespace Assets.Scripts
         private UnityEvent onPause;
         private UnityEvent onUnpause;
         private UnityEvent onFinish;
+        private UnityEvent onAbort;
 
         public UnityEvent OnBegin
         {
@@ -40,6 +41,14 @@ namespace Assets.Scripts
             get
             {
                 return onFinish ?? (onFinish = new UnityEvent());
+            }
+        }
+
+        public UnityEvent OnAbort
+        {
+            get
+            {
+                return onAbort ?? (onAbort = new UnityEvent());
             }
         }
 
