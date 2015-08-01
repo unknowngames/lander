@@ -111,8 +111,6 @@ namespace Assets.Scripts
                 float scale = Mathf.Lerp(1.0f, FarScale, normalizedDistance);    
 
                 Target.transform.localScale = new Vector3(scale,scale,scale);
-
-                Debug.Log(scale);
             }
             
 
