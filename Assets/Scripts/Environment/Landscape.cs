@@ -2,32 +2,27 @@ using UnityEngine;
 
 namespace Assets.Scripts.Environment
 {
-    public class Landscape : MonoBehaviour
+    public class Landscape : LandscapeBase
     {
         [SerializeField]
-        private Renderer landscapeRenderer;
+        private LandscapePart[] landscapeParts;
 
-        public Bounds Bounds
+        public override Bounds Bounds
         {
             get
             {
-                if (landscapeRenderer != null)
+                if (landscapeParts != null && landscapeParts.Length > 0)
                 {
-                    return landscapeRenderer.bounds;
+                    Bounds b = landscapeParts[0].Bounds;
+
+                    foreach (LandscapePart part in landscapeParts)
+                    {
+                        b.Encapsulate(part.Bounds);
+                    }
+                    return b;
                 }
                 return new Bounds();
             }
-        }
-
-        public Vector3 Position
-        {
-            get { return transform.position; }
-            set { transform.position = value; }
-        }
-
-        public void OnDrawGizmos()
-        {
-            Gizmos.DrawWireCube(Bounds.center, Bounds.size);
         }
     }
 }
