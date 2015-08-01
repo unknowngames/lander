@@ -20,13 +20,22 @@ namespace Assets.Scripts.UI
             if (GameHelper.PlayerSpaceship != null)
             {
                 string format = System.String.Format("Fuel remain: {0:F0}", GameHelper.PlayerSpaceship.RemainingFuel);
-                throttleText.text = format;
+                if (throttleText != null)
+                {
+                    throttleText.text = format;
+                }
 
-                format = System.String.Format("Height : {0:F0}", GameHelper.PlayerSpaceship.FlyHeight);
-                heightText.text = format;
+                format = System.String.Format("{0:F0}", GameHelper.PlayerSpaceship.FlyHeight);
+                if (heightText != null)
+                {
+                    heightText.text = format;
+                }
 
-                format = System.String.Format("Speed : {0:F0}", GameHelper.PlayerSpaceship.Velosity.magnitude);
-                speedText.text = format;
+                format = System.String.Format("{0:F0}", GameHelper.PlayerSpaceship.Velosity.magnitude);
+                if (speedText != null)
+                {
+                    speedText.text = format;
+                }
             }
         }    
     }
