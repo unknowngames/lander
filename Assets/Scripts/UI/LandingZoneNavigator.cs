@@ -3,9 +3,10 @@ using System.Collections.Generic;
 
 namespace Assets.Scripts.UI
 {
-	public class LandingZoneNavigator : MonoBehaviour 
-	{
-		public Sprite Pointer;
+	public class LandingZoneNavigator : MonoBehaviour
+    {
+        [SerializeField]
+        private RectTransform pointerPrefab;
 
 		[SerializeField]
 		private string landingZoneTag = "LandingZone";
@@ -32,27 +33,18 @@ namespace Assets.Scripts.UI
 			pointers = new UnityEngine.UI.Image[maxPointersCount];
 			RectTransform parent = GetComponent<RectTransform> ();
 
-			for (int i=0; i<maxPointersCount; i++) 
+			for (int i=0; i<maxPointersCount; i++)
 			{
-				GameObject pointer = new GameObject("Pointer");
-				var rect = pointer.AddComponent<RectTransform>();
-				rect.SetParent(parent);
-				pointer.AddComponent<CanvasRenderer>();
-				var image = pointer.AddComponent<UnityEngine.UI.Image>();
+			    RectTransform rect = Instantiate(pointerPrefab);
 
+                rect.SetParent(parent, false);
 				rect.pivot = new Vector2(0.5f, 0.5f);
 				rect.anchorMax = new Vector2(0.5f, 0.5f);
 				rect.anchorMin = new Vector2(0.5f, 0.5f);
 
 				rect.localPosition = new Vector2(0.0f, -radius);
 
-				rect.sizeDelta = new Vector2(Pointer.texture.width, Pointer.texture.height);
-
-
-				image.sprite = Pointer;
-				image.color = new Color(1,1,1,0);
-
-				pointers[i] = image;
+                pointers[i] = rect.GetComponent<UnityEngine.UI.Image>();
 			}
 		}
 		
