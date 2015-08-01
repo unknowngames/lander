@@ -7,12 +7,7 @@ using UnityEngine.EventSystems;
 namespace Assets.Scripts.UI
 {
     public class GameUINavigator : UIBehaviour
-    {                                        
-        [SerializeField]
-        private SpaceshipControllerUI controllerUIPrefab;
-
-        private SpaceshipControllerUI controllerUIInstance;
-                                             
+    {                                                         
         [SerializeField]
         private PauseMenuUI pauseMenuUIPrefab;
 
@@ -33,9 +28,6 @@ namespace Assets.Scripts.UI
         {
             base.Awake ();
 
-            controllerUIInstance = Instantiate (controllerUIPrefab);
-            controllerUIInstance.transform.SetParent (transform, false);
-
             pauseMenuUIInstance = Instantiate (pauseMenuUIPrefab);
             pauseMenuUIInstance.transform.SetParent (transform, false);
 
@@ -45,7 +37,7 @@ namespace Assets.Scripts.UI
             gameMenuUIInstance = Instantiate(gameMenuUIPrefab);
             gameMenuUIInstance.transform.SetParent(transform, false);
 
-            Show(gameMenuUIInstance, controllerUIInstance);
+            Show(gameMenuUIInstance);
         }
 
 
@@ -73,7 +65,6 @@ namespace Assets.Scripts.UI
 
         private void HideAll()
         {
-            controllerUIInstance.Hide();
             pauseMenuUIInstance.Hide();
             resultMenuUIInstance.Hide();
             gameMenuUIInstance.Hide ();
@@ -96,7 +87,7 @@ namespace Assets.Scripts.UI
 
         private void OnBeginGame ()
         {          
-            Show(gameMenuUIInstance, controllerUIInstance);
+            Show(gameMenuUIInstance);
         }
 
         private void OnFinishGame()
@@ -111,7 +102,7 @@ namespace Assets.Scripts.UI
 
         private void OnUnpauseGame()
         {
-            Show(gameMenuUIInstance, controllerUIInstance);
+            Show(gameMenuUIInstance);
         }
 
         private void OnAbortGame()
