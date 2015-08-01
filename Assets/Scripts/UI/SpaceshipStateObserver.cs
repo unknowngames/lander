@@ -13,6 +13,9 @@ namespace Assets.Scripts.UI
         private Text heightText;
 
         [SerializeField]
+        private Text vSpeedText;
+
+        [SerializeField]
         private Text speedText;
 
         public void Update ()
@@ -35,6 +38,12 @@ namespace Assets.Scripts.UI
                 if (speedText != null)
                 {
                     speedText.text = format;
+                }
+
+                format = System.String.Format("{0:F0}", Mathf.Abs(GameHelper.PlayerSpaceship.Velosity.y));
+                if (vSpeedText != null)
+                {
+                    vSpeedText.text = format;
                 }
             }
         }    
