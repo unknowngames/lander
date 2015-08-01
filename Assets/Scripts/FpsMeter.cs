@@ -45,7 +45,7 @@ namespace Assets.Scripts
             if (timeleft <= 0.0)
             {
                 float fps = accum / frames;
-                string format = System.String.Format("{0:F2} FPS", fps);
+                string format = System.String.Format("{0:F0} FPS", fps);
                 text.text = format;
 
                 if (fps < 30)
