@@ -64,8 +64,10 @@ namespace Assets.Scripts.Spaceship.Effects.Animators
                 throttleLevel = spaceship.EnginePower;
             }
 
-            MainRenderer.velocityScale = (mainParameters.MaxSpeedScale - mainParameters.MinSpeedScale) * throttleLevel;
-            GlowRenderer.velocityScale = (glowParameters.MaxSpeedScale - glowParameters.MinSpeedScale) * throttleLevel;
+            var scale = spaceship.transform.localScale.x;
+
+            MainRenderer.velocityScale = (mainParameters.MaxSpeedScale - mainParameters.MinSpeedScale) * throttleLevel * scale;
+            GlowRenderer.velocityScale = (glowParameters.MaxSpeedScale - glowParameters.MinSpeedScale) * throttleLevel * scale;
         }   
     }
 }

@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.Scripts
 {
     public class CameraSmoothFolower : MonoBehaviour
     {
         public Transform Target;
+
+        public bool ScaleTarget = false;
+        public float FarScale = 2;
+        private float currentScale = 1;
+
         [SerializeField]
         private float distance = 750;
 
@@ -38,6 +39,10 @@ namespace Assets.Scripts
 
         GameObject[] zoomTargets;
 
+#if UNITY_EDITOR
+        public bool debugViewDistance = false;
+#endif
+
 
         void Start()
         {
@@ -60,7 +65,10 @@ namespace Assets.Scripts
                 Target = GameHelper.PlayerSpaceship.transform;
             }
 
-            if(Target != null && zoomTargets != null)
+            if(Target == null)
+                return;
+
+            if(zoomTargets != null)
             {
                 Transform closestTarget = null;
                 float closestDistance = float.MaxValue;
@@ -87,8 +95,28 @@ namespace Assets.Scripts
                     targetZoomDistance = distance;
                 }
 
+#if UNITY_EDITOR
+                if (debugViewDistance)
+                {
+                    targetZoomDistance = zoomViewDistance;
+                }
+#endif
+
                 currentZoomDistance = Mathf.Lerp(currentZoomDistance, targetZoomDistance, Time.deltaTime * zoomSpeed);
             }
+
+            if (ScaleTarget)
+            {
+                float normalizedDistance = (currentZoomDistance - zoomViewDistance) / (distance - zoomViewDistance);
+                float scale = Mathf.Lerp(1.0f, FarScale, normalizedDistance);    
+
+                Target.transform.localScale = new Vector3(scale,scale,scale);
+
+                Debug.Log(scale);
+            }
+            
+
+
         }
 
         public void FixedUpdate ()
