@@ -28,26 +28,16 @@ namespace Assets.Scripts.Spaceship.Effects.Animators
         private SpaceshipBehaviour spaceship;
 
         [SerializeField]
-        private ParticleSystem main;
-        [SerializeField]
-        private ParticleSystem glow;
+        private ParticleSystem particleSystem;
 
         [SerializeField]
-        private ParticleSystemParameters mainParameters;
-        [SerializeField]
-        private ParticleSystemParameters glowParameters;
+        private ParticleSystemParameters parameters;
 
 
         private ParticleSystemRenderer mainRenderer;
         private ParticleSystemRenderer MainRenderer
         {
-            get { return mainRenderer ?? (mainRenderer = main.GetComponent<ParticleSystemRenderer>()); }
-        }
-        
-        private ParticleSystemRenderer glowRenderer;
-        private ParticleSystemRenderer GlowRenderer
-        {
-            get { return glowRenderer ?? (glowRenderer = glow.GetComponent<ParticleSystemRenderer>()); }
+            get { return mainRenderer ?? (mainRenderer = particleSystem.GetComponent<ParticleSystemRenderer>()); }
         }
 
         [SerializeField]
@@ -57,6 +47,7 @@ namespace Assets.Scripts.Spaceship.Effects.Animators
         [Range(0, 1)]   
         private float throttleLevel;
 
+        // ReSharper disable once UnusedMember.Global
         public void Update ()
         {
             if (!debugMode)
@@ -64,10 +55,9 @@ namespace Assets.Scripts.Spaceship.Effects.Animators
                 throttleLevel = spaceship.EnginePower;
             }
 
-            var scale = spaceship.transform.localScale.x;
+            float scale = spaceship.transform.localScale.x;
 
-            MainRenderer.velocityScale = (mainParameters.MaxSpeedScale - mainParameters.MinSpeedScale) * throttleLevel * scale;
-            GlowRenderer.velocityScale = (glowParameters.MaxSpeedScale - glowParameters.MinSpeedScale) * throttleLevel * scale;
+            MainRenderer.velocityScale = (parameters.MaxSpeedScale - parameters.MinSpeedScale) * throttleLevel * scale;
         }   
     }
 }
