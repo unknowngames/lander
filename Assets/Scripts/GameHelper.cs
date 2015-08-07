@@ -7,74 +7,57 @@ namespace Assets.Scripts
     {
         public static UnityEvent OnBegin
         {
-            get
-            {
-                return Game.Instance.OnBegin;
-            }
+            get { return Game.Instance.OnBegin; }
         }
 
         public static UnityEvent OnPause
         {
-            get
-            {
-                return Game.Instance.OnPause;
-            }
+            get { return Game.Instance.OnPause; }
         }
 
         public static UnityEvent OnUnpause
         {
-            get
-            {
-                return Game.Instance.OnUnpause;
-            }
+            get { return Game.Instance.OnUnpause; }
         }
 
         public static UnityEvent OnFinish
         {
-            get
-            {
-                return Game.Instance.OnFinish;
-            }
+            get { return Game.Instance.OnFinish; }
         }
+
+        public static UnityEvent OnMissionCompleted
+        {
+            get { return Game.Instance.OnMissionCompleted; }
+        }
+
         public static UnityEvent OnAbort
         {
-            get
-            {
-                return Game.Instance.OnAbort;
-            }
+            get { return Game.Instance.OnAbort; }
         }
 
         public static SpaceshipBehaviour PlayerSpaceship
         {
-            get
-            {
-                return Game.Instance.PlayerSpaceship;
-            }
+            get { return Game.Instance.PlayerSpaceship; }
         }
 
-        public static void Begin ()
+        public static void Begin()
         {
-            Game.Instance.Begin ();
+            Game.Instance.Begin();
         }
 
-        public static void Abort ()
+        public static void Abort()
         {
-            Game.Instance.Abort ();
+            Game.Instance.Abort();
         }
 
-        public static void Pause ()
+        public static void Pause()
         {
-            Game.Instance.Pause ();
+            Game.Instance.Pause();
         }
 
-        public static void Unpause ()
+        public static void Unpause()
         {
-            Game.Instance.Unpause ();
-        }
-
-        public static void Finish ()
-        {
-            Game.Instance.Finish ();
+            Game.Instance.Unpause();
         }
     }
 }

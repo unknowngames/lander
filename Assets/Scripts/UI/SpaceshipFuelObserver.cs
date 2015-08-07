@@ -13,7 +13,7 @@ namespace Assets.Scripts.UI
         {
             if (GameHelper.PlayerSpaceship != null)
             {
-                string format = System.String.Format("Fuel remain: {0:F0}", GameHelper.PlayerSpaceship.RemainingFuel);
+                string format = System.String.Format("{0:F0}", GameHelper.PlayerSpaceship.RemainingFuel);
                 if (fuelText != null)
                 {
                     fuelText.text = format;

@@ -31,5 +31,8 @@ namespace Assets.Scripts.Interfaces
         bool IsPaused { get; set; }
 
         void Reset ();
+
+        ISpaceshipState Save();
+        void Restore(ISpaceshipState state);
     }
 }

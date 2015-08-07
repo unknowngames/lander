@@ -85,7 +85,6 @@ namespace Assets.Scripts.Spaceship
             if (touchdownTrigger.Landed && !IsLanded)
             {
                 DoLand();
-                GameHelper.Finish();
             }
         }
 
@@ -137,6 +136,16 @@ namespace Assets.Scripts.Spaceship
             crashTrigger.Reset();
         }
 
+        public ISpaceshipState Save()
+        {
+            return SpaceshipState.Create(RemainingFuel);
+        }
+
+        public void Restore(ISpaceshipState state)
+        {
+            RemainingFuel = state.RemainingFuel;
+        }
+
         public void OnCollisionEnter(Collision collision)
         {
             ProcessCollisionEvent(collision);
@@ -179,6 +188,7 @@ namespace Assets.Scripts.Spaceship
 
         private void Landed()
         {
+            LandEvent.Invoke();
         }
 
         private bool VelosityTest(Collision collision)
