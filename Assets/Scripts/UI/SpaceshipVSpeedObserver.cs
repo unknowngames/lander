@@ -13,7 +13,7 @@ namespace Assets.Scripts.UI
         {
             if (GameHelper.PlayerSpaceship != null)
             {
-                string format = System.String.Format("{0:F0}", Mathf.Abs(GameHelper.PlayerSpaceship.Velosity.y));
+                string format = System.String.Format("{0:F2}", Mathf.Abs(GameHelper.PlayerSpaceship.Velosity.y));
                 if (vSpeedText != null)
                 {
                     vSpeedText.text = format;

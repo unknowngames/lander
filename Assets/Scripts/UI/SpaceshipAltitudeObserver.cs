@@ -14,7 +14,7 @@ namespace Assets.Scripts.UI
         {
             if (GameHelper.PlayerSpaceship != null)
             {             
-                string format = System.String.Format("{0:F0}", GameHelper.PlayerSpaceship.FlyHeight);
+                string format = System.String.Format("{0:F2}", GameHelper.PlayerSpaceship.FlyHeight);
                 if (altitudeText != null)
                 {
                     altitudeText.text = format;
