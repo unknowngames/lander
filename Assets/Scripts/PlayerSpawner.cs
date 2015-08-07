@@ -11,7 +11,7 @@ namespace Assets.Scripts
         private SpaceshipBehaviour spaceshipBehaviourPrefab;
 
         [SerializeField]
-        private Transform spawnPosition;
+        private SpawnZone spawnZone;
 
         [SerializeField]
         private float playerStartImpulsePower = 500;
@@ -21,8 +21,7 @@ namespace Assets.Scripts
         public SpaceshipBehaviour CreatePlayerAndRandomMove()
         {
             Vector3 randomDirection = Vector3.right;
-            randomDirection *= UnityEngine.Random.Range(0, 2) == 0 ? -1 : 1;
-            randomDirection *= playerStartImpulsePower;
+            randomDirection *= playerStartImpulsePower*UnityEngine.Random.Range(-2, 2);
 
             return CreatePlayer(randomDirection);
         }
@@ -36,8 +35,10 @@ namespace Assets.Scripts
             
             spaceshipBehaviourInstance.Reset ();
 
-            spaceshipBehaviourInstance.transform.position = spawnPosition.position;
-            spaceshipBehaviourInstance.transform.rotation = spawnPosition.rotation;
+            spaceshipBehaviourInstance.transform.position = spawnZone.GetRandomPosition();
+
+
+            spaceshipBehaviourInstance.transform.rotation = Quaternion.identity;
             
             spaceshipBehaviourInstance.gameObject.SetActive (true);
             
