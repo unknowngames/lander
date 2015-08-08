@@ -39,7 +39,8 @@ namespace Assets.Scripts
 
         private IGameSessionStorage gameSessionStorage;
 
-        private UnityEvent onBegin; 
+        private UnityEvent onBegin;
+        private UnityEvent onSuspended;
         private UnityEvent onPause;
         private UnityEvent onUnpause;
         private UnityEvent onFinish;
@@ -53,6 +54,15 @@ namespace Assets.Scripts
                 return onBegin ?? (onBegin = new UnityEvent());
             }
         }
+
+        public UnityEvent OnSuspended
+        {
+            get
+            {
+                return onSuspended ?? (onSuspended = new UnityEvent());
+            }
+        }
+
         public UnityEvent OnPause
         {
             get
@@ -60,6 +70,7 @@ namespace Assets.Scripts
                 return onPause ?? (onPause = new UnityEvent());
             }
         }
+
         public UnityEvent OnUnpause
         {
             get
@@ -67,6 +78,7 @@ namespace Assets.Scripts
                 return onUnpause ?? (onUnpause = new UnityEvent());
             }
         }
+
         public UnityEvent OnFinish
         {
             get
@@ -74,6 +86,7 @@ namespace Assets.Scripts
                 return onFinish ?? (onFinish = new UnityEvent());
             }
         }
+
         public UnityEvent OnMissionCompleted
         {
             get
@@ -81,6 +94,7 @@ namespace Assets.Scripts
                 return onMissionCompleted ?? (onMissionCompleted = new UnityEvent());
             }
         }
+
         public UnityEvent OnAbort
         {
             get
@@ -94,6 +108,14 @@ namespace Assets.Scripts
             if (OnBegin != null)
             {
                 OnBegin.Invoke();
+            }
+        }
+
+        private void OnSuspendedCall()
+        {
+            if (OnSuspended != null)
+            {
+                OnSuspended.Invoke();
             }
         }
 
@@ -157,6 +179,15 @@ namespace Assets.Scripts
             }
 
             OnBeginCall ();
+        }
+
+        public void Suspend()
+        {
+            gameSessionStorage.SaveGameSession(this);
+
+            Clean();
+            OnSuspendedCall();
+            Application.LoadLevelAsync(0);
         }
 
         public void Abort()

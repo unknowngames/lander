@@ -45,6 +45,11 @@ namespace Assets.Scripts
             Game.Instance.Begin();
         }
 
+        public static void Suspend()
+        {
+            Game.Instance.Suspend();
+        }
+
         public static void Abort()
         {
             Game.Instance.Abort();

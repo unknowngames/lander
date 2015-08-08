@@ -15,6 +15,7 @@ namespace Assets.Scripts
         SpaceshipBehaviour PlayerSpaceship { get; }
 
         void Begin();
+        void Suspend();
         void Abort();
         void Pause();
         void Unpause();
