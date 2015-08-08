@@ -31,16 +31,26 @@ namespace Assets.Scripts.Session
             //current.ScorePoints++;
         }
 
-        public IGameScore Calculate()
+        public IGameSession Calculate()
         {
+            ISpaceshipState lastState = game.PlayerSpaceship.Save();
+            SpaceshipState newState = SpaceshipState.Create(lastState);
+
             if (game.PlayerSpaceship.IsLanded)
             {
                 current.LandingsCount++;
                 current.ScorePoints += 50 * game.PlayerSpaceship.TouchdownTrigger.Zone.ScoreMultiplier;
-                current.ScorePoints += (int) (lastSession.Spaceship.RemainingFuel - game.PlayerSpaceship.RemainingFuel);
+                newState.RemainingFuel += 50;
+
+                //current.ScorePoints += (int)(lastSession.Spaceship.RemainingFuel - game.PlayerSpaceship.RemainingFuel);
             }
 
-            return current;
+            if (game.PlayerSpaceship.IsCrashed)
+            {
+                current.ScorePoints += 5;
+            }
+
+            return GameSession.Create(newState, current);
         }
     }
 }

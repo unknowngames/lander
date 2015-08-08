@@ -208,10 +208,8 @@ namespace Assets.Scripts
 
         public IGameSession Save()
         {
-            ISpaceshipState spaceshipState = PlayerSpaceship.Save();
-            IGameScore gameScore = scoreCalculator.Calculate();
-
-            return GameSession.Create(spaceshipState, gameScore);
+            IGameSession gameScore = scoreCalculator.Calculate();
+            return gameScore;
         }
 
         public void Restore(IGameSession session)

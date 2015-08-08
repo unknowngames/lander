@@ -9,11 +9,16 @@ namespace Assets.Scripts.Session
             RemainingFuel = remainingFuel;
         }
 
-        public float RemainingFuel { get; private set; }
+        public float RemainingFuel { get; set; }
 
         public static SpaceshipState Create(float remainingFuel)
         {
             return new SpaceshipState(remainingFuel);
+        }
+
+        public static SpaceshipState Create(ISpaceshipState state)
+        {
+            return Create(state.RemainingFuel);
         }
     }
 }
