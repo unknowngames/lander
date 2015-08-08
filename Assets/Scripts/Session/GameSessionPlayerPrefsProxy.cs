@@ -1,4 +1,7 @@
-﻿namespace Assets.Scripts
+﻿using Assets.Scripts.Common;
+using Assets.Scripts.Interfaces;
+
+namespace Assets.Scripts.Session
 {
     public static class GameSessionPlayerPrefsProxy
     {

@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Interfaces;
 
-namespace Assets.Scripts
+namespace Assets.Scripts.Session
 {
     public class GameSession : IGameSession
     {

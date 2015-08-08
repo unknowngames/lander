@@ -1,11 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Xml.Serialization;
 using UnityEngine;
 
-namespace Assets.Scripts
+namespace Assets.Scripts.Common
 {
     public class PlayerPrefsX
     {
@@ -104,7 +102,7 @@ namespace Assets.Scripts
             // unsigned, to prevent loss of sign bit.
             ulong ret = (uint)highBits;
             ret = (ret << 32);
-            return (long)(ret | (ulong)(uint)lowBits);
+            return (long)(ret | (uint)lowBits);
         }
  
         public static long GetLong(string key)
@@ -115,7 +113,7 @@ namespace Assets.Scripts
             // unsigned, to prevent loss of sign bit.
             ulong ret = (uint)highBits;
             ret = (ret << 32);
-            return (long)(ret | (ulong)(uint)lowBits);
+            return (long)(ret | (uint)lowBits);
         }
  
         private static void SplitLong(long input, out int lowBits, out int highBits)
@@ -135,12 +133,12 @@ namespace Assets.Scripts
  
         public static bool SetVector2 (String key, Vector2 vector)
         {
-            return SetFloatArray(key, new float[]{vector.x, vector.y});
+            return SetFloatArray(key, new[]{vector.x, vector.y});
         }
  
         private static Vector2 GetVector2 (String key)
         {
-            var floatArray = GetFloatArray(key);
+            float[] floatArray = GetFloatArray(key);
             if (floatArray.Length < 2)
             {
                 return Vector2.zero;
@@ -159,12 +157,12 @@ namespace Assets.Scripts
  
         public static bool SetVector3 (String key, Vector3 vector)
         {
-            return SetFloatArray(key, new float []{vector.x, vector.y, vector.z});
+            return SetFloatArray(key, new[]{vector.x, vector.y, vector.z});
         }
  
         public static Vector3 GetVector3 (String key)
         {
-            var floatArray = GetFloatArray(key);
+            float[] floatArray = GetFloatArray(key);
             if (floatArray.Length < 3)
             {
                 return Vector3.zero;
@@ -183,12 +181,12 @@ namespace Assets.Scripts
  
         public static bool SetQuaternion (String key, Quaternion vector)
         {
-            return SetFloatArray(key, new float[]{vector.x, vector.y, vector.z, vector.w});
+            return SetFloatArray(key, new[]{vector.x, vector.y, vector.z, vector.w});
         }
  
         public static Quaternion GetQuaternion (String key)
         {
-            var floatArray = GetFloatArray(key);
+            float[] floatArray = GetFloatArray(key);
             if (floatArray.Length < 4)
             {
                 return Quaternion.identity;
@@ -207,12 +205,12 @@ namespace Assets.Scripts
  
         public static bool SetColor (String key, Color color)
         {
-            return SetFloatArray(key, new float[]{color.r, color.g, color.b, color.a});
+            return SetFloatArray(key, new[]{color.r, color.g, color.b, color.a});
         }
  
         public static Color GetColor (String key)
         {
-            var floatArray = GetFloatArray(key);
+            float[] floatArray = GetFloatArray(key);
             if (floatArray.Length < 4)
             {
                 return new Color(0.0f, 0.0f, 0.0f, 0.0f);
@@ -233,9 +231,9 @@ namespace Assets.Scripts
         {
             // Make a byte array that's a multiple of 8 in length, plus 5 bytes to store the number of entries as an int32 (+ identifier)
             // We have to store the number of entries, since the boolArray length might not be a multiple of 8, so there could be some padded zeroes
-            var bytes = new byte[(boolArray.Length + 7)/8 + 5];
-            bytes[0] = System.Convert.ToByte (ArrayType.Bool);	// Identifier
-            var bits = new BitArray(boolArray);
+            byte[] bytes = new byte[(boolArray.Length + 7)/8 + 5];
+            bytes[0] = Convert.ToByte (ArrayType.Bool);	// Identifier
+            BitArray bits = new BitArray(boolArray);
             bits.CopyTo (bytes, 5);
             Initialize();
             ConvertInt32ToBytes (boolArray.Length, bytes); // The number of entries in the boolArray goes in the first 4 bytes
@@ -247,7 +245,7 @@ namespace Assets.Scripts
         {
             if (HasKey(key))
             {
-                var bytes = System.Convert.FromBase64String (PlayerPrefs.GetString(key));
+                byte[] bytes = Convert.FromBase64String (PlayerPrefs.GetString(key));
                 if (bytes.Length < 5)
                 {
                     Debug.LogError ("Corrupt preference file for " + key);
@@ -261,12 +259,12 @@ namespace Assets.Scripts
                 Initialize();
  
                 // Make a new bytes array that doesn't include the number of entries + identifier (first 5 bytes) and turn that into a BitArray
-                var bytes2 = new byte[bytes.Length-5];
-                System.Array.Copy(bytes, 5, bytes2, 0, bytes2.Length);
-                var bits = new BitArray(bytes2);
+                byte[] bytes2 = new byte[bytes.Length-5];
+                Array.Copy(bytes, 5, bytes2, 0, bytes2.Length);
+                BitArray bits = new BitArray(bytes2);
                 // Get the number of entries from the first 4 bytes after the identifier and resize the BitArray to that length, then convert it to a boolean array
                 bits.Length = ConvertBytesToInt32 (bytes);
-                var boolArray = new bool[bits.Count];
+                bool[] boolArray = new bool[bits.Count];
                 bits.CopyTo (boolArray, 0);
  
                 return boolArray;
@@ -280,7 +278,7 @@ namespace Assets.Scripts
             {
                 return GetBoolArray(key);
             }
-            var boolArray = new bool[defaultSize];
+            bool[] boolArray = new bool[defaultSize];
             for(int i=0;i<defaultSize;i++)
             {
                 boolArray[i] = defaultValue;
@@ -290,12 +288,12 @@ namespace Assets.Scripts
  
         public static bool SetStringArray (String key, String[] stringArray)
         {
-            var bytes = new byte[stringArray.Length + 1];
-            bytes[0] = System.Convert.ToByte (ArrayType.String);	// Identifier
+            byte[] bytes = new byte[stringArray.Length + 1];
+            bytes[0] = Convert.ToByte (ArrayType.String);	// Identifier
             Initialize();
  
             // Store the length of each string that's in stringArray, so we can extract the correct strings in GetStringArray
-            for (var i = 0; i < stringArray.Length; i++)
+            for (int i = 0; i < stringArray.Length; i++)
             {
                 if (stringArray[i] == null)
                 {
@@ -312,7 +310,7 @@ namespace Assets.Scripts
  
             try
             {
-                PlayerPrefs.SetString (key, System.Convert.ToBase64String (bytes) + "|" + String.Join("", stringArray));
+                PlayerPrefs.SetString (key, Convert.ToBase64String (bytes) + "|" + String.Join("", stringArray));
             }
             catch
             {
@@ -324,23 +322,23 @@ namespace Assets.Scripts
         public static String[] GetStringArray (String key)
         {
             if (HasKey(key)) {
-                var completeString = PlayerPrefs.GetString(key);
-                var separatorIndex = completeString.IndexOf("|"[0]);
+                string completeString = PlayerPrefs.GetString(key);
+                int separatorIndex = completeString.IndexOf("|"[0]);
                 if (separatorIndex < 4) {
                     Debug.LogError ("Corrupt preference file for " + key);
                     return new String[0];
                 }
-                var bytes = System.Convert.FromBase64String (completeString.Substring(0, separatorIndex));
+                byte[] bytes = Convert.FromBase64String (completeString.Substring(0, separatorIndex));
                 if ((ArrayType)bytes[0] != ArrayType.String) {
                     Debug.LogError (key + " is not a string array");
                     return new String[0];
                 }
                 Initialize();
  
-                var numberOfEntries = bytes.Length-1;
-                var stringArray = new String[numberOfEntries];
-                var stringIndex = separatorIndex + 1;
-                for (var i = 0; i < numberOfEntries; i++)
+                int numberOfEntries = bytes.Length-1;
+                string[] stringArray = new String[numberOfEntries];
+                int stringIndex = separatorIndex + 1;
+                for (int i = 0; i < numberOfEntries; i++)
                 {
                     int stringLength = bytes[idx++];
                     if (stringIndex + stringLength > completeString.Length)
@@ -363,7 +361,7 @@ namespace Assets.Scripts
             {
                 return GetStringArray(key);
             }
-            var stringArray = new String[defaultSize];
+            string[] stringArray = new String[defaultSize];
             for(int i=0;i<defaultSize;i++)
             {
                 stringArray[i] = defaultValue;
@@ -403,11 +401,11 @@ namespace Assets.Scripts
  
         private static bool SetValue<T> (String key, T array, ArrayType arrayType, int vectorNumber, Action<T, byte[],int> convert) where T : IList
         {
-            var bytes = new byte[(4*array.Count)*vectorNumber + 1];
-            bytes[0] = System.Convert.ToByte (arrayType);	// Identifier
+            byte[] bytes = new byte[(4*array.Count)*vectorNumber + 1];
+            bytes[0] = Convert.ToByte (arrayType);	// Identifier
             Initialize();
  
-            for (var i = 0; i < array.Count; i++) {
+            for (int i = 0; i < array.Count; i++) {
                 convert (array, bytes, i);	
             }
             return SaveBytes (key, bytes);
@@ -454,7 +452,7 @@ namespace Assets.Scripts
  
         public static int[] GetIntArray (String key)
         {
-            var intList = new List<int>();
+            List<int> intList = new List<int>();
             GetValue (key, intList, ArrayType.Int32, 1, ConvertToInt);
             return intList.ToArray();
         }
@@ -465,7 +463,7 @@ namespace Assets.Scripts
             {
                 return GetIntArray(key);
             }
-            var intArray = new int[defaultSize];
+            int[] intArray = new int[defaultSize];
             for (int i=0; i<defaultSize; i++)
             {
                 intArray[i] = defaultValue;
@@ -475,7 +473,7 @@ namespace Assets.Scripts
  
         public static float[] GetFloatArray (String key)
         {
-            var floatList = new List<float>();
+            List<float> floatList = new List<float>();
             GetValue (key, floatList, ArrayType.Float, 1, ConvertToFloat);
             return floatList.ToArray();
         }
@@ -486,7 +484,7 @@ namespace Assets.Scripts
             {
                 return GetFloatArray(key);
             }
-            var floatArray = new float[defaultSize];
+            float[] floatArray = new float[defaultSize];
             for (int i=0; i<defaultSize; i++)
             {
                 floatArray[i] = defaultValue;
@@ -496,7 +494,7 @@ namespace Assets.Scripts
  
         public static Vector2[] GetVector2Array (String key)
         {
-            var vector2List = new List<Vector2>();
+            List<Vector2> vector2List = new List<Vector2>();
             GetValue (key, vector2List, ArrayType.Vector2, 2, ConvertToVector2);
             return vector2List.ToArray();
         }
@@ -507,7 +505,7 @@ namespace Assets.Scripts
             {
                 return GetVector2Array(key);
             }
-            var vector2Array = new Vector2[defaultSize];
+            Vector2[] vector2Array = new Vector2[defaultSize];
             for(int i=0; i< defaultSize;i++)
             {
                 vector2Array[i] = defaultValue;
@@ -517,7 +515,7 @@ namespace Assets.Scripts
  
         public static Vector3[] GetVector3Array (String key)
         {
-            var vector3List = new List<Vector3>();
+            List<Vector3> vector3List = new List<Vector3>();
             GetValue (key, vector3List, ArrayType.Vector3, 3, ConvertToVector3);
             return vector3List.ToArray();
         }
@@ -529,7 +527,7 @@ namespace Assets.Scripts
             {
                 return GetVector3Array(key);
             }
-            var vector3Array = new Vector3[defaultSize];
+            Vector3[] vector3Array = new Vector3[defaultSize];
             for (int i=0; i<defaultSize;i++)
             {
                 vector3Array[i] = defaultValue;
@@ -539,7 +537,7 @@ namespace Assets.Scripts
  
         public static Quaternion[] GetQuaternionArray (String key)
         {
-            var quaternionList = new List<Quaternion>();
+            List<Quaternion> quaternionList = new List<Quaternion>();
             GetValue (key, quaternionList, ArrayType.Quaternion, 4, ConvertToQuaternion);
             return quaternionList.ToArray();
         }
@@ -550,7 +548,7 @@ namespace Assets.Scripts
             {
                 return GetQuaternionArray(key);
             }
-            var quaternionArray = new Quaternion[defaultSize];
+            Quaternion[] quaternionArray = new Quaternion[defaultSize];
             for(int i=0;i<defaultSize;i++)
             {
                 quaternionArray[i] = defaultValue;
@@ -560,7 +558,7 @@ namespace Assets.Scripts
  
         public static Color[] GetColorArray (String key)
         {
-            var colorList = new List<Color>();
+            List<Color> colorList = new List<Color>();
             GetValue (key, colorList, ArrayType.Color, 4, ConvertToColor);
             return colorList.ToArray();
         }
@@ -570,7 +568,7 @@ namespace Assets.Scripts
             if (HasKey(key)) {
                 return GetColorArray(key);
             }
-            var colorArray = new Color[defaultSize];
+            Color[] colorArray = new Color[defaultSize];
             for(int i=0;i<defaultSize;i++)
             {
                 colorArray[i] = defaultValue;
@@ -582,7 +580,7 @@ namespace Assets.Scripts
         {
             if (HasKey(key))
             {
-                var bytes = System.Convert.FromBase64String (PlayerPrefs.GetString(key));
+                byte[] bytes = Convert.FromBase64String (PlayerPrefs.GetString(key));
                 if ((bytes.Length-1) % (vectorNumber*4) != 0)
                 {
                     Debug.LogError ("Corrupt preference file for " + key);
@@ -595,8 +593,8 @@ namespace Assets.Scripts
                 }
                 Initialize();
  
-                var end = (bytes.Length-1) / (vectorNumber*4);
-                for (var i = 0; i < end; i++)
+                int end = (bytes.Length-1) / (vectorNumber*4);
+                for (int i = 0; i < end; i++)
                 {
                     convert (list, bytes);
                 }
@@ -635,7 +633,7 @@ namespace Assets.Scripts
  
         public static void ShowArrayType (String key)
         {
-            var bytes = System.Convert.FromBase64String (PlayerPrefs.GetString(key));
+            byte[] bytes = Convert.FromBase64String (PlayerPrefs.GetString(key));
             if (bytes.Length > 0)
             {
                 ArrayType arrayType = (ArrayType)bytes[0];
@@ -645,7 +643,7 @@ namespace Assets.Scripts
  
         private static void Initialize ()
         {
-            if (System.BitConverter.IsLittleEndian)
+            if (BitConverter.IsLittleEndian)
             {
                 endianDiff1 = 0;
                 endianDiff2 = 0;
@@ -666,7 +664,7 @@ namespace Assets.Scripts
         {
             try
             {
-                PlayerPrefs.SetString (key, System.Convert.ToBase64String (bytes));
+                PlayerPrefs.SetString (key, Convert.ToBase64String (bytes));
             }
             catch
             {
@@ -677,26 +675,26 @@ namespace Assets.Scripts
  
         private static void ConvertFloatToBytes (float f, byte[] bytes)
         {
-            byteBlock = System.BitConverter.GetBytes (f);
+            byteBlock = BitConverter.GetBytes (f);
             ConvertTo4Bytes (bytes);
         }
  
         private static float ConvertBytesToFloat (byte[] bytes)
         {
             ConvertFrom4Bytes (bytes);
-            return System.BitConverter.ToSingle (byteBlock, 0);
+            return BitConverter.ToSingle (byteBlock, 0);
         }
  
         private static void ConvertInt32ToBytes (int i, byte[] bytes)
         {
-            byteBlock = System.BitConverter.GetBytes (i);
+            byteBlock = BitConverter.GetBytes (i);
             ConvertTo4Bytes (bytes);
         }
  
         private static int ConvertBytesToInt32 (byte[] bytes)
         {
             ConvertFrom4Bytes (bytes);
-            return System.BitConverter.ToInt32 (byteBlock, 0);
+            return BitConverter.ToInt32 (byteBlock, 0);
         }
  
         private static void ConvertTo4Bytes (byte[] bytes)

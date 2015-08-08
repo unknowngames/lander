@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts
+﻿using Assets.Scripts.Interfaces;
+
+namespace Assets.Scripts.Session
 {
     public class GameSessionStorage : IGameSessionStorage
     {

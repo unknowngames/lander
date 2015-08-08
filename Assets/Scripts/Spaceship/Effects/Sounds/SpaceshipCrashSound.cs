@@ -1,28 +1,28 @@
-﻿using System;
-using UnityEngine;
-using System.Collections;
-using Assets.Scripts.Spaceship;
+﻿using UnityEngine;
 
-public class SpaceshipCrashSound : MonoBehaviour
+namespace Assets.Scripts.Spaceship.Effects.Sounds
 {
-    [SerializeField]
-    private AudioSource audioSource;
-
-    [SerializeField]
-    private AudioClip audioClip;
-
-    [SerializeField]
-    private SpaceshipBehaviour spaceshipBehaviour;
-
-    public void Awake()
+    public class SpaceshipCrashSound : MonoBehaviour
     {
-        spaceshipBehaviour.CrashEvent.AddListener(CrashEvent);
-    }
+        [SerializeField]
+        private AudioSource audioSource;
 
-    private void CrashEvent()
-    {
-        float volume = spaceshipBehaviour.Velosity.magnitude * 0.01f * spaceshipBehaviour.RemainingFuel * 0.01f;
-        volume = Mathf.Clamp(volume, 0.0f, 1.0f);
-        audioSource.PlayOneShot(audioClip, volume);
+        [SerializeField]
+        private AudioClip audioClip;
+
+        [SerializeField]
+        private SpaceshipBehaviour spaceshipBehaviour;
+
+        public void Awake()
+        {
+            spaceshipBehaviour.CrashEvent.AddListener(CrashEvent);
+        }
+
+        private void CrashEvent()
+        {
+            float volume = spaceshipBehaviour.Velosity.magnitude * 0.01f * spaceshipBehaviour.RemainingFuel * 0.01f;
+            volume = Mathf.Clamp(volume, 0.0f, 1.0f);
+            audioSource.PlayOneShot(audioClip, volume);
+        }
     }
 }

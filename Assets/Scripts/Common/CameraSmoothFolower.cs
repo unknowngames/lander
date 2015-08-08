@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.Scripts
+namespace Assets.Scripts.Common
 {
     public class CameraSmoothFolower : MonoBehaviour
     {
@@ -44,7 +44,7 @@ namespace Assets.Scripts
 #endif
 
 
-        void Start()
+        public void Start()
         {
             zoomTargets = GameObject.FindGameObjectsWithTag(zoomObjectTag);
 
@@ -75,9 +75,9 @@ namespace Assets.Scripts
 
                 for (int i=0; i<zoomTargets.Length; i++)
                 {
-                    var zoomTarget = zoomTargets[i];
+                    GameObject zoomTarget = zoomTargets[i];
 
-                    var dist = Vector3.Distance(Target.position, zoomTarget.transform.position);
+                    float dist = Vector3.Distance(Target.position, zoomTarget.transform.position);
 
                     if(dist <= zoomStartDistance && dist < closestDistance)
                     {
@@ -145,7 +145,7 @@ namespace Assets.Scripts
                 currentHeight = Mathf.Lerp(currentHeight, wantedHeight, heightDamping * FixedDeltaTime);
 
                 // Convert the angle into a rotation
-                var currentRotation = Quaternion.Euler (0, currentRotationAngle, 0);
+                Quaternion currentRotation = Quaternion.Euler (0, currentRotationAngle, 0);
 
                 // Set the position of the camera on the x-z plane to:
                 // distance meters behind the target

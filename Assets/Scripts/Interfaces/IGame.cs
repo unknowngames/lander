@@ -1,7 +1,7 @@
 ﻿using Assets.Scripts.Spaceship;
 using UnityEngine.Events;
 
-namespace Assets.Scripts
+namespace Assets.Scripts.Interfaces
 {
     public interface IGame
     {

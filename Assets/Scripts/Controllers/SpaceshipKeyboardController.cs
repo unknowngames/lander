@@ -1,76 +1,77 @@
-﻿using UnityEngine;
-using Assets.Scripts;
-using Assets.Scripts.Controllers;
-using Assets.Scripts.Interfaces;
+﻿using Assets.Scripts.Interfaces;
+using UnityEngine;
 
-public class SpaceshipKeyboardController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    private SpaceshipController spaceshipController;       
-
-    private ISpaceshipMoveable spaceshipMoveable;  
-
-    public ISpaceshipMoveable SpaceshipMoveable
+    public class SpaceshipKeyboardController : MonoBehaviour
     {
-        get
+        private SpaceshipController spaceshipController;       
+
+        private ISpaceshipMoveable spaceshipMoveable;  
+
+        public ISpaceshipMoveable SpaceshipMoveable
         {
-            return spaceshipMoveable ??
-                   (spaceshipMoveable = GameHelper.PlayerSpaceship.GetComponent<ISpaceshipMoveable>());
+            get
+            {
+                return spaceshipMoveable ??
+                       (spaceshipMoveable = GameHelper.PlayerSpaceship.GetComponent<ISpaceshipMoveable>());
+            }
+            set
+            {
+                spaceshipMoveable = value;
+            }
         }
-        set
+
+        public void Start()
         {
-            spaceshipMoveable = value;
+            spaceshipController = new SpaceshipController(SpaceshipMoveable);
         }
-    }
 
-    public void Start()
-    {
-        spaceshipController = new SpaceshipController(SpaceshipMoveable);
-    }
+        public void Update()
+        {
+            bool throttleUp = Input.GetButtonUp("Throttle");
+            bool throttleDown = Input.GetButtonDown("Throttle");
 
-    public void Update()
-    {
-        bool throttleUp = Input.GetButtonUp("Throttle");
-        bool throttleDown = Input.GetButtonDown("Throttle");
+            bool rotationClockwiseUp = Input.GetButtonUp("RotationClockwise");
+            bool rotationClockwiseDown = Input.GetButtonDown("RotationClockwise");
 
-        bool rotationClockwiseUp = Input.GetButtonUp("RotationClockwise");
-        bool rotationClockwiseDown = Input.GetButtonDown("RotationClockwise");
-
-        bool rotationCounterClockwiseUp = Input.GetButtonUp("RotationCounterClockwise");
-        bool rotationCounterClockwiseDown = Input.GetButtonDown("RotationCounterClockwise");
+            bool rotationCounterClockwiseUp = Input.GetButtonUp("RotationCounterClockwise");
+            bool rotationCounterClockwiseDown = Input.GetButtonDown("RotationCounterClockwise");
         
-        bool jump = Input.GetButton("Jump");
+            bool jump = Input.GetButton("Jump");
 
 
-        if (throttleDown)
-        {
-            spaceshipController.ChangeThrottle(1.0f);
-        }
-        else if (throttleUp)
-        {
-            spaceshipController.ChangeThrottle(0.0f);
-        }
+            if (throttleDown)
+            {
+                spaceshipController.ChangeThrottle(1.0f);
+            }
+            else if (throttleUp)
+            {
+                spaceshipController.ChangeThrottle(0.0f);
+            }
 
-        if (rotationClockwiseDown)
-        {
-            spaceshipController.ClockwiseRotate(1.0f);
-        }
-        else if (rotationClockwiseUp)
-        {
-            spaceshipController.ClockwiseRotate(0.0f);
-        }
+            if (rotationClockwiseDown)
+            {
+                spaceshipController.ClockwiseRotate(1.0f);
+            }
+            else if (rotationClockwiseUp)
+            {
+                spaceshipController.ClockwiseRotate(0.0f);
+            }
 
-        if (rotationCounterClockwiseDown)
-        {
-            spaceshipController.CounterClockwiseRotate(1.0f);
-        }
-        else if (rotationCounterClockwiseUp)
-        {
-            spaceshipController.CounterClockwiseRotate(0.0f);
-        }
+            if (rotationCounterClockwiseDown)
+            {
+                spaceshipController.CounterClockwiseRotate(1.0f);
+            }
+            else if (rotationCounterClockwiseUp)
+            {
+                spaceshipController.CounterClockwiseRotate(0.0f);
+            }
 
-        if (jump)
-        {
-            spaceshipController.Stabilize();
-        }                                   
+            if (jump)
+            {
+                spaceshipController.Stabilize();
+            }                                   
+        }
     }
 }

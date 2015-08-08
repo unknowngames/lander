@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Assets.Scripts
+﻿namespace Assets.Scripts.Interfaces
 {
     public interface IGameScore
     {

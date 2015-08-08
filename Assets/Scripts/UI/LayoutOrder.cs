@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class LayoutOrder : UIBehaviour
+namespace Assets.Scripts.UI
 {
-    [SerializeField]
-    private int order;
-
-    protected override void OnEnable()
+    public class LayoutOrder : UIBehaviour
     {
-        base.OnEnable();
-        transform.SetSiblingIndex(order);
+        [SerializeField]
+        private int order;
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            transform.SetSiblingIndex(order);
+        }
     }
 }

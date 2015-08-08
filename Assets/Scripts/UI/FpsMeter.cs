@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Scripts
+namespace Assets.Scripts.UI
 {
     public class FpsMeter : MonoBehaviour
     {
@@ -24,9 +24,9 @@ namespace Assets.Scripts
         private float timeleft; // Left time for current interval
         private Text text;
 
-        void Start()
+        public void Start()
         {
-            text = GetComponent<Text> ();
+            text = GetComponent<Text>();
             if (!GetComponent<Text>())
             {
                 Debug.Log("UtilityFramesPerSecond needs a GUIText component!");
@@ -36,25 +36,33 @@ namespace Assets.Scripts
             timeleft = updateInterval;
         }
 
-        void Update()
+        public void Update()
         {
             timeleft -= Time.deltaTime;
-            accum += Time.timeScale / Time.deltaTime;
+            accum += Time.timeScale/Time.deltaTime;
             ++frames;
 
             if (timeleft <= 0.0)
             {
-                float fps = accum / frames;
+                float fps = accum/frames;
                 string format = System.String.Format("{0:F0} FPS", fps);
                 text.text = format;
 
                 if (fps < 30)
+                {
                     text.color = Color.yellow;
+                }
                 else
+                {
                     if (fps < 10)
+                    {
                         text.color = Color.red;
+                    }
                     else
+                    {
                         text.color = Color.green;
+                    }
+                }
                 timeleft = updateInterval;
                 accum = 0.0F;
                 frames = 0;

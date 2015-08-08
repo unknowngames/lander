@@ -1,7 +1,8 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace Assets.Scripts.UI
+namespace Assets.Scripts.UI.HUD
 {
 	public class LandingZoneNavigator : MonoBehaviour
     {
@@ -26,11 +27,11 @@ namespace Assets.Scripts.UI
 		[SerializeField]
 		float minDistance = 50;
 
-		private UnityEngine.UI.Image[] pointers;
+		private Image[] pointers;
 
-		void Start()
+        public void Start()
 		{
-			pointers = new UnityEngine.UI.Image[maxPointersCount];
+			pointers = new Image[maxPointersCount];
 			RectTransform parent = GetComponent<RectTransform> ();
 
 			for (int i=0; i<maxPointersCount; i++)
@@ -44,13 +45,13 @@ namespace Assets.Scripts.UI
 
 				rect.localPosition = new Vector2(0.0f, -radius);
 
-                pointers[i] = rect.GetComponent<UnityEngine.UI.Image>();
+                pointers[i] = rect.GetComponent<Image>();
 			}
 		}
-		
-		void Update()
+
+	    public void Update()
 		{
-			var landingZones = GameObject.FindGameObjectsWithTag (landingZoneTag);
+			GameObject[] landingZones = GameObject.FindGameObjectsWithTag (landingZoneTag);
 
 			if (landingZones == null || landingZones.Length == 0)
 				return;
@@ -58,9 +59,9 @@ namespace Assets.Scripts.UI
 			List<GameObject> objectsInSearchRadius = new List<GameObject> ();
 			float sqrRadius = searchRadius * searchRadius;
 
-			foreach (var zone in landingZones) 
+			foreach (GameObject zone in landingZones) 
 			{
-				var dist = (GameHelper.PlayerSpaceship.transform.position - zone.transform.position).sqrMagnitude;
+				float dist = (GameHelper.PlayerSpaceship.transform.position - zone.transform.position).sqrMagnitude;
 
 				if(dist <= sqrRadius)
 					objectsInSearchRadius.Add(zone);
@@ -72,8 +73,10 @@ namespace Assets.Scripts.UI
 			}
 			landingZones = objectsInSearchRadius.ToArray ();
 
-			if (landingZones == null || landingZones.Length == 0)
-				return;
+	        if (landingZones.Length == 0)
+	        {
+	            return;
+	        }
 
 			System.Array.Sort (	landingZones, 
 			                   delegate (GameObject obj1, GameObject obj2) 
@@ -81,36 +84,42 @@ namespace Assets.Scripts.UI
 				float dist1 = (GameHelper.PlayerSpaceship.transform.position - obj1.transform.position).sqrMagnitude;
 				float dist2 = (GameHelper.PlayerSpaceship.transform.position - obj2.transform.position).sqrMagnitude;
 
-				if(dist1 > dist2) return 1;
-				else if(dist1 < dist2) return -1;
-				else return 0;				
+			    if (dist1 > dist2)
+			    {
+			        return 1;
+			    }
+			    if (dist1 < dist2)
+			    {
+			        return -1;
+			    }
+			    return 0;
 			}
 			);	
 
-			var sqrFadeOutDistance = this.fadeOutStartDistance * this.fadeOutStartDistance;
-			var sqrMinDistance = minDistance * minDistance;
+			float sqrFadeOutDistance = fadeOutStartDistance * fadeOutStartDistance;
+			float sqrMinDistance = minDistance * minDistance;
 			for (int i=0; i<maxPointersCount; i++) 
 			{
-				var pointer = pointers[i];
-				var c = pointer.color;
+				Image pointer = pointers[i];
+				Color c = pointer.color;
 
 				if(i < landingZones.Length)
 				{
-					var zone = landingZones[i];
+					GameObject zone = landingZones[i];
 
-					var dir = zone.transform.position - GameHelper.PlayerSpaceship.transform.position;
-					var sqrDist = dir.sqrMagnitude;
+					Vector3 dir = zone.transform.position - GameHelper.PlayerSpaceship.transform.position;
+					float sqrDist = dir.sqrMagnitude;
 
 					dir.z = 0;
 					dir.Normalize();
 
 					pointer.rectTransform.localPosition = dir * radius;
 
-					var dot = Vector3.Dot(Vector3.down, dir);
+					float dot = Vector3.Dot(Vector3.down, dir);
 					dot = 1.0f - ((dot + 1.0f) / 2.0f);
 					if(dir.x < 0.0f) 
 						dot = -dot;
-					var rot = Quaternion.Euler(0,0,180 * dot);
+					Quaternion rot = Quaternion.Euler(0,0,180 * dot);
 					pointer.rectTransform.rotation = rot;
 
 					if(sqrDist < sqrMinDistance)

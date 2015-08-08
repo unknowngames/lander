@@ -2,17 +2,20 @@
 using Parse;
 using UnityEngine;
 
-public class Score : MonoBehaviour
+namespace Assets.Scripts.Social
 {
-	public void Start ()
+    public class Score : MonoBehaviour
     {
-        ParseObject testObject = new ParseObject("TestObject");
-        testObject["foo"] = "bar";
-        testObject.SaveAsync();
+        public void Start ()
+        {
+            ParseObject testObject = new ParseObject("TestObject");
+            testObject["foo"] = "bar";
+            testObject.SaveAsync();
 
-	    Task<ParseUser> task = ParseUser.LogInAsync("login", "password");
-        task.Wait();
-	    ParseUser parseUser = task.Result;
-	    Debug.Log(parseUser);
+            Task<ParseUser> task = ParseUser.LogInAsync("login", "password");
+            task.Wait();
+            ParseUser parseUser = task.Result;
+            Debug.Log(parseUser);
+        }
     }
 }

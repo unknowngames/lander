@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts
+﻿using Assets.Scripts.Session;
+
+namespace Assets.Scripts.Interfaces
 {
     public interface IScoreStorage
     {

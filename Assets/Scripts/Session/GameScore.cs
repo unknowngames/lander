@@ -1,7 +1,8 @@
 ﻿using System;
+using Assets.Scripts.Interfaces;
 using UnityEngine;
 
-namespace Assets.Scripts
+namespace Assets.Scripts.Session
 {
     [Serializable]
     public class GameScore : IGameScore

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.Scripts
+namespace Assets.Scripts.Environment
 {
     public class SpawnZone : MonoBehaviour
     {
