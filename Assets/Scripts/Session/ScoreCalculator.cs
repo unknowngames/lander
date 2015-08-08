@@ -6,8 +6,7 @@ namespace Assets.Scripts.Session
     {
         private readonly IGame game;
 
-        private IGameScore initialScore;
-        private int scorePoints;
+        private GameScore current;
 
 
         public ScoreCalculator(IGame game)
@@ -15,20 +14,31 @@ namespace Assets.Scripts.Session
             this.game = game;
         }
 
+        public IGameScore Current
+        {
+            get { return current; }
+        }
+
         public void SetInitialScore(IGameScore gameScore)
         {
-            initialScore = gameScore;
-            scorePoints = initialScore.ScorePoints;
+            current = GameScore.Create(gameScore);
         }
 
         public void Update()
         {
-            scorePoints++;
+            //current.ScorePoints++;
         }
 
         public IGameScore Calculate()
         {
-            return GameScore.Create(scorePoints, initialScore.LandingsCount + 1);
+            if (game.PlayerSpaceship.IsLanded)
+            {
+                current.LandingsCount++;
+                current.ScorePoints += 50;
+                current.ScorePoints += (int)game.PlayerSpaceship.RemainingFuel;
+            }
+
+            return current;
         }
     }
 }

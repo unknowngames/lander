@@ -8,37 +8,36 @@ namespace Assets.Scripts.Session
     public class GameScore : IGameScore
     {
         [SerializeField]
-        private DateTime timestamp;
-        [SerializeField]
         private int scorePoints;
         [SerializeField]
         private int landingsCount;
 
         private GameScore(int scorePoints, int landingsCount)
         {
-            timestamp = DateTime.Now;
             this.scorePoints = scorePoints;
             this.landingsCount = landingsCount;
-        }
-
-        public DateTime Timestamp
-        {
-            get { return timestamp; }
         }
 
         public int ScorePoints
         {
             get { return scorePoints; }
+            set { scorePoints = value; }
         }
 
         public int LandingsCount
         {
             get { return landingsCount; }
+            set { landingsCount = value; }
         }
 
         public static GameScore Create(int scorePoints, int landingsCount)
         {
             return new GameScore(scorePoints, landingsCount);
+        }
+
+        public static GameScore Create(IGameScore score)
+        {
+            return new GameScore(score.ScorePoints, score.LandingsCount);
         }
     }
 }

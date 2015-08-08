@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Spaceship;
+﻿using Assets.Scripts.Interfaces;
+using Assets.Scripts.Spaceship;
 using UnityEngine.Events;
 
 namespace Assets.Scripts
@@ -38,6 +39,11 @@ namespace Assets.Scripts
         public static SpaceshipBehaviour PlayerSpaceship
         {
             get { return Game.Instance.PlayerSpaceship; }
+        }
+
+        public static IGameScore CurrentScore
+        {
+            get { return Game.Instance.CurrentScore; }
         }
 
         public static void Begin()

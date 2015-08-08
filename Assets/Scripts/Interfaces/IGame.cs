@@ -14,7 +14,7 @@ namespace Assets.Scripts.Interfaces
         UnityEvent OnAbort { get; }
 
         SpaceshipBehaviour PlayerSpaceship { get; }  
-        IGameSession CurrentSession { get; }
+        IGameScore CurrentScore { get; }
 
         void Begin();
         void Suspend();

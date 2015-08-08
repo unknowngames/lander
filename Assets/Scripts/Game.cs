@@ -36,7 +36,11 @@ namespace Assets.Scripts
         [SerializeField]
         private PlayerSpawner playerSpawner = new PlayerSpawner();
         public SpaceshipBehaviour PlayerSpaceship { get; private set; }
-        public IGameSession CurrentSession { get; private set; }
+
+        public IGameScore CurrentScore
+        {
+            get { return scoreCalculator.Current; }
+        }
 
         private IGameSessionStorage gameSessionStorage;
         private IScoreCalculator scoreCalculator;
