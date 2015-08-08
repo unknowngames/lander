@@ -6,6 +6,7 @@ namespace Assets.Scripts.Session
     {
         private readonly IGame game;
 
+        private IGameSession lastSession;
         private GameScore current;
 
 
@@ -19,9 +20,10 @@ namespace Assets.Scripts.Session
             get { return current; }
         }
 
-        public void SetInitialScore(IGameScore gameScore)
+        public void SetInitialScore(IGameSession gameSession)
         {
-            current = GameScore.Create(gameScore);
+            lastSession = gameSession;
+            current = GameScore.Create(lastSession.Score);
         }
 
         public void Update()
@@ -34,8 +36,8 @@ namespace Assets.Scripts.Session
             if (game.PlayerSpaceship.IsLanded)
             {
                 current.LandingsCount++;
-                current.ScorePoints += 50;
-                current.ScorePoints += (int)game.PlayerSpaceship.RemainingFuel;
+                current.ScorePoints += 50 * game.PlayerSpaceship.TouchdownTrigger.Zone.ScoreMultiplier;
+                current.ScorePoints += (int) (lastSession.Spaceship.RemainingFuel - game.PlayerSpaceship.RemainingFuel);
             }
 
             return current;

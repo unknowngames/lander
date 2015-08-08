@@ -17,5 +17,10 @@ namespace Assets.Scripts.Session
         {
             return new GameSession(spaceship, gameScore);
         }
+
+        public static GameSession Create(IGameSession gameSession)
+        {
+            return new GameSession(gameSession.Spaceship, gameSession.Score);
+        }
     }
 }

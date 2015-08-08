@@ -216,7 +216,7 @@ namespace Assets.Scripts
 
         public void Restore(IGameSession session)
         {
-            scoreCalculator.SetInitialScore(session.Score);
+            scoreCalculator.SetInitialScore(session);
             PlayerSpaceship.Restore(session.Spaceship);
         }
 
