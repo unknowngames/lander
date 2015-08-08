@@ -14,7 +14,7 @@ namespace Assets.Scripts.UI.HUD
             {
                 Vector3 direction = GameHelper.PlayerSpaceship.Velosity;
                 Quaternion horisontRotation = Quaternion.FromToRotation(Vector3.down, direction);
-                arrow.rotation = horisontRotation;
+                arrow.rotation = Quaternion.Slerp(arrow.rotation, horisontRotation, Time.deltaTime * 2);
             }
         }
     }
