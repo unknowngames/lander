@@ -9,7 +9,7 @@ namespace Assets.Scripts.UI
 
         public void OnAbort()
         {
-            GameHelper.Abort();
+            GameHelper.Suspend();
         }
     }
 }

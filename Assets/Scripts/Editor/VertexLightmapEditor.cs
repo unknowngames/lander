@@ -9,29 +9,31 @@ public class VertexLightmapEditor : EditorWindow
 	Color ambientLight = Color.gray;
 
 	[MenuItem("Unknown games/Vertex Lightmap Editor")]
-	static void show()
+	public static void CreateWindow()
 	{
-		var window = EditorWindow.GetWindow<VertexLightmapEditor> ();
+		VertexLightmapEditor window = GetWindow<VertexLightmapEditor> ();
 		window.Show ();
 	}
 
-	void OnGUI()
+    public void OnGUI()
 	{
 		targetMesh = EditorGUILayout.ObjectField ("Target mesh", targetMesh, typeof(MeshFilter), true) as MeshFilter;
 		targetLight = EditorGUILayout.ObjectField ("Target light", targetLight, typeof(Light), true) as Light;
 		ambientLight = EditorGUILayout.ColorField ("Ambient light", ambientLight);
 
-		if (targetMesh == null || targetLight == null)
-			return;
+        if (targetMesh == null || targetLight == null)
+        {
+            return;
+        }
 
 		if (GUILayout.Button ("Calculate")) 
 		{
-			calculate(targetLight, targetMesh);
+            Calculate(targetLight, targetMesh);
 		}
 
 		if (GUILayout.Button ("Save mesh to file")) 
 		{
-			var path = EditorUtility.SaveFilePanelInProject ("Save mesh", "mesh", "asset", "save me please");
+			string path = EditorUtility.SaveFilePanelInProject ("Save mesh", "mesh", "asset", "save me please");
 			
 			if(string.IsNullOrEmpty(path) == false)
 			{
@@ -41,32 +43,32 @@ public class VertexLightmapEditor : EditorWindow
 		}
 	}
 
-	void calculate(Light light, MeshFilter mf)
+    private void Calculate(Light light, MeshFilter mf)
 	{
 		//var mc = mf.gameObject.AddComponent<MeshCollider> ();
 		//mc.sharedMesh = mf.sharedMesh;
 
 		//Vector3 lightDir = new Vector3 (1,-0.5f,1).normalized;// light.transform.forward;
 
-		var mesh = mf.sharedMesh;
+		Mesh mesh = mf.sharedMesh;
 		Vector3 lightDir = light.transform.forward;
 
-		var vertices = mesh.vertices;
-		var length = vertices.Length;
+		Vector3[] vertices = mesh.vertices;
+		int length = vertices.Length;
 		Color[] colors = new Color[length];
-		var normals = mesh.normals;
+		Vector3[] normals = mesh.normals;
 	
-		var transform = mf.transform;
+		Transform transform = mf.transform;
 
 		for (int i=0; i<length; i++) 
 		{
-			var v = vertices[i];
-			var n = normals[i];
+			Vector3 v = vertices[i];
+			Vector3 n = normals[i];
 
-			var tV = transform.TransformPoint(v);
-			var tN = transform.TransformVector(n);
+			Vector3 tV = transform.TransformPoint(v);
+			Vector3 tN = transform.TransformVector(n);
 
-			var inShadow = false;
+			bool inShadow = false;
 
 			RaycastHit hit;
 
@@ -76,11 +78,11 @@ public class VertexLightmapEditor : EditorWindow
 				inShadow = true;
 			}
 
-			var dot = Vector3.Dot(tN, -lightDir);
+			float dot = Vector3.Dot(tN, -lightDir);
 
 			dot = Mathf.Clamp(dot, 0.0f, 1.0f);
 
-			var finalColor = ambientLight + dot * light.intensity * Color.white;
+			Color finalColor = ambientLight + dot * light.intensity * Color.white;
 			finalColor = inShadow ? ambientLight : ambientLight + finalColor;
 		
 

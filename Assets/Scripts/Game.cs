@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Interfaces;
+using Assets.Scripts.Session;
 using Assets.Scripts.Spaceship;
 using UnityEngine;
 using UnityEngine.Events;
@@ -19,12 +20,12 @@ namespace Assets.Scripts
                     if (objects.Length > 1)
                     {
                         Debug.LogError("На сцене находится более одного объекта Game!");
-                        return new GameMOC();
+                        return null;
                     } 
                     if (objects.Length == 0)
                     {
                         Debug.LogError("На сцене не найдено ни одного объекта Game!");
-                        return new GameMOC ();
+                        return null;
                     }
                     cachedGame = objects[0];
                 }
@@ -36,13 +37,14 @@ namespace Assets.Scripts
         private PlayerSpawner playerSpawner = new PlayerSpawner();
         public SpaceshipBehaviour PlayerSpaceship { get; private set; }
 
-		[SerializeField]
-		private float playerStartImpulsePower = 500;
+        private IGameSessionStorage gameSessionStorage;
 
-        private UnityEvent onBegin; 
+        private UnityEvent onBegin;
+        private UnityEvent onSuspended;
         private UnityEvent onPause;
         private UnityEvent onUnpause;
         private UnityEvent onFinish;
+        private UnityEvent onMissionCompleted;
         private UnityEvent onAbort;
 
         public UnityEvent OnBegin
@@ -52,7 +54,15 @@ namespace Assets.Scripts
                 return onBegin ?? (onBegin = new UnityEvent());
             }
         }
-                 
+
+        public UnityEvent OnSuspended
+        {
+            get
+            {
+                return onSuspended ?? (onSuspended = new UnityEvent());
+            }
+        }
+
         public UnityEvent OnPause
         {
             get
@@ -73,7 +83,15 @@ namespace Assets.Scripts
         {
             get
             {
-                return onFinish ?? (onFinish = new UnityEvent ());
+                return onFinish ?? (onFinish = new UnityEvent());
+            }
+        }
+
+        public UnityEvent OnMissionCompleted
+        {
+            get
+            {
+                return onMissionCompleted ?? (onMissionCompleted = new UnityEvent());
             }
         }
 
@@ -84,12 +102,20 @@ namespace Assets.Scripts
                 return onAbort ?? (onAbort = new UnityEvent());
             }
         }
-
+        
         private void OnBeginCall()
         {
             if (OnBegin != null)
             {
                 OnBegin.Invoke();
+            }
+        }
+
+        private void OnSuspendedCall()
+        {
+            if (OnSuspended != null)
+            {
+                OnSuspended.Invoke();
             }
         }
 
@@ -117,6 +143,14 @@ namespace Assets.Scripts
             }
         }
 
+        private void OnMissionCompletedCall()
+        {
+            if (OnMissionCompleted != null)
+            {
+                OnMissionCompleted.Invoke();
+            }
+        }
+
         private void OnAbortCall()
         {
             if (OnAbort != null)
@@ -127,21 +161,33 @@ namespace Assets.Scripts
 
         public void Start ()
         {
+            gameSessionStorage = new GameSessionStorage();
             Begin ();
         }
 
         public void Begin()
         {
-            PlayerSpaceship = playerSpawner.CreatePlayer();
+            PlayerSpaceship = playerSpawner.CreatePlayerAndRandomMove();
 
-			Vector3 randomDirection = Vector3.right;
-			randomDirection *= UnityEngine.Random.Range (0, 2) == 0 ? -1 : 1;
-			randomDirection *= playerStartImpulsePower;
-			PlayerSpaceship.SetVelocity(randomDirection);
+            PlayerSpaceship.CrashEvent.AddListener(OnSpaceshipCrashHandler);
+            PlayerSpaceship.LandEvent.AddListener(OnSpaceshipLandHandler);
 
-            PlayerSpaceship.CrashEvent.AddListener(Finish);
-            PlayerSpaceship.LandEvent.AddListener(Finish);
+
+            if (gameSessionStorage.HasSavedSession)
+            {
+                gameSessionStorage.RestoreSavedSession(this);
+            }
+
             OnBeginCall ();
+        }
+
+        public void Suspend()
+        {
+            gameSessionStorage.SaveGameSession(this);
+
+            Clean();
+            OnSuspendedCall();
+            Application.LoadLevelAsync(0);
         }
 
         public void Abort()
@@ -163,9 +209,30 @@ namespace Assets.Scripts
             OnUnpauseCall();
         }
 
-        public void Finish()
+        public IGameSession Save()
+        {
+            ISpaceshipState spaceshipState = PlayerSpaceship.Save();
+            IGameScore gameScore = GameScore.Create(Random.Range(0, 100), 10);
+
+            return GameSession.Create(spaceshipState, gameScore);
+        }
+
+        public void Restore(IGameSession session)
+        {
+            PlayerSpaceship.Restore(session.Spaceship);
+        }
+
+        private void CompleteMission()
         {
             SetPlayerPause(true);
+            gameSessionStorage.SaveGameSession(this);
+            OnMissionCompletedCall();
+        }
+
+        private void FailMission()
+        {
+            SetPlayerPause(true);
+            gameSessionStorage.RemoveSaveGame();
             OnFinishCall();
         }
 
@@ -176,11 +243,22 @@ namespace Assets.Scripts
 
         private void Clean ()
         {
-            PlayerSpaceship.CrashEvent.RemoveListener(Finish);
-            PlayerSpaceship.LandEvent.RemoveListener(Finish);
+            PlayerSpaceship.CrashEvent.RemoveListener(OnSpaceshipCrashHandler);
+            PlayerSpaceship.LandEvent.RemoveListener(OnSpaceshipLandHandler);
 
             PlayerSpaceship = null;
             playerSpawner.RemovePlayer ();
+        }
+
+
+        private void OnSpaceshipLandHandler()
+        {
+            CompleteMission();
+        }
+
+        private void OnSpaceshipCrashHandler()
+        {
+            FailMission();
         }
     }
 }

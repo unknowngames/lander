@@ -1,4 +1,5 @@
 using System;
+using Assets.Scripts.Environment;
 using Assets.Scripts.Spaceship;
 using UnityEngine;
 
@@ -11,11 +12,22 @@ namespace Assets.Scripts
         private SpaceshipBehaviour spaceshipBehaviourPrefab;
 
         [SerializeField]
-        private Transform spawnPosition;
+        private SpawnZone spawnZone;
+
+        [SerializeField]
+        private float playerStartImpulsePower = 500;
 
         private SpaceshipBehaviour spaceshipBehaviourInstance;
 
-        public SpaceshipBehaviour CreatePlayer()
+        public SpaceshipBehaviour CreatePlayerAndRandomMove()
+        {
+            Vector3 randomDirection = Vector3.right;
+            randomDirection *= playerStartImpulsePower*UnityEngine.Random.Range(-2, 2);
+
+            return CreatePlayer(randomDirection);
+        }
+
+        public SpaceshipBehaviour CreatePlayer(Vector3 initialVelosity)
         {
             if (spaceshipBehaviourInstance == null)
             {
@@ -24,10 +36,15 @@ namespace Assets.Scripts
             
             spaceshipBehaviourInstance.Reset ();
 
-            spaceshipBehaviourInstance.transform.position = spawnPosition.position;
-            spaceshipBehaviourInstance.transform.rotation = spawnPosition.rotation;
+            spaceshipBehaviourInstance.transform.position = spawnZone.GetRandomPosition();
+
+
+            spaceshipBehaviourInstance.transform.rotation = Quaternion.identity;
             
             spaceshipBehaviourInstance.gameObject.SetActive (true);
+            
+			spaceshipBehaviourInstance.SetVelocity(initialVelosity);
+
             return spaceshipBehaviourInstance;
         }
 

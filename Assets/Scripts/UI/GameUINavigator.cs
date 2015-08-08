@@ -82,6 +82,7 @@ namespace Assets.Scripts.UI
             GameHelper.OnFinish.AddListener (OnFinishGame);
             GameHelper.OnPause.AddListener (OnPauseGame);
             GameHelper.OnUnpause.AddListener(OnUnpauseGame);
+            GameHelper.OnMissionCompleted.AddListener(OnMissionCompleted);
             GameHelper.OnAbort.AddListener(OnAbortGame);
         }
 
@@ -91,6 +92,11 @@ namespace Assets.Scripts.UI
         }
 
         private void OnFinishGame()
+        {
+            Show(1.5f, resultMenuUIInstance);
+        }
+
+        private void OnMissionCompleted()
         {
             Show(1.5f, resultMenuUIInstance);
         }
