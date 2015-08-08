@@ -163,21 +163,23 @@ namespace Assets.Scripts
 
         public void Start ()
         {
-            gameSessionStorage = new GameSessionStorage(this);
+            gameSessionStorage = new GameSessionStorage();
             scoreCalculator = new ScoreCalculator(this);
             Begin ();
         }
 
         public void Begin()
         {
-            PlayerSpaceship = playerSpawner.CreatePlayerAndRandomMove();      
+            PlayerSpaceship = playerSpawner.CreatePlayerAndRandomMove();   
+            gameSessionStorage.RestoreSavedSession(this);
             OnBeginCall ();
         }
 
         public void Suspend()
-        {               
-            OnSuspendedCall();                           
+        {
+            gameSessionStorage.SaveGameSession(this);
             Clean();
+            OnSuspendedCall();    
             Application.LoadLevelAsync(0);
         }
 
@@ -216,12 +218,14 @@ namespace Assets.Scripts
 
         public void CompleteMission()
         {
+            gameSessionStorage.SaveGameSession(this);
             SetPlayerPause(true);
             OnMissionCompletedCall();
         }
 
         public void FailMission()
         {
+            gameSessionStorage.RemoveSaveGame();
             SetPlayerPause(true);
             OnFinishCall();
         }

@@ -5,16 +5,6 @@ namespace Assets.Scripts.Session
     public class GameSessionStorage : IGameSessionStorage
     {
         private IGameSession savedSession;
-        private readonly IGame game;
-
-        public GameSessionStorage(IGame game)
-        {
-            this.game = game;
-            game.OnBegin.AddListener(OnGameBegin);
-            game.OnSuspended.AddListener(OnGameSuspend);
-            game.OnMissionCompleted.AddListener(OnGameMissionCompleted);
-            game.OnFinish.AddListener(OnGameFinished);
-        }
 
         public IGameSession Current
         {
@@ -29,23 +19,23 @@ namespace Assets.Scripts.Session
             get { return GameSessionPlayerPrefsProxy.HasSession; }
         }
 
-        public void SaveGameSession()
+        public void SaveGameSession(IGame game)
         {
             savedSession = game.Save();
             GameSessionPlayerPrefsProxy.Save(savedSession);
         }
 
-        public void RestoreSavedSession()
+        public void RestoreSavedSession(IGame game)
         {
             if (savedSession == null)
             {
-                savedSession = HasSavedSession ? GameSessionPlayerPrefsProxy.Restore() : CreateNew();
+                savedSession = HasSavedSession ? GameSessionPlayerPrefsProxy.Restore() : CreateNew(game);
             }
 
             game.Restore(savedSession);
         }
 
-        private IGameSession CreateNew()
+        private IGameSession CreateNew(IGame game)
         {
             IGameScore score = GameScore.Create(0, 0);
             ISpaceshipState state = game.PlayerSpaceship.Save();
@@ -57,26 +47,6 @@ namespace Assets.Scripts.Session
         {
             GameSessionPlayerPrefsProxy.Remove();
             savedSession = null;
-        }
-
-        private void OnGameBegin()
-        {     
-            RestoreSavedSession();
-        }         
-
-        private void OnGameSuspend()                    
-        {
-            SaveGameSession();
-        }                    
-
-        private void OnGameMissionCompleted()
-        {
-            SaveGameSession();
-        }
-
-        private void OnGameFinished()
-        {
-            RemoveSaveGame();
-        }    
+        }      
     }
 }

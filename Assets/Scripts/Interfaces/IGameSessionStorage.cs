@@ -4,8 +4,8 @@
     {
         IGameSession Current { get; }
         bool HasSavedSession { get; }
-        void RestoreSavedSession();
-        void SaveGameSession();
+        void RestoreSavedSession(IGame game);
+        void SaveGameSession(IGame game);
         void RemoveSaveGame();
     }
 }
