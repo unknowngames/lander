@@ -22,7 +22,9 @@ namespace Assets.Scripts
         public SpaceshipBehaviour CreatePlayerAndRandomMove()
         {
             Vector3 randomDirection = Vector3.right;
-            randomDirection *= playerStartImpulsePower * UnityEngine.Random.Range(-2.0f, 2.0f);
+            int direction = UnityEngine.Random.Range(0, 1) == 0 ? 1 : -1;
+
+            randomDirection *= playerStartImpulsePower * UnityEngine.Random.Range(1.0f, 3.0f) * direction;
 
             return CreatePlayer(randomDirection);
         }
