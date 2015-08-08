@@ -35,12 +35,18 @@ namespace Assets.Scripts
 
         [SerializeField]
         private PlayerSpawner playerSpawner = new PlayerSpawner();
+
+        [SerializeField]
+        private GameDifficultyStorage difficultyStorage;
+        
         public SpaceshipBehaviour PlayerSpaceship { get; private set; }
 
         public IGameScore CurrentScore
         {
             get { return scoreCalculator.Current; }
         }
+
+        public ILevelInfo LevelInfo { get; private set; }
 
         private IGameSessionStorage gameSessionStorage;
         private IScoreCalculator scoreCalculator;
@@ -169,6 +175,8 @@ namespace Assets.Scripts
         {
             gameSessionStorage = new GameSessionStorage();
             scoreCalculator = new ScoreCalculator(this);
+            LevelInfo = FindObjectOfType<LevelInfo>();
+
             Begin ();
         }
 
@@ -176,6 +184,7 @@ namespace Assets.Scripts
         {
             PlayerSpaceship = playerSpawner.CreatePlayerAndRandomMove();   
             gameSessionStorage.RestoreSavedSession(this);
+            GameSettings.ApplyDifficulty(this, difficultyStorage);
             OnBeginCall ();
         }
 

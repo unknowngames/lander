@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Spaceship;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Assets.Scripts.Interfaces
@@ -15,6 +16,7 @@ namespace Assets.Scripts.Interfaces
 
         SpaceshipBehaviour PlayerSpaceship { get; }  
         IGameScore CurrentScore { get; }
+        ILevelInfo LevelInfo { get; }
 
         void Begin();
         void Suspend();

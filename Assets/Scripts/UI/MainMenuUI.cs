@@ -17,5 +17,10 @@ namespace Assets.Scripts.UI
 
             Application.LoadLevelAsync (1);
         }
+
+        public void OnSettingsClick()
+        {
+            
+        }
     }
 }

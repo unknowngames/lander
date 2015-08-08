@@ -60,6 +60,8 @@ namespace Assets.Scripts.Spaceship
             RotationStabilize ();
         }
 
+        public bool AutoStabilize { get; set; }
+
         public void RotationStabilize ()
         {
             doRotationStabilize = true;
@@ -80,7 +82,12 @@ namespace Assets.Scripts.Spaceship
             else
             {
                 spaceship.LeftStabilizerThrottleLevel = 0.0f;
-                spaceship.RightStabilizerThrottleLevel = 0.0f; 
+                spaceship.RightStabilizerThrottleLevel = 0.0f;
+
+                if (AutoStabilize)
+                {
+                    RotationStabilize();
+                }
             }
         }
 
@@ -136,7 +143,7 @@ namespace Assets.Scripts.Spaceship
             if (Spaceship.RemainingFuel > 0.0f)
             {
                 float throttle = Mathf.Pow (ThrottleLevel, 0.25f);
-                cachedRigidbody.AddForce (transform.up * throttle * -Physics.gravity.y * cachedRigidbody.mass * tw);
+                cachedRigidbody.AddForce (transform.up * throttle * -GameHelper.LevelInfo.Gravitation * cachedRigidbody.mass * tw);
 
                 Spaceship.RemainingFuel -= Time.fixedDeltaTime * throttle * 2;
             }

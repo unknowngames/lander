@@ -46,6 +46,11 @@ namespace Assets.Scripts
             get { return Game.Instance.CurrentScore; }
         }
 
+        public static ILevelInfo LevelInfo
+        {
+            get { return Game.Instance.LevelInfo; }
+        }
+
         public static void Begin()
         {
             Game.Instance.Begin();
