@@ -22,7 +22,7 @@ namespace Assets.Scripts
         public SpaceshipBehaviour CreatePlayerAndRandomMove()
         {
             Vector3 randomDirection = Vector3.right;
-            randomDirection *= playerStartImpulsePower*UnityEngine.Random.Range(-2, 2);
+            randomDirection *= playerStartImpulsePower * UnityEngine.Random.Range(-2.0f, 2.0f);
 
             return CreatePlayer(randomDirection);
         }
@@ -38,8 +38,8 @@ namespace Assets.Scripts
 
             spaceshipBehaviourInstance.transform.position = spawnZone.GetRandomPosition();
 
-
-            spaceshipBehaviourInstance.transform.rotation = Quaternion.identity;
+            Quaternion rotation = Quaternion.FromToRotation(Vector3.up, -initialVelosity);  
+            spaceshipBehaviourInstance.transform.rotation = rotation;
             
             spaceshipBehaviourInstance.gameObject.SetActive (true);
             

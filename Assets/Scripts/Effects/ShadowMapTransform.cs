@@ -7,8 +7,8 @@ namespace Assets.Scripts.Effects
         Vector3 positionOffset = Vector3.zero;
         Transform target = null;
 
-        public void Start () 
-        {
+        public void Awake ()
+        {                                           
             positionOffset = transform.localPosition;
             target = transform.parent;
             transform.parent = null;
