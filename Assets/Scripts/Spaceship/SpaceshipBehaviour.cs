@@ -174,6 +174,7 @@ namespace Assets.Scripts.Spaceship
                 IsCrashed = true;
                 BlowUp();
 
+                GameHelper.FailMission();
                 CrashEvent.Invoke();
             }
         }
@@ -189,6 +190,7 @@ namespace Assets.Scripts.Spaceship
 
         private void Landed()
         {
+            GameHelper.CompleteMission();
             LandEvent.Invoke();
         }
 

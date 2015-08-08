@@ -2,9 +2,10 @@
 {
     public interface IGameSessionStorage
     {
+        IGameSession Current { get; }
         bool HasSavedSession { get; }
-        void RestoreSavedSession(IGame game);
-        void SaveGameSession(IGame game);
+        void RestoreSavedSession();
+        void SaveGameSession();
         void RemoveSaveGame();
     }
 }

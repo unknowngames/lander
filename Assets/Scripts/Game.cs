@@ -36,8 +36,10 @@ namespace Assets.Scripts
         [SerializeField]
         private PlayerSpawner playerSpawner = new PlayerSpawner();
         public SpaceshipBehaviour PlayerSpaceship { get; private set; }
+        public IGameSession CurrentSession { get; private set; }
 
         private IGameSessionStorage gameSessionStorage;
+        private IScoreCalculator scoreCalculator;
 
         private UnityEvent onBegin;
         private UnityEvent onSuspended;
@@ -161,39 +163,28 @@ namespace Assets.Scripts
 
         public void Start ()
         {
-            gameSessionStorage = new GameSessionStorage();
+            gameSessionStorage = new GameSessionStorage(this);
+            scoreCalculator = new ScoreCalculator(this);
             Begin ();
         }
 
         public void Begin()
         {
-            PlayerSpaceship = playerSpawner.CreatePlayerAndRandomMove();
-
-            PlayerSpaceship.CrashEvent.AddListener(OnSpaceshipCrashHandler);
-            PlayerSpaceship.LandEvent.AddListener(OnSpaceshipLandHandler);
-
-
-            if (gameSessionStorage.HasSavedSession)
-            {
-                gameSessionStorage.RestoreSavedSession(this);
-            }
-
+            PlayerSpaceship = playerSpawner.CreatePlayerAndRandomMove();      
             OnBeginCall ();
         }
 
         public void Suspend()
-        {
-            gameSessionStorage.SaveGameSession(this);
-
+        {               
+            OnSuspendedCall();                           
             Clean();
-            OnSuspendedCall();
             Application.LoadLevelAsync(0);
         }
 
         public void Abort()
         {
-            Clean();
             OnAbortCall();
+            Clean();
             Application.LoadLevelAsync(0);
         }
 
@@ -212,28 +203,32 @@ namespace Assets.Scripts
         public IGameSession Save()
         {
             ISpaceshipState spaceshipState = PlayerSpaceship.Save();
-            IGameScore gameScore = GameScore.Create(Random.Range(0, 100), 10);
+            IGameScore gameScore = scoreCalculator.Calculate();
 
             return GameSession.Create(spaceshipState, gameScore);
         }
 
         public void Restore(IGameSession session)
         {
+            scoreCalculator.SetInitialScore(session.Score);
             PlayerSpaceship.Restore(session.Spaceship);
         }
 
-        private void CompleteMission()
+        public void CompleteMission()
         {
             SetPlayerPause(true);
-            gameSessionStorage.SaveGameSession(this);
             OnMissionCompletedCall();
         }
 
-        private void FailMission()
+        public void FailMission()
         {
             SetPlayerPause(true);
-            gameSessionStorage.RemoveSaveGame();
             OnFinishCall();
+        }
+
+        public void Update()
+        {
+            scoreCalculator.Update();
         }
 
         private void SetPlayerPause (bool state)
@@ -243,22 +238,8 @@ namespace Assets.Scripts
 
         private void Clean ()
         {
-            PlayerSpaceship.CrashEvent.RemoveListener(OnSpaceshipCrashHandler);
-            PlayerSpaceship.LandEvent.RemoveListener(OnSpaceshipLandHandler);
-
             PlayerSpaceship = null;
             playerSpawner.RemovePlayer ();
-        }
-
-
-        private void OnSpaceshipLandHandler()
-        {
-            CompleteMission();
-        }
-
-        private void OnSpaceshipCrashHandler()
-        {
-            FailMission();
         }
     }
 }

@@ -64,5 +64,15 @@ namespace Assets.Scripts
         {
             Game.Instance.Unpause();
         }
+
+        public static void CompleteMission()
+        {
+           Game.Instance.CompleteMission(); 
+        }
+
+        public static void FailMission()
+        {
+            Game.Instance.FailMission(); 
+        }
     }
 }
