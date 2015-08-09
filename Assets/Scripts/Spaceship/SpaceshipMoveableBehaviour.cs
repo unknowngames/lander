@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Interfaces;
+﻿using System;
+using Assets.Scripts.Interfaces;
 using UnityEngine;
 
 namespace Assets.Scripts.Spaceship
@@ -62,12 +63,30 @@ namespace Assets.Scripts.Spaceship
 
         public bool AutoStabilize { get; set; }
 
-        public void RotationStabilize ()
+        public void RotationStabilize()
         {
             doRotationStabilize = true;
         }
 
+        public void CancelRotationStabilize()
+        {
+            doRotationStabilize = false;
+        }
+
         public void SetStabilizerThrottleLevel(float impulse)
+        {
+            CancelRotationStabilize();
+
+            SetStabilizerThrottleLevelInternal(impulse);
+
+            if (AutoStabilize && impulse == 0.0f)
+            {
+                RotationStabilize();
+            }
+            
+        }
+
+        private void SetStabilizerThrottleLevelInternal(float impulse)
         {
             if (impulse < -0.0f)
             {
@@ -83,11 +102,6 @@ namespace Assets.Scripts.Spaceship
             {
                 spaceship.LeftStabilizerThrottleLevel = 0.0f;
                 spaceship.RightStabilizerThrottleLevel = 0.0f;
-
-                if (AutoStabilize)
-                {
-                    RotationStabilize();
-                }
             }
         }
 
@@ -129,12 +143,12 @@ namespace Assets.Scripts.Spaceship
             if (doRotationStabilize)
             {
                 float impulse = -Mathf.Clamp(cachedRigidbody.angularVelocity.z, -1.0f, 1.0f);
-                
-                SetStabilizerThrottleLevel(impulse);
+
+                SetStabilizerThrottleLevelInternal(impulse);
 
                 if (cachedRigidbody.angularVelocity.sqrMagnitude<0.05f)
                 {
-                    SetStabilizerThrottleLevel(0.0f);
+                    SetStabilizerThrottleLevelInternal(0.0f);
                     cachedRigidbody.angularVelocity = Vector3.zero;
                     doRotationStabilize = false;
                 }
