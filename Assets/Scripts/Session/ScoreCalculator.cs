@@ -38,11 +38,43 @@ namespace Assets.Scripts.Session
 
             if (game.PlayerSpaceship.IsLanded)
             {
-                current.LandingsCount++;
-                current.ScorePoints += 50 * game.PlayerSpaceship.TouchdownTrigger.Zone.ScoreMultiplier;
-                newState.RemainingFuel += 50;
+                int totalScore = 0;
 
-                //current.ScorePoints += (int)(lastSession.Spaceship.RemainingFuel - game.PlayerSpaceship.RemainingFuel);
+                // расчет бонуса за м€гкую посадку
+                int softLandingScore = 0;
+
+                var collisions = game.PlayerSpaceship.Collisions;
+                bool isLandingSoft = true;
+                
+                foreach(var c in collisions)
+                {
+                    if(c.relativeVelocity.magnitude >= 0.25f)
+                    {
+                        isLandingSoft = false;
+                        break;
+                    }
+                }
+
+                if (isLandingSoft)
+                {
+                    softLandingScore += 20;
+                }
+
+                //UnityEngine.Debug.Log("Soft landed : " + isLandingSoft + " collisions: " + collisions.Count);
+
+                if (collisions.Count <= 1)
+                    softLandingScore += 20;
+
+                totalScore += softLandingScore;
+
+
+                // расчет очков за успешную посадку
+                totalScore += 50 * game.PlayerSpaceship.TouchdownTrigger.Zone.ScoreMultiplier;
+                
+                current.ScorePoints += totalScore;
+                current.LandingsCount++;
+
+                newState.RemainingFuel += 50;
             }
 
             if (game.PlayerSpaceship.IsCrashed)
