@@ -75,7 +75,7 @@ namespace Assets.Scripts.Session
                 if (distanceFromCenter <= 0.5f)
                     preciseLandingScore += 40;
                 else if (distanceFromCenter <= 1.0f)
-                    preciseLandingScore += 10;
+                    preciseLandingScore += 20;
 
                 UnityEngine.Debug.Log("Precise landing score: " + preciseLandingScore + " Distance: " + distanceFromCenter);
                 totalScore += preciseLandingScore;
