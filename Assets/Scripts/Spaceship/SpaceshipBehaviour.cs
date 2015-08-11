@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Scripts.Interfaces;
 using Assets.Scripts.Session;
@@ -39,6 +40,19 @@ namespace Assets.Scripts.Spaceship
         public bool IsCrashed { get; private set; }
         public bool IsLanded { get; private set; }
         public TouchdownTrigger TouchdownTrigger { get { return touchdownTrigger; } }
+
+        private List<Collision> collisions = new List<Collision>();
+
+        /// <summary>
+        /// список последних коллизий корабля 
+        /// </summary>
+        public ReadOnlyCollection<Collision> Collisions
+        {
+            get
+            {
+                return new ReadOnlyCollection<Collision>(collisions);
+            }
+        }
 
         public float EnginePower
         {
@@ -135,6 +149,8 @@ namespace Assets.Scripts.Spaceship
             spaceshipGhost.Reset();
             touchdownTrigger.Reset();
             crashTrigger.Reset();
+
+            collisions.Clear();
         }
 
         public ISpaceshipState Save()
@@ -165,6 +181,10 @@ namespace Assets.Scripts.Spaceship
                 Crash();
                 return;
             }
+
+            // коснулись зоны приземления, сохраняем информацию о касании для последующей обработки
+            //Debug.Log("Collision: " + collision.relativeVelocity.magnitude);
+            collisions.Add(collision);
         }
 
         private void Crash()
