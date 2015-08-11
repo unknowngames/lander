@@ -190,7 +190,6 @@ namespace Assets.Scripts
 
         public void Suspend()
         {
-            gameSessionStorage.SaveGameSession(this);
             Clean();
             OnSuspendedCall();    
             Application.LoadLevelAsync(0);
