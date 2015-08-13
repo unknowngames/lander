@@ -36,7 +36,7 @@ namespace Assets.Scripts.Session
             int scorePoints = PlayerPrefsX.GetInt(ScorePointsKey);
             int landingsCount = PlayerPrefsX.GetInt(LandingsCountKey);
 
-            return GameSession.Create(SpaceshipState.Create(remainingFuel), GameScore.Create(scorePoints, landingsCount));
+            return GameSession.Create(SpaceshipState.Create(remainingFuel), GameScore.Create(scorePoints, landingsCount, 0, 0, 0));
         }
 
         public static void Remove()

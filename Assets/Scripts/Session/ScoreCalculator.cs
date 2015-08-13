@@ -65,6 +65,7 @@ namespace Assets.Scripts.Session
                 if (collisions.Count <= 1)
                     softLandingScore += 20;
 
+                current.SoftLandingScore = softLandingScore;
                 totalScore += softLandingScore;
 
                 // расчет очков за точность посадки
@@ -78,12 +79,15 @@ namespace Assets.Scripts.Session
                     preciseLandingScore += 20;
 
                 UnityEngine.Debug.Log("Precise landing score: " + preciseLandingScore + " Distance: " + distanceFromCenter);
+                current.PreciseLandingScore = preciseLandingScore;
                 totalScore += preciseLandingScore;
 
 
                 // расчет очков за успешную посадку
-                totalScore += 50 * game.PlayerSpaceship.TouchdownTrigger.Zone.ScoreMultiplier;
-                
+                int successLandingScore = 50 * game.PlayerSpaceship.TouchdownTrigger.Zone.ScoreMultiplier;
+                totalScore += successLandingScore;
+
+                current.SuccessLandingScore = successLandingScore;
                 current.ScorePoints += totalScore;
                 current.LandingsCount++;
 

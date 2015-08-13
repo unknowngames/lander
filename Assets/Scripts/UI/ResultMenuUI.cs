@@ -7,6 +7,16 @@ namespace Assets.Scripts.UI
 {
     public class ResultMenuUI : MenuUI
     {
+        /// <summary>
+        /// Скорость роста очков
+        /// </summary>
+        public float ScoreGrowSpeed = 30;
+
+        public GameObject SuccessPanel;
+
+        public GameObject FailPanel;
+        public UnityEngine.UI.Text FailText;
+
         public UnityEngine.UI.Text SuccessLandingScoreLabel;
         public UnityEngine.UI.Text SuccessLandingScore;
 
@@ -20,7 +30,52 @@ namespace Assets.Scripts.UI
         {
             base.OnEnable();
 
-            SuccessLandingScore.text = Game.Instance.CurrentScore.ScorePoints.ToString();
+            if(Game.Instance.CurrentScore.SuccessLandingScore > 0)
+            {
+                SuccessPanel.SetActive(true);
+                FailPanel.SetActive(false);
+                StartCoroutine(scoreGrow());
+            }
+            else
+            {
+                FailPanel.SetActive(true);
+                SuccessPanel.SetActive(false);
+            }
+        }
+
+        System.Collections.IEnumerator scoreGrow()
+        {
+            float growSpeed = 1.0f / ScoreGrowSpeed;
+
+            int success = Game.Instance.CurrentScore.SuccessLandingScore;
+            int currentSuccess = 0;
+
+            while(currentSuccess < success)
+            {
+                currentSuccess++;
+                SuccessLandingScore.text = currentSuccess.ToString();
+                yield return new WaitForSeconds(growSpeed);
+            }
+
+            int soft = Game.Instance.CurrentScore.SoftLandingScore;
+            int currrentSoft = 0;
+
+            while (currrentSoft < soft)
+            {
+                currrentSoft++;
+                SoftLandingScore.text = currrentSoft.ToString();
+                yield return new WaitForSeconds(growSpeed);
+            }
+
+            int precise = Game.Instance.CurrentScore.PreciseLandingScore;
+            int currentPrecise = 0;
+
+            while (currentPrecise < precise)
+            {
+                currentPrecise++;
+                PreciseLandingScore.text = currentPrecise.ToString();
+                yield return new WaitForSeconds(growSpeed);
+            }
         }
 
         public void OnStart()
