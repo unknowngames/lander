@@ -45,6 +45,10 @@ namespace Assets.Scripts.UI
 
         System.Collections.IEnumerator scoreGrow()
         {
+            SuccessLandingScore.text = "0";
+            SoftLandingScore.text = "0";
+            PreciseLandingScore.text = "0";
+
             float growSpeed = 1.0f / ScoreGrowSpeed;
 
             int success = GameHelper.CurrentScore.SuccessLandingScore;
