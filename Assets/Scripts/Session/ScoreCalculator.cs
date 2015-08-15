@@ -7,7 +7,7 @@ namespace Assets.Scripts.Session
         private readonly IGame game;
 
         private IGameSession lastSession;
-        private GameScore current;
+        private GameScore current = GameScore.Create(0,0,0,0,0);
 
 
         public ScoreCalculator(IGame game)

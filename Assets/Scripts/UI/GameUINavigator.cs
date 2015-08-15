@@ -24,9 +24,9 @@ namespace Assets.Scripts.UI
         private ResultMenuUI resultMenuUIInstance;
 
 
-        protected override void Awake ()
+        protected override void Start ()
         {
-            base.Awake ();
+            base.Start();
 
             pauseMenuUIInstance = Instantiate (pauseMenuUIPrefab);
             pauseMenuUIInstance.transform.SetParent (transform, false);

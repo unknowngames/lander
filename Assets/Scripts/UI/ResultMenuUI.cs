@@ -30,7 +30,7 @@ namespace Assets.Scripts.UI
         {
             base.OnEnable();
 
-            if(Game.Instance.CurrentScore.SuccessLandingScore > 0)
+            if(GameHelper.CurrentScore.SuccessLandingScore > 0)
             {
                 SuccessPanel.SetActive(true);
                 FailPanel.SetActive(false);
@@ -47,7 +47,7 @@ namespace Assets.Scripts.UI
         {
             float growSpeed = 1.0f / ScoreGrowSpeed;
 
-            int success = Game.Instance.CurrentScore.SuccessLandingScore;
+            int success = GameHelper.CurrentScore.SuccessLandingScore;
             int currentSuccess = 0;
 
             while(currentSuccess < success)
@@ -57,7 +57,7 @@ namespace Assets.Scripts.UI
                 yield return new WaitForSeconds(growSpeed);
             }
 
-            int soft = Game.Instance.CurrentScore.SoftLandingScore;
+            int soft = GameHelper.CurrentScore.SoftLandingScore;
             int currrentSoft = 0;
 
             while (currrentSoft < soft)
@@ -67,7 +67,7 @@ namespace Assets.Scripts.UI
                 yield return new WaitForSeconds(growSpeed);
             }
 
-            int precise = Game.Instance.CurrentScore.PreciseLandingScore;
+            int precise = GameHelper.CurrentScore.PreciseLandingScore;
             int currentPrecise = 0;
 
             while (currentPrecise < precise)

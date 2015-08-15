@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Interfaces;
 using Assets.Scripts.Session;
+using Assets.Scripts.Settings;
 using Assets.Scripts.Spaceship;
 using UnityEngine;
 using UnityEngine.Events;
@@ -171,12 +172,15 @@ namespace Assets.Scripts
             }
         }
 
-        public void Start ()
-        {
+        public void Awake()
+        {       
             gameSessionStorage = new GameSessionStorage();
             scoreCalculator = new ScoreCalculator(this);
             LevelInfo = FindObjectOfType<LevelInfo>();
+        }
 
+        public void Start ()
+        {                                                        
             Begin ();
         }
 
