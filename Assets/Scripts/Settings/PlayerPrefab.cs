@@ -1,9 +1,11 @@
+using System;
 using Assets.Scripts.Interfaces;
 using Assets.Scripts.Spaceship;
 using UnityEngine;
 
 namespace Assets.Scripts.Settings
 {
+    [Serializable]
     public class PlayerPrefab : IPlayerPrefab
     {                      
         [SerializeField]
