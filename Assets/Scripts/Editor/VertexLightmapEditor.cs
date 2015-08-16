@@ -7,6 +7,7 @@ public class VertexLightmapEditor : EditorWindow
 	MeshFilter targetMesh = null;
 	Light targetLight = null;
 	Color ambientLight = Color.gray;
+    bool calcShadow = true;
 
 	[MenuItem("Unknown games/Vertex Lightmap Editor")]
 	public static void CreateWindow()
@@ -20,6 +21,7 @@ public class VertexLightmapEditor : EditorWindow
 		targetMesh = EditorGUILayout.ObjectField ("Target mesh", targetMesh, typeof(MeshFilter), true) as MeshFilter;
 		targetLight = EditorGUILayout.ObjectField ("Target light", targetLight, typeof(Light), true) as Light;
 		ambientLight = EditorGUILayout.ColorField ("Ambient light", ambientLight);
+        calcShadow = EditorGUILayout.Toggle("Расчет тени", calcShadow);
 
         if (targetMesh == null || targetLight == null)
         {
@@ -70,13 +72,16 @@ public class VertexLightmapEditor : EditorWindow
 
 			bool inShadow = false;
 
-			RaycastHit hit;
+            if(calcShadow)
+            {
+                RaycastHit hit;
 
-			if(Physics.Raycast(tV + tN*0.01f, -lightDir, out hit))
-			{
-				Debug.Log(hit.collider.name);
-				inShadow = true;
-			}
+                if (Physics.Raycast(tV + tN * 0.01f, -lightDir, out hit))
+                {
+                    Debug.Log(hit.collider.name);
+                    inShadow = true;
+                }
+            }
 
 			float dot = Vector3.Dot(tN, -lightDir);
 
