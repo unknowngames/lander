@@ -1,11 +1,27 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
+
+class MeshInfo
+{
+    public Vector3[] Vertices;
+    public Vector3[] Normals;
+}
 
 public class LandGenerator : EditorWindow
 {
     private Mesh currentMesh = null;
     bool drawNormals = false;
+    List<MeshInfo> history = new List<MeshInfo>();
+
+    float minSinAmplitude = 0.25f;
+    float maxSinAmplitude = 1.0f;
+
+    float minSinFrequency = 0.1f;
+    float maxSinFrequency = 1.0f;
+
+    float minSinStepness = 1.0f;
+    float maxSinStepness = 2.0f;
 
     [MenuItem("Unknown games/Land generator")]
     static void show()
@@ -17,7 +33,14 @@ public class LandGenerator : EditorWindow
 
     void OnGUI()
     {
-        if(GUILayout.Button("Generate"))
+        //if(GUILayout.Button("Сбросить"))
+        //{
+        //    history.Clear();
+        //}
+
+
+
+        if(GUILayout.Button("Сгенерировать"))
         {
             var go = GameObject.Find("Generated land");
             if(go != null)
@@ -34,13 +57,29 @@ public class LandGenerator : EditorWindow
 
         drawNormals = GUILayout.Toggle(drawNormals, "Показать нормали");
 
-        if(GUILayout.Button("Применить Sin"))
+        if(GUILayout.Button("Пересчитать нормали"))
         {
-            //applySinWave(currentMesh, new Vector2(Random.Range(0.0f,1.0f), Random.Range(0.0f, 1.0f)).normalized, Random.Range(0.25f, 1.0f), 2f, 2.0f);
-            applySinWave(currentMesh, new Vector2(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)).normalized, 1.0f, 1.0f, 1.0f);
+            recalcNormals(currentMesh);
         }
 
-        
+        if(GUILayout.Button("Применить Sin"))
+        {
+            applySinWave(currentMesh, 
+                new Vector2(Random.Range(-1.0f,1.0f), Random.Range(-1.0f, 1.0f)).normalized, 
+                Random.Range(minSinFrequency, maxSinFrequency),
+                Random.Range(minSinAmplitude, maxSinAmplitude),
+                Random.Range(minSinStepness, maxSinStepness));
+            //applySinWave(currentMesh, new Vector2(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)).normalized, 1.0f, 1.0f, 1.0f);
+
+            recalcNormals(currentMesh);
+        }
+
+        minSinAmplitude = EditorGUILayout.FloatField("Мин амплитуда Sin", minSinAmplitude);
+        maxSinAmplitude = EditorGUILayout.FloatField("Макс амплитуда Sin", maxSinAmplitude);
+        minSinFrequency = EditorGUILayout.FloatField("Мин частота Sin", minSinFrequency);
+        maxSinFrequency = EditorGUILayout.FloatField("Макс частота Sin", maxSinFrequency);
+        minSinStepness = EditorGUILayout.FloatField("Мин крутизна волны Sin", minSinStepness);
+        maxSinStepness = EditorGUILayout.FloatField("Макс крутизна Sin", maxSinStepness);
     }
 
     
@@ -125,37 +164,94 @@ public class LandGenerator : EditorWindow
     {
         var verts = mesh.vertices;
         var normals = mesh.normals;
-        var oldNormals = mesh.normals;
-        Vector2 pos = Vector2.zero;
 
         for(int i=0; i<verts.Length; i++)
         {
             var v = verts[i];
 
-            pos.x = v.x;
-            pos.y = v.z;
-            float s = direction.x * pos.x + direction.y * pos.y;
-            //s = (Mathf.Sin(s * frequency) + 1.0f) / 2.0f;
-            //s = Mathf.Pow(s, stepness);
-            //v.y += s * amplitude;
+            float s = (direction.x * v.x + direction.y * v.z) * frequency;
 
-            //s = v.x + v.z;
-            float height =  (Mathf.Sin(s) + 1.0f) / 2.0f;
-            //height *= amplitude;
+            float height = Mathf.Pow(((Mathf.Sin(s) + 1.0f) / 2.0f), stepness) * amplitude;
             v.y += height;
             verts[i] = v;
 
-            float dZ = Mathf.Cos(s)*direction.y / 2.0f;
+            float dZ = direction.y * frequency * amplitude * Mathf.Pow(2, -stepness) * stepness * Mathf.Cos(s) * Mathf.Pow(Mathf.Sin(s) + 1.0f, stepness);
             Vector3 binormal = new Vector3(0, dZ, 1).normalized;
 
-            float dX = Mathf.Cos(s)*direction.x / 2.0f;
-            //dX *= amplitude;
+            float dX = direction.x * frequency * amplitude * Mathf.Pow(2, -stepness) * stepness * Mathf.Cos(s) * Mathf.Pow(Mathf.Sin(s) + 1.0f, stepness);
             Vector3 tangent = new Vector3(1, dX, 0).normalized;
 
-            normals[i] = (Vector3.Cross(binormal, tangent).normalized + oldNormals[i]) / 2.0f;
+            normals[i] = (Vector3.Cross(binormal, tangent).normalized);
         }
 
         mesh.vertices = verts;
         mesh.normals = normals;
     }
+
+    void recalcNormals(Mesh mesh)
+    {
+        var vertices = mesh.vertices;
+        var normals = mesh.normals;
+        var indices = mesh.GetIndices(0);
+
+        Dictionary<int, List<Vector3>> neighbourMap = new Dictionary<int, List<Vector3>>();
+        //Vector3[] faceNormals = new Vector3[indices.Length / 3];
+
+        for (int i = 0; i < normals.Length; i++)
+        {
+            neighbourMap[i] = new List<Vector3>();
+        }
+
+        for (int i=0; i<indices.Length; i+=3)
+        {
+            var i1 = indices[i];
+            var i2 = indices[i+1];
+            var i3 = indices[i+2];
+
+            var a = vertices[i2] - vertices[i1];
+            var b = vertices[i3] - vertices[i2];
+
+            //a.Normalize();
+            //b.Normalize();
+
+            var c = Vector3.Cross(a, b);
+            c.Normalize();
+
+            //faceNormals[j] = c;
+            //j++;
+
+            neighbourMap[i1].Add(c);
+            neighbourMap[i2].Add(c);
+            neighbourMap[i3].Add(c);
+        }
+
+        for (int i = 0; i < normals.Length; i++)
+        {
+            var n = normals[i];
+            n.x = n.y = n.z = 0;
+
+            var nbrs = neighbourMap[i];
+
+            for(int j=0; j<nbrs.Count; j++)
+            {
+                n += nbrs[j];
+            }
+
+            //for (int j = 0, k = 0; j < indices.Length; j+=3)
+            //{
+            //    if(i == indices[j] || i == indices[j + 1] || i == indices[j + 2])
+            //    {
+            //        n += faceNormals[k];
+            //    }
+            //    k++;
+            //}
+
+            n.Normalize();
+            normals[i] = n;
+        }
+
+        mesh.normals = normals;
+    }
+
+
 }
