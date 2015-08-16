@@ -13,12 +13,14 @@ public class LandGenerator : EditorWindow
     int planeWidth = 100;
     int planeLength = 100;
     float planeCellSize = 1.0f;
-    float planeHeight = 30;
+    float planeHeight = 10;
 
     Material mainSurfaceMaterial;
     Material innerSurfaceMaterial;
     private Mesh currentMesh = null;
     bool drawNormals = false;
+
+    bool showSin = false;
     bool calcNormalsAfterSin = true;
     int sinApplyCount = 1;
     float minSinAmplitude = 0.25f;
@@ -29,6 +31,11 @@ public class LandGenerator : EditorWindow
 
     float minSinStepness = 1.0f;
     float maxSinStepness = 2.0f;
+
+    bool showCollision = false;
+    float collisionZ = 0;
+    float collisionExtent = 1;
+    
 
     [MenuItem("Unknown games/Land generator")]
     static void show()
@@ -75,37 +82,74 @@ public class LandGenerator : EditorWindow
             recalcNormals(currentMesh);
         }
 
-        if(GUILayout.Button("Применить Sin"))
+        showCollision = EditorGUILayout.Foldout(showCollision, "Коллизия");
+        if(showCollision)
         {
-            var verts = currentMesh.vertices;
-            var normals = currentMesh.normals;
-
-            for(int i=0; i<sinApplyCount; i++)
+            EditorGUI.indentLevel++;
+            if (GUILayout.Button("Создать меш коллизии"))
             {
-                applySinWave(ref verts,
-                    ref normals,
-                    new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized,
-                    Random.Range(minSinFrequency, maxSinFrequency),
-                    Random.Range(minSinAmplitude, maxSinAmplitude),
-                    Random.Range(minSinStepness, maxSinStepness),
-                    false
-                );
+                var mesh = createCollision(currentMesh, collisionZ, collisionExtent);
+
+                var go = GameObject.Find("Generated land");
+                if (go != null)
+                {
+                    var mc = go.GetComponent<MeshCollider>();
+
+                    if (mc == null)
+                    {
+                        mc = go.AddComponent<MeshCollider>();
+                    }
+
+                    mc.sharedMesh = mesh;
+                }
             }
 
-            currentMesh.vertices = verts;
-
-            if(calcNormalsAfterSin)
-                recalcNormals(currentMesh);
+            collisionZ = EditorGUILayout.FloatField("Z Глубина коллизии", collisionZ);
+            collisionExtent = EditorGUILayout.FloatField("Ширина коллизии", collisionExtent);
+            EditorGUI.indentLevel--;
         }
 
-        sinApplyCount = EditorGUILayout.IntField("Количество итераций Sin", sinApplyCount);
-        calcNormalsAfterSin = EditorGUILayout.Toggle("Пересчитывать нормали после применения Sin", calcNormalsAfterSin);
-        minSinAmplitude = EditorGUILayout.FloatField("Мин амплитуда Sin", minSinAmplitude);
-        maxSinAmplitude = EditorGUILayout.FloatField("Макс амплитуда Sin", maxSinAmplitude);
-        minSinFrequency = EditorGUILayout.FloatField("Мин частота Sin", minSinFrequency);
-        maxSinFrequency = EditorGUILayout.FloatField("Макс частота Sin", maxSinFrequency);
-        minSinStepness = EditorGUILayout.FloatField("Мин крутизна волны Sin", minSinStepness);
-        maxSinStepness = EditorGUILayout.FloatField("Макс крутизна Sin", maxSinStepness);
+        
+
+        showSin = EditorGUILayout.Foldout(showSin, "Sin");
+
+        if(showSin)
+        {
+            if (GUILayout.Button("Применить Sin"))
+            {
+                EditorGUI.indentLevel++;
+                var verts = currentMesh.vertices;
+                var normals = currentMesh.normals;
+
+                for (int i = 0; i < sinApplyCount; i++)
+                {
+                    applySinWave(ref verts,
+                        ref normals,
+                        new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized,
+                        Random.Range(minSinFrequency, maxSinFrequency),
+                        Random.Range(minSinAmplitude, maxSinAmplitude),
+                        Random.Range(minSinStepness, maxSinStepness),
+                        false
+                    );
+                }
+
+                currentMesh.vertices = verts;
+
+                if (calcNormalsAfterSin)
+                    recalcNormals(currentMesh);
+                EditorGUI.indentLevel--;
+            }
+
+            sinApplyCount = EditorGUILayout.IntField("Количество итераций Sin", sinApplyCount);
+            calcNormalsAfterSin = EditorGUILayout.Toggle("Пересчитывать нормали после применения Sin", calcNormalsAfterSin);
+            minSinAmplitude = EditorGUILayout.FloatField("Мин амплитуда Sin", minSinAmplitude);
+            maxSinAmplitude = EditorGUILayout.FloatField("Макс амплитуда Sin", maxSinAmplitude);
+            minSinFrequency = EditorGUILayout.FloatField("Мин частота Sin", minSinFrequency);
+            maxSinFrequency = EditorGUILayout.FloatField("Макс частота Sin", maxSinFrequency);
+            minSinStepness = EditorGUILayout.FloatField("Мин крутизна волны Sin", minSinStepness);
+            maxSinStepness = EditorGUILayout.FloatField("Макс крутизна Sin", maxSinStepness);
+        }
+        
     }
 
     
@@ -261,6 +305,63 @@ public class LandGenerator : EditorWindow
                 normals[i] = (Vector3.Cross(binormal, tangent).normalized);
             }
         }
+    }
+
+    Mesh createCollision(Mesh source, float collZ, float collExtent)
+    {
+        var vertices = source.vertices;
+        var normals = source.normals;
+        var indices = source.GetIndices(0);
+
+        Mesh m = new Mesh();
+        m.name = "Generated collision";
+
+        List<int> newVertIndices = new List<int>();
+
+        for(int i=0; i<vertices.Length; i++)
+        {
+            var v = vertices[i];
+            var absZ = Mathf.Abs(v.z);
+
+            if (absZ >= collZ - collExtent && absZ <= collZ + collExtent)
+            {
+                newVertIndices.Add(i);
+            }
+        }
+
+        var newVertices = new Vector3[newVertIndices.Count];
+        var newNormals = new Vector3[newVertices.Length];
+        var newIndices = new List<int>();
+
+        Dictionary<int, int> indexMapping = new Dictionary<int, int>();
+
+        for(int i=0; i<newVertices.Length; i++)
+        {
+            var ind = newVertIndices[i];
+            newVertices[i] = vertices[ind];
+            newNormals[i] = normals[ind];
+            indexMapping.Add(ind, i);
+        }
+
+        for (int i = 0; i < indices.Length; i+=3)
+        {
+            var i1 = indices[i];
+            var i2 = indices[i+1];
+            var i3 = indices[i+2];
+
+            if(newVertIndices.Contains(i1) && newVertIndices.Contains(i2) && newVertIndices.Contains(i3))
+            {
+                newIndices.Add(indexMapping[i1]);
+                newIndices.Add(indexMapping[i2]);
+                newIndices.Add(indexMapping[i3]);
+            }
+        }
+
+        m.vertices = newVertices;
+        m.normals = newNormals;
+        m.SetIndices(newIndices.ToArray(), MeshTopology.Triangles, 0);
+
+        return m;
     }
 
     void recalcNormals(Mesh mesh)
