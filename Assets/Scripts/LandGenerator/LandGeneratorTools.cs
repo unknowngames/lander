@@ -7,17 +7,25 @@ namespace Assets.Scripts.LandGenerator
     {
         public Vector3 position;
         public Vector3 normal;
+        public int index;
 
         public Vertex Top;
         public Vertex Bottom;
         public Vertex Left;
         public Vertex Right;
 
-        public Vertex(Vector3 pos, Vector3 norm)
+        public Vertex(Vector3 pos, Vector3 norm, int ind)
         {
             position = pos;
             normal = norm;
+            index = ind;
         }
+    }
+
+    public class MeshData
+    {
+        public Vertex[] vertices;
+        public QuadTreeNode QuadTreeRootNode;
     }
 
     public static class LandGeneratorTools
@@ -46,7 +54,7 @@ namespace Assets.Scripts.LandGenerator
             }
         }
 
-        public static MeshFilter GeneratePlaneMesh(int width, int length, float cellSize, float height, out Vertex[] result)
+        public static MeshFilter GeneratePlaneMesh(int width, int length, float cellSize, float height, out MeshData meshData)
         {
             var go = new GameObject("Generated land");
 
@@ -64,9 +72,15 @@ namespace Assets.Scripts.LandGenerator
             Vector3[] verts = new Vector3[(width + 3) * (length + 1)];
             Vector3[] normals = new Vector3[verts.Length];
             Vector2[] uv = new Vector2[verts.Length];
-            result = new Vertex[verts.Length];
+
+            meshData = new MeshData();
+            meshData.vertices = new Vertex[verts.Length];
+            meshData.QuadTreeRootNode = new QuadTreeNode(Vector2.zero, (float)Mathf.Max(width, length) * cellSize);
+            meshData.QuadTreeRootNode.SubdivideRecursively(cellSize);
 
             int[] mainSurfIndices = new int[width * length * 6];
+
+            Vector2 tempVect = Vector2.zero;
 
 
             for (int i = 0; i <= length + 2; i++)
@@ -88,8 +102,8 @@ namespace Assets.Scripts.LandGenerator
                         uv[index].x = (float)j / (float)width;
                         uv[index].y = (float)(i - 2) / (float)(length);
 
-                        vtx = new Vertex(v,n);
-                        result[index] = vtx;
+                        vtx = new Vertex(v,n, index);
+                        meshData.vertices[index] = vtx;
                     }
                     else if (i == 1)
                     {
@@ -101,8 +115,8 @@ namespace Assets.Scripts.LandGenerator
                         uv[index].x = 1.0f - ((float)j / (float)width);
                         uv[index].y = 1; // по нормальному должен быть 0, скорее всего косяк в шейдере для почвы
 
-                        vtx = new Vertex(v, n);
-                        result[index] = vtx;
+                        vtx = new Vertex(v, n, index);
+                        meshData.vertices[index] = vtx;
                     }
                     else if (i == 0)
                     {
@@ -114,13 +128,24 @@ namespace Assets.Scripts.LandGenerator
                         uv[index].x = 1.0f - ((float)j / (float)width);
                         uv[index].y = 0; // по нормальному должен быть 1, скорее всего косяк в шейдере для почвы
 
-                        vtx = new Vertex(v, n);
-                        result[index] = vtx;
+                        vtx = new Vertex(v, n, index);
+                        meshData.vertices[index] = vtx;
                     }
 
                     if(vtx != null)
                     {
-                        addNeighbours(vtx, index, width, ref result);
+                        addNeighbours(vtx, width, ref meshData.vertices);
+                        tempVect.x = vtx.position.x;
+                        tempVect.y = vtx.position.z;
+                        var node = meshData.QuadTreeRootNode.GetNodeNearPoint(ref tempVect);
+
+                        if (node != null)
+                        {
+                            if (node.Objs == null)
+                                node.Objs = new List<object>();
+                            node.Objs.Add(vtx);
+                        }
+                            
                     }
                 }
             }
@@ -180,8 +205,11 @@ namespace Assets.Scripts.LandGenerator
             return mf;
         }
 
-        private static void addNeighbours(Vertex v, int index, int width, ref Vertex[] verts)
+        private static void addNeighbours(Vertex v, int width, ref Vertex[] verts)
         {
+            int index = v.index;
+            int len = verts.Length;
+
             // top
             if(index > width)
             {
@@ -190,7 +218,7 @@ namespace Assets.Scripts.LandGenerator
 
             // bottom
             int indW = index + width;
-            if(indW < verts.Length)
+            if(indW < len)
             {
                 v.Bottom = verts[indW];
             }
@@ -203,7 +231,7 @@ namespace Assets.Scripts.LandGenerator
 
             // right
             int indInc = index + 1;
-            if((index % width != width-1) && indInc < verts.Length)
+            if((index % width != width-1) && indInc < len)
             {
                 v.Right = verts[indInc];
             }
@@ -212,7 +240,8 @@ namespace Assets.Scripts.LandGenerator
 
         public static void ApplySinWave(ref Vector3[] vertices, ref Vector3[] normals, Vector2 direction, float frequency, float amplitude, float stepness, bool calcNormal)
         {
-            for (int i = 0; i < vertices.Length; i++)
+            int len = vertices.Length;
+            for (int i = 0; i < len; i++)
             {
                 var v = vertices[i];
 

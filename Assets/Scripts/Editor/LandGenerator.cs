@@ -62,7 +62,7 @@ namespace Assets.Scripts.Editor
                     DestroyImmediate(go);
                 }
 
-                Vertex[] result;
+                MeshData result;
                 var mf = LandGeneratorTools.GeneratePlaneMesh(planeWidth, planeLength, planeCellSize, planeHeight, out result);
                 currentMesh = mf.sharedMesh;
                 var renderer = mf.GetComponent<Renderer>();
