@@ -37,7 +37,8 @@ namespace Assets.Scripts.LandGenerator
 
         void Awake()
         {
-            var meshFilter = LandGeneratorTools.GeneratePlaneMesh(Width, Length, CellSize, Height);
+            Vertex[] result;
+            var meshFilter = LandGeneratorTools.GeneratePlaneMesh(Width, Length, CellSize, Height, out result);
             var mesh = meshFilter.sharedMesh;
 
             var verts = mesh.vertices;

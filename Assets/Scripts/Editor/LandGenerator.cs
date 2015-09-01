@@ -62,7 +62,8 @@ namespace Assets.Scripts.Editor
                     DestroyImmediate(go);
                 }
 
-                var mf = LandGeneratorTools.GeneratePlaneMesh(planeWidth, planeLength, planeCellSize, planeHeight);
+                Vertex[] result;
+                var mf = LandGeneratorTools.GeneratePlaneMesh(planeWidth, planeLength, planeCellSize, planeHeight, out result);
                 currentMesh = mf.sharedMesh;
                 var renderer = mf.GetComponent<Renderer>();
                 renderer.sharedMaterials = new Material[] { mainSurfaceMaterial, innerSurfaceMaterial };
@@ -103,6 +104,13 @@ namespace Assets.Scripts.Editor
                 collisionZ = EditorGUILayout.FloatField("Z Глубина коллизии", collisionZ);
                 collisionExtent = EditorGUILayout.FloatField("Ширина коллизии", collisionExtent);
                 EditorGUI.indentLevel--;
+
+                if(GUILayout.Button("Выровнять меш после Z глубины"))
+                {
+                    var v = currentMesh.vertices;
+                    LandGeneratorTools.FlattenPlaneMeshByDepthZ(ref v, planeWidth, planeLength, collisionZ);
+                    currentMesh.vertices = v;
+                }
             }
 
 

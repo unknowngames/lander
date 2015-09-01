@@ -3,9 +3,50 @@ using System.Collections.Generic;
 
 namespace Assets.Scripts.LandGenerator
 {
+    public class Vertex
+    {
+        public Vector3 position;
+        public Vector3 normal;
+
+        public Vertex Top;
+        public Vertex Bottom;
+        public Vertex Left;
+        public Vertex Right;
+
+        public Vertex(Vector3 pos, Vector3 norm)
+        {
+            position = pos;
+            normal = norm;
+        }
+    }
+
     public static class LandGeneratorTools
     {
-        public static MeshFilter GeneratePlaneMesh(int width, int length, float cellSize, float height)
+        /// <summary>
+        /// выравнивает все вершины плейна, которые больше заданный глубины
+        /// </summary>
+        /// <param name="planeWIdth"></param>
+        /// <param name="planeHeight"></param>
+        /// <param name="depth"></param>
+        public static void FlattenPlaneMeshByDepthZ(ref Vector3[] vertices, int planeWidth, int planeLength, float depth)
+        {
+            var vl = vertices.Length;
+            for(int i=vl-1; i>= 0; i--)
+            {
+                if (i < planeWidth)
+                    continue;
+
+                var v = vertices[i];
+
+                if (v.z >= depth)
+                {
+                    v.y = vertices[i + planeWidth].y;
+                    vertices[i] = v;
+                }
+            }
+        }
+
+        public static MeshFilter GeneratePlaneMesh(int width, int length, float cellSize, float height, out Vertex[] result)
         {
             var go = new GameObject("Generated land");
 
@@ -23,6 +64,7 @@ namespace Assets.Scripts.LandGenerator
             Vector3[] verts = new Vector3[(width + 3) * (length + 1)];
             Vector3[] normals = new Vector3[verts.Length];
             Vector2[] uv = new Vector2[verts.Length];
+            result = new Vertex[verts.Length];
 
             int[] mainSurfIndices = new int[width * length * 6];
 
@@ -33,29 +75,52 @@ namespace Assets.Scripts.LandGenerator
                 {
                     int index = i * (width + 1) + j;
 
+                    Vertex vtx = null;
+
                     if (i > 1)
                     {
                         // генерируем вершины, нормали и текстурные координаты для основной поверхности
-                        verts[index] = new Vector3(j * cellSize - halfWidth, 0, (length - (i - 2)) * cellSize - halfLength);
-                        normals[index] = new Vector3(0, 1, 0);
+                        var v = new Vector3(j * cellSize - halfWidth, 0, (length - (i - 2)) * cellSize - halfLength);
+                        verts[index] = v;
+                        var n = new Vector3(0, 1, 0);
+                        normals[index] = n;
+
                         uv[index].x = (float)j / (float)width;
                         uv[index].y = (float)(i - 2) / (float)(length);
+
+                        vtx = new Vertex(v,n);
+                        result[index] = vtx;
                     }
                     else if (i == 1)
                     {
                         // генерируем вершины, нормали и текстурные координаты для внутренней поверхности
-                        verts[index] = new Vector3(j * cellSize - halfWidth, 0, (length - (i - 1)) * cellSize - halfLength);
-                        normals[index] = new Vector3(0, 0, 1);
+                        var v = new Vector3(j * cellSize - halfWidth, 0, (length - (i - 1)) * cellSize - halfLength);
+                        verts[index] = v;
+                        var n = new Vector3(0, 1, 0);
+                        normals[index] = n;
                         uv[index].x = 1.0f - ((float)j / (float)width);
                         uv[index].y = 1; // по нормальному должен быть 0, скорее всего косяк в шейдере для почвы
+
+                        vtx = new Vertex(v, n);
+                        result[index] = vtx;
                     }
                     else if (i == 0)
                     {
                         // генерируем вершины, нормали и текстурные координаты для внутренней поверхности
-                        verts[index] = new Vector3(j * cellSize - halfWidth, -height, (length) * cellSize - halfLength);
-                        normals[index] = new Vector3(0, 0, 1);
+                        var v = new Vector3(j * cellSize - halfWidth, -height, (length) * cellSize - halfLength);
+                        verts[index] = v;
+                        var n = new Vector3(0, 1, 0);
+                        normals[index] = n;
                         uv[index].x = 1.0f - ((float)j / (float)width);
                         uv[index].y = 0; // по нормальному должен быть 1, скорее всего косяк в шейдере для почвы
+
+                        vtx = new Vertex(v, n);
+                        result[index] = vtx;
+                    }
+
+                    if(vtx != null)
+                    {
+                        addNeighbours(vtx, index, width, ref result);
                     }
                 }
             }
@@ -113,6 +178,35 @@ namespace Assets.Scripts.LandGenerator
             mesh.uv = uv;
 
             return mf;
+        }
+
+        private static void addNeighbours(Vertex v, int index, int width, ref Vertex[] verts)
+        {
+            // top
+            if(index > width)
+            {
+                v.Top = verts[index - width];
+            }
+
+            // bottom
+            int indW = index + width;
+            if(indW < verts.Length)
+            {
+                v.Bottom = verts[indW];
+            }
+
+            // left
+            if(index > 0 && (index % width > 0))
+            {
+                v.Left = verts[index - 1];
+            }
+
+            // right
+            int indInc = index + 1;
+            if((index % width != width-1) && indInc < verts.Length)
+            {
+                v.Right = verts[indInc];
+            }
         }
 
 
