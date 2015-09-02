@@ -14,6 +14,7 @@ namespace Assets.Scripts.Editor
         Material mainSurfaceMaterial;
         Material innerSurfaceMaterial;
         private Mesh currentMesh = null;
+        private MeshData currentMeshData = null;
         bool drawNormals = false;
 
         bool showSin = false;
@@ -59,11 +60,11 @@ namespace Assets.Scripts.Editor
                 if (go != null)
                 {
                     currentMesh = null;
+                    currentMeshData = null;
                     DestroyImmediate(go);
                 }
 
-                MeshData result;
-                var mf = LandGeneratorTools.GeneratePlaneMesh(planeWidth, planeLength, planeCellSize, planeHeight, out result);
+                var mf = LandGeneratorTools.GeneratePlaneMesh(planeWidth, planeLength, planeCellSize, planeHeight, out currentMeshData);
                 currentMesh = mf.sharedMesh;
                 var renderer = mf.GetComponent<Renderer>();
                 renderer.sharedMaterials = new Material[] { mainSurfaceMaterial, innerSurfaceMaterial };
@@ -85,7 +86,7 @@ namespace Assets.Scripts.Editor
                 EditorGUI.indentLevel++;
                 if (GUILayout.Button("Создать меш коллизии"))
                 {
-                    var mesh = LandGeneratorTools.CreateCollisionMesh(currentMesh, collisionZ, collisionExtent);
+                    var mesh = LandGeneratorTools.CreateCollisionMesh(currentMeshData, collisionZ, collisionExtent);
 
                     var go = GameObject.Find("Generated land");
                     if (go != null)

@@ -131,22 +131,24 @@ namespace Assets.Scripts.LandGenerator
                         vtx = new Vertex(v, n, index);
                         meshData.vertices[index] = vtx;
                     }
+                }
+            }
 
-                    if(vtx != null)
-                    {
-                        addNeighbours(vtx, width, ref meshData.vertices);
-                        tempVect.x = vtx.position.x;
-                        tempVect.y = vtx.position.z;
-                        var node = meshData.QuadTreeRootNode.GetNodeNearPoint(ref tempVect);
+            // add neighbours
+            for(int i=0; i<meshData.vertices.Length; i++)
+            {
+                var vtx = meshData.vertices[i];
 
-                        if (node != null)
-                        {
-                            if (node.Objs == null)
-                                node.Objs = new List<object>();
-                            node.Objs.Add(vtx);
-                        }
-                            
-                    }
+                addNeighbours(vtx, width, ref meshData.vertices);
+                tempVect.x = vtx.position.x;
+                tempVect.y = vtx.position.z;
+                var node = meshData.QuadTreeRootNode.GetNodeNearPoint(ref tempVect);
+
+                if (node != null)
+                {
+                    if (node.Objs == null)
+                        node.Objs = new List<object>();
+                    node.Objs.Add(vtx);
                 }
             }
 
@@ -317,18 +319,113 @@ namespace Assets.Scripts.LandGenerator
             mesh.normals = normals;
         }
 
-        public static Mesh CreateCollisionMesh(Mesh source, float collZ, float collExtent)
+        public static Mesh CreateCollisionMesh(MeshData source, float collZ, float collExtent)
         {
-            var vertices = source.vertices;
-            var normals = source.normals;
-            var indices = source.GetIndices(0);
+            Vector2 pnt = new Vector2(0, collZ);
+            var middleNode = source.QuadTreeRootNode.GetNodeNearPoint(ref pnt);
+            if(middleNode == null)
+            {
+                return null;
+            }
+            var middleVertex = middleNode.Objs[0] as Vertex;
 
             Mesh m = new Mesh();
             m.name = "Generated collision";
 
-            List<int> newVertIndices = new List<int>();
+            
+            //var vertices = source.vertices;
+            //var normals = source.normals;
+            //var indices = source.GetIndices(0);;
 
-            for (int i = 0; i < vertices.Length; i++)
+            List<int> newVertIndices = new List<int>();
+            List<Vertex> newVertices = new List<Vertex>();
+
+            int currentIndex = 0;
+            Vertex nextVertex = middleVertex;
+            while(nextVertex != null)
+            {
+                if (nextVertex.Right == null)
+                    break;
+
+                newVertices.Add(nextVertex);
+                newVertices.Add(nextVertex.Right);
+                newVertices.Add(nextVertex.Top);
+                newVertices.Add(nextVertex.Top.Right);
+                newVertices.Add(nextVertex.Bottom);
+                newVertices.Add(nextVertex.Bottom.Right);
+
+
+                newVertIndices.Add(currentIndex);
+                newVertIndices.Add(currentIndex + 2);
+                newVertIndices.Add(currentIndex + 1);
+
+                newVertIndices.Add(currentIndex + 2);
+                newVertIndices.Add(currentIndex + 3);
+                newVertIndices.Add(currentIndex + 1);
+
+
+                newVertIndices.Add(currentIndex);
+                newVertIndices.Add(currentIndex + 1);
+                newVertIndices.Add(currentIndex + 4);
+
+                newVertIndices.Add(currentIndex + 4);
+                newVertIndices.Add(currentIndex + 1);
+                newVertIndices.Add(currentIndex + 5);   
+
+                nextVertex = nextVertex.Right;
+                currentIndex += 6;
+            }
+             
+            
+            nextVertex = middleVertex;
+            while (nextVertex != null)
+            {
+                if (nextVertex.Left == null)
+                    break;
+
+                newVertices.Add(nextVertex);
+                newVertices.Add(nextVertex.Left);
+                newVertices.Add(nextVertex.Top);
+                newVertices.Add(nextVertex.Top.Left);
+                newVertices.Add(nextVertex.Bottom);
+                newVertices.Add(nextVertex.Bottom.Left);
+
+
+                newVertIndices.Add(currentIndex);
+                newVertIndices.Add(currentIndex + 1);
+                newVertIndices.Add(currentIndex + 2);
+
+                newVertIndices.Add(currentIndex + 2);
+                newVertIndices.Add(currentIndex + 1);
+                newVertIndices.Add(currentIndex + 3);
+
+                newVertIndices.Add(currentIndex);
+                newVertIndices.Add(currentIndex + 4);
+                newVertIndices.Add(currentIndex + 1);
+                
+                newVertIndices.Add(currentIndex + 4);
+                newVertIndices.Add(currentIndex + 5);
+                newVertIndices.Add(currentIndex + 1);
+                
+
+                nextVertex = nextVertex.Left;
+                currentIndex += 6;
+            }
+            
+
+            var newVerts = new Vector3[newVertices.Count];
+            var newNormals = new Vector3[newVertices.Count];
+
+            for (int i=0; i<newVertices.Count; i++)
+            {
+                var v = newVertices[i];
+                var newV = new Vertex(v.position, v.normal, i);
+                newVerts[i] = v.position;
+                newNormals[i] = v.normal;
+                newVertices[i] = newV;
+            }
+
+            /*for (int i = 0; i < vertices.Length; i++)
             {
                 var v = vertices[i];
 
@@ -336,41 +433,17 @@ namespace Assets.Scripts.LandGenerator
                 {
                     newVertIndices.Add(i);
                 }
-            }
+            }*/
 
-            var newVertices = new Vector3[newVertIndices.Count];
-            var newNormals = new Vector3[newVertices.Length];
-            var newIndices = new List<int>();
+            
 
-            Dictionary<int, int> indexMapping = new Dictionary<int, int>();
-
-            for (int i = 0; i < newVertices.Length; i++)
-            {
-                var ind = newVertIndices[i];
-                newVertices[i] = vertices[ind];
-                newNormals[i] = normals[ind];
-                indexMapping.Add(ind, i);
-            }
-
-            for (int i = 0; i < indices.Length; i += 3)
-            {
-                var i1 = indices[i];
-                var i2 = indices[i + 1];
-                var i3 = indices[i + 2];
-
-                if (newVertIndices.Contains(i1) && newVertIndices.Contains(i2) && newVertIndices.Contains(i3))
-                {
-                    newIndices.Add(indexMapping[i1]);
-                    newIndices.Add(indexMapping[i2]);
-                    newIndices.Add(indexMapping[i3]);
-                }
-            }
-
-            m.vertices = newVertices;
+            m.vertices = newVerts;
             m.normals = newNormals;
-            m.SetIndices(newIndices.ToArray(), MeshTopology.Triangles, 0);
-
+            m.SetIndices(newVertIndices.ToArray(), MeshTopology.Triangles, 0);
+            
             return m;
+
+    
         }
     }
 }

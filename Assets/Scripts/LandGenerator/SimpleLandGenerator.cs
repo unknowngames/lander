@@ -59,7 +59,7 @@ namespace Assets.Scripts.LandGenerator
 
             LandGeneratorTools.RecalculateNormals(mesh);
 
-            var collMesh = LandGeneratorTools.CreateCollisionMesh(mesh, CollisionZ, CollizionExtent);
+            var collMesh = LandGeneratorTools.CreateCollisionMesh(meshData, CollisionZ, CollizionExtent);
 
             var mc = meshFilter.gameObject.AddComponent<MeshCollider>();
             mc.sharedMesh = collMesh;
