@@ -50,7 +50,8 @@ namespace Assets.Scripts.LandGenerator
                             Random.Range(si.MinStepness, si.MaxStepness), false);
                 }                
             }
-       
+
+            LandGeneratorTools.PrepareCollisionPlace(meshData, CollisionZ, CollizionExtent);
 
             LandGeneratorTools.RecalculateNormals(meshData);
 

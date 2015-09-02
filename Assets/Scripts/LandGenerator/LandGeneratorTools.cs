@@ -366,17 +366,81 @@ namespace Assets.Scripts.LandGenerator
             return result;
         }
 
+        private static Vertex getStartVertexZ(MeshData mesh, float z)
+        {
+            Vector2 pnt = new Vector2(0, z);
+            var n = mesh.QuadTreeRootNode.GetNodeNearPoint(ref pnt);
+            return n.Objs[0] as Vertex;
+        }
+
+        public static void PrepareCollisionPlace(MeshData source, float collZ, float collExtent)
+        {
+            var middleVertex = getStartVertexZ(source, collZ);
+
+
+            List<int> newVertIndices = new List<int>();
+            List<Vertex> newVertices = new List<Vertex>();
+
+            int currentIndex = 0;
+            Vertex nextVertex = middleVertex;
+            while (nextVertex != null)
+            {
+                if (nextVertex.Right == null)
+                    break;
+
+                nextVertex.Bottom.position.y = nextVertex.position.y;
+                nextVertex.Top.position.y = nextVertex.position.y;
+
+                var nextTop = nextVertex;
+                while(nextTop.Top != null)
+                {
+                    // игнорим вертикальные
+                    if (nextTop.Bottom.position.x == nextTop.position.x && nextTop.Bottom.position.z == nextTop.position.z)
+                    {
+                        break;
+                    }
+
+                    nextTop.Top.position.y = nextTop.position.y;
+                    nextTop = nextTop.Top;
+                }
+                
+                nextVertex = nextVertex.Right;
+                currentIndex += 6;
+            }
+
+
+            nextVertex = middleVertex;
+            while (nextVertex != null)
+            {
+                if (nextVertex.Left == null)
+                    break;
+
+                nextVertex.Bottom.position.y = nextVertex.position.y;
+                nextVertex.Top.position.y = nextVertex.position.y;
+
+                var nextTop = nextVertex;
+                while (nextTop.Top != null)
+                {
+                    // игнорим вертикальные
+                    if (nextTop.Bottom.position.x == nextTop.position.x && nextTop.Bottom.position.z == nextTop.position.z)
+                    {
+                        break;
+                    }
+
+                    nextTop.Top.position.y = nextTop.position.y;
+                    nextTop = nextTop.Top;
+                }
+
+                nextVertex = nextVertex.Left;
+                currentIndex += 6;
+            }
+        }
+
         public static void CreateCollisionMesh(MeshData source, float collZ, float collExtent, out MeshData result)
         {
             result = null;
-            Vector2 pnt = new Vector2(0, collZ);
-            var middleNode = source.QuadTreeRootNode.GetNodeNearPoint(ref pnt);
-            if(middleNode == null)
-            {
-                return;
-            }
-            var middleVertex = middleNode.Objs[0] as Vertex;
-            
+            var middleVertex = getStartVertexZ(source, collZ);
+
 
             List<int> newVertIndices = new List<int>();
             List<Vertex> newVertices = new List<Vertex>();
