@@ -38,28 +38,31 @@ namespace Assets.Scripts.LandGenerator
         void Awake()
         {
             MeshData meshData;
-            var meshFilter = LandGeneratorTools.GeneratePlaneMesh(Width, Length, CellSize, Height, out meshData);
-            var mesh = meshFilter.sharedMesh;
-
-            var verts = mesh.vertices;
-            var normals = mesh.normals;
+            LandGeneratorTools.GeneratePlaneMesh(Width, Length, CellSize, Height, out meshData);
 
             foreach (var si in sinSettings)
             {
                 for(int i=0; i<si.IterationCount; i++)
                 {
-                    LandGeneratorTools.ApplySinWave(ref verts, ref normals, new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized,
+                    LandGeneratorTools.ApplySinWave(meshData, new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized,
                             Random.Range(si.MinFrequency, si.MaxFrequency),
                             Random.Range(si.MinAmplitude, si.MaxAmplitude),
                             Random.Range(si.MinStepness, si.MaxStepness), false);
                 }                
             }
+       
 
-            mesh.vertices = verts;
+            LandGeneratorTools.RecalculateNormals(meshData);
 
-            LandGeneratorTools.RecalculateNormals(mesh);
+            var mesh = LandGeneratorTools.MeshDataToUnityMesh(meshData);
 
-            var collMesh = LandGeneratorTools.CreateCollisionMesh(meshData, CollisionZ, CollizionExtent);
+            var meshFilter = LandGeneratorTools.CreatePlaneMeshObject("Generated land");
+            meshFilter.sharedMesh = mesh;
+
+            MeshData collisionMeshData;
+            LandGeneratorTools.CreateCollisionMesh(meshData, CollisionZ, CollizionExtent, out collisionMeshData);
+
+            var collMesh = LandGeneratorTools.MeshDataToUnityMesh(collisionMeshData);
 
             var mc = meshFilter.gameObject.AddComponent<MeshCollider>();
             mc.sharedMesh = collMesh;

@@ -32,7 +32,7 @@ namespace Assets.Scripts.Editor
         bool showCollision = false;
         float collisionZ = 0;
         float collisionExtent = 1;
-
+        const string GeneratedLandObjectName = "Generated land";
 
         [MenuItem("Unknown games/Land generator")]
         static void show()
@@ -56,7 +56,7 @@ namespace Assets.Scripts.Editor
 
             if (GUILayout.Button("Сгенерировать"))
             {
-                var go = GameObject.Find("Generated land");
+                var go = GameObject.Find(GeneratedLandObjectName);
                 if (go != null)
                 {
                     currentMesh = null;
@@ -64,7 +64,9 @@ namespace Assets.Scripts.Editor
                     DestroyImmediate(go);
                 }
 
-                var mf = LandGeneratorTools.GeneratePlaneMesh(planeWidth, planeLength, planeCellSize, planeHeight, out currentMeshData);
+                var mf = LandGeneratorTools.CreatePlaneMeshObject(GeneratedLandObjectName);
+                LandGeneratorTools.GeneratePlaneMesh(planeWidth, planeLength, planeCellSize, planeHeight, out currentMeshData);
+                mf.sharedMesh = LandGeneratorTools.MeshDataToUnityMesh(currentMeshData);
                 currentMesh = mf.sharedMesh;
                 var renderer = mf.GetComponent<Renderer>();
                 renderer.sharedMaterials = new Material[] { mainSurfaceMaterial, innerSurfaceMaterial };
@@ -77,7 +79,7 @@ namespace Assets.Scripts.Editor
 
             if (GUILayout.Button("Пересчитать нормали"))
             {
-                LandGeneratorTools.RecalculateNormals(currentMesh);
+                LandGeneratorTools.RecalculateNormals(currentMeshData);
             }
 
             showCollision = EditorGUILayout.Foldout(showCollision, "Коллизия");
@@ -86,7 +88,9 @@ namespace Assets.Scripts.Editor
                 EditorGUI.indentLevel++;
                 if (GUILayout.Button("Создать меш коллизии"))
                 {
-                    var mesh = LandGeneratorTools.CreateCollisionMesh(currentMeshData, collisionZ, collisionExtent);
+                    MeshData collMeshData;
+                    LandGeneratorTools.CreateCollisionMesh(currentMeshData, collisionZ, collisionExtent, out collMeshData);
+                    var mesh = LandGeneratorTools.MeshDataToUnityMesh(collMeshData);
 
                     var go = GameObject.Find("Generated land");
                     if (go != null)
@@ -128,8 +132,7 @@ namespace Assets.Scripts.Editor
 
                     for (int i = 0; i < sinApplyCount; i++)
                     {
-                        LandGeneratorTools.ApplySinWave(ref verts,
-                            ref normals,
+                        LandGeneratorTools.ApplySinWave(currentMeshData,
                             new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized,
                             Random.Range(minSinFrequency, maxSinFrequency),
                             Random.Range(minSinAmplitude, maxSinAmplitude),
@@ -138,10 +141,11 @@ namespace Assets.Scripts.Editor
                         );
                     }
 
-                    currentMesh.vertices = verts;
-
                     if (calcNormalsAfterSin)
-                        LandGeneratorTools.RecalculateNormals(currentMesh);
+                        LandGeneratorTools.RecalculateNormals(currentMeshData);
+
+                    updateMeshFromMeshdata();
+
                     EditorGUI.indentLevel--;
                 }
 
@@ -157,6 +161,14 @@ namespace Assets.Scripts.Editor
 
         }
 
+
+        void updateMeshFromMeshdata()
+        {
+            if(currentMeshData != null)
+            {
+                currentMesh = LandGeneratorTools.MeshDataToUnityMesh(currentMeshData);
+            }
+        }
 
         public void OnSceneGUI(SceneView scnView)
         {

@@ -8,6 +8,7 @@ namespace Assets.Scripts.LandGenerator
         public Vector3 position;
         public Vector3 normal;
         public int index;
+        public Vector2 uv;
 
         public Vertex Top;
         public Vertex Bottom;
@@ -26,6 +27,26 @@ namespace Assets.Scripts.LandGenerator
     {
         public Vertex[] vertices;
         public QuadTreeNode QuadTreeRootNode;
+
+        Dictionary<int, int[]> indexMap = new Dictionary<int, int[]>();
+
+        public int SubMeshCount
+        {
+            get
+            {
+                return indexMap.Count;
+            }
+        }
+
+        public void SetIndices(int submeshId, int[] indices)
+        {
+            indexMap[submeshId] = indices;
+        }
+
+        public int[] GetIndices(int submeshId)
+        {
+            return indexMap[submeshId];
+        }
     }
 
     public static class LandGeneratorTools
@@ -54,27 +75,32 @@ namespace Assets.Scripts.LandGenerator
             }
         }
 
-        public static MeshFilter GeneratePlaneMesh(int width, int length, float cellSize, float height, out MeshData meshData)
+        public static MeshFilter CreatePlaneMeshObject(string name)
         {
-            var go = new GameObject("Generated land");
+            var go = new GameObject(name);
 
             var mf = go.AddComponent<MeshFilter>();
             var mr = go.AddComponent<MeshRenderer>();
             mr.sharedMaterial = new Material(Shader.Find("Diffuse"));
 
-            Mesh mesh = new Mesh();
-            mesh.name = "generated land";
-            mf.sharedMesh = mesh;
+            return mf;
 
+
+            //mesh.subMeshCount = 2;
+            //mesh.vertices = verts;
+            //mesh.normals = normals;
+            //mesh.SetIndices(mainSurfIndices, MeshTopology.Triangles, 0);
+            //mesh.SetIndices(innerSurfIndices, MeshTopology.Triangles, 1);
+            //mesh.uv = uv;
+        }
+
+        public static void GeneratePlaneMesh(int width, int length, float cellSize, float height, out MeshData meshData)
+        {
             float halfWidth = width * cellSize / 2.0f;
             float halfLength = length * cellSize / 2.0f;
 
-            Vector3[] verts = new Vector3[(width + 3) * (length + 1)];
-            Vector3[] normals = new Vector3[verts.Length];
-            Vector2[] uv = new Vector2[verts.Length];
-
             meshData = new MeshData();
-            meshData.vertices = new Vertex[verts.Length];
+            meshData.vertices = new Vertex[(width + 3) * (length + 1)];
             meshData.QuadTreeRootNode = new QuadTreeNode(Vector2.zero, (float)Mathf.Max(width, length) * cellSize);
             meshData.QuadTreeRootNode.SubdivideRecursively(cellSize);
 
@@ -95,40 +121,37 @@ namespace Assets.Scripts.LandGenerator
                     {
                         // генерируем вершины, нормали и текстурные координаты для основной поверхности
                         var v = new Vector3(j * cellSize - halfWidth, 0, (length - (i - 2)) * cellSize - halfLength);
-                        verts[index] = v;
                         var n = new Vector3(0, 1, 0);
-                        normals[index] = n;
-
-                        uv[index].x = (float)j / (float)width;
-                        uv[index].y = (float)(i - 2) / (float)(length);
-
+                        
                         vtx = new Vertex(v,n, index);
+                        vtx.uv.x = (float)j / (float)width;
+                        vtx.uv.y = (float)(i - 2) / (float)(length);
                         meshData.vertices[index] = vtx;
                     }
                     else if (i == 1)
                     {
                         // генерируем вершины, нормали и текстурные координаты для внутренней поверхности
                         var v = new Vector3(j * cellSize - halfWidth, 0, (length - (i - 1)) * cellSize - halfLength);
-                        verts[index] = v;
                         var n = new Vector3(0, 1, 0);
-                        normals[index] = n;
-                        uv[index].x = 1.0f - ((float)j / (float)width);
-                        uv[index].y = 1; // по нормальному должен быть 0, скорее всего косяк в шейдере для почвы
 
                         vtx = new Vertex(v, n, index);
+
+                        vtx.uv.x = 1.0f - ((float)j / (float)width);
+                        vtx.uv.y = 1; // по нормальному должен быть 0, скорее всего косяк в шейдере для почвы
+
                         meshData.vertices[index] = vtx;
                     }
                     else if (i == 0)
                     {
                         // генерируем вершины, нормали и текстурные координаты для внутренней поверхности
                         var v = new Vector3(j * cellSize - halfWidth, -height, (length) * cellSize - halfLength);
-                        verts[index] = v;
                         var n = new Vector3(0, 1, 0);
-                        normals[index] = n;
-                        uv[index].x = 1.0f - ((float)j / (float)width);
-                        uv[index].y = 0; // по нормальному должен быть 1, скорее всего косяк в шейдере для почвы
+                        
 
                         vtx = new Vertex(v, n, index);
+                        vtx.uv.x = 1.0f - ((float)j / (float)width);
+                        vtx.uv.y = 0; // по нормальному должен быть 1, скорее всего косяк в шейдере для почвы
+
                         meshData.vertices[index] = vtx;
                     }
                 }
@@ -196,15 +219,9 @@ namespace Assets.Scripts.LandGenerator
                 }
             }
 
-            mesh.subMeshCount = 2;
-            mesh.vertices = verts;
-            mesh.normals = normals;
-            mesh.SetIndices(mainSurfIndices, MeshTopology.Triangles, 0);
-            mesh.SetIndices(innerSurfIndices, MeshTopology.Triangles, 1);
-
-            mesh.uv = uv;
-
-            return mf;
+            
+            meshData.SetIndices(0, mainSurfIndices);
+            meshData.SetIndices(1, innerSurfIndices);
         }
 
         private static void addNeighbours(Vertex v, int width, ref Vertex[] verts)
@@ -240,18 +257,18 @@ namespace Assets.Scripts.LandGenerator
         }
 
 
-        public static void ApplySinWave(ref Vector3[] vertices, ref Vector3[] normals, Vector2 direction, float frequency, float amplitude, float stepness, bool calcNormal)
+        public static void ApplySinWave(MeshData meshData, Vector2 direction, float frequency, float amplitude, float stepness, bool calcNormal)
         {
-            int len = vertices.Length;
+            int len = meshData.vertices.Length;
             for (int i = 0; i < len; i++)
             {
-                var v = vertices[i];
+                var v = meshData.vertices[i];
 
-                float s = (direction.x * v.x + direction.y * v.z) * frequency;
+                float s = (direction.x * v.position.x + direction.y * v.position.z) * frequency;
 
                 float height = Mathf.Pow(((Mathf.Sin(s) + 1.0f) / 2.0f), stepness) * amplitude;
-                v.y += height;
-                vertices[i] = v;
+                v.position.y += height;
+                meshData.vertices[i] = v;
 
                 if (calcNormal)
                 {
@@ -261,24 +278,26 @@ namespace Assets.Scripts.LandGenerator
                     float dX = direction.x * frequency * amplitude * Mathf.Pow(2, -stepness) * stepness * Mathf.Cos(s) * Mathf.Pow(Mathf.Sin(s) + 1.0f, stepness);
                     Vector3 tangent = new Vector3(1, dX, 0).normalized;
 
-                    normals[i] = (Vector3.Cross(binormal, tangent).normalized);
+                    v.normal = (Vector3.Cross(binormal, tangent).normalized);
                 }
             }
         }
 
-        public static void RecalculateNormals(Mesh mesh)
+        public static void RecalculateNormals(MeshData mesh)
         {
-            var vertices = mesh.vertices;
-            var normals = mesh.normals;
-            var indices = mesh.GetIndices(0);
+            //var vertices = mesh.vertices;
+            //var normals = mesh.normals;
+            //var indices = mesh.GetIndices(0);
 
             Dictionary<int, List<Vector3>> neighbourMap = new Dictionary<int, List<Vector3>>();
             //Vector3[] faceNormals = new Vector3[indices.Length / 3];
 
-            for (int i = 0; i < normals.Length; i++)
+            for (int i = 0; i < mesh.vertices.Length; i++)
             {
                 neighbourMap[i] = new List<Vector3>();
             }
+
+            var indices = mesh.GetIndices(0);
 
             for (int i = 0; i < indices.Length; i += 3)
             {
@@ -286,8 +305,8 @@ namespace Assets.Scripts.LandGenerator
                 var i2 = indices[i + 1];
                 var i3 = indices[i + 2];
 
-                var a = vertices[i2] - vertices[i1];
-                var b = vertices[i3] - vertices[i2];
+                var a = mesh.vertices[i2].position - mesh.vertices[i1].position;
+                var b = mesh.vertices[i3].position - mesh.vertices[i2].position;
 
                 //a.Normalize();
                 //b.Normalize();
@@ -300,42 +319,64 @@ namespace Assets.Scripts.LandGenerator
                 neighbourMap[i3].Add(c);
             }
 
-            for (int i = 0; i < normals.Length; i++)
+            for (int i = 0; i < mesh.vertices.Length; i++)
             {
-                var n = normals[i];
-                n.x = n.y = n.z = 0;
+                var v = mesh.vertices[i];
+
+                v.normal.x = v.normal.y = v.normal.z = 0;
 
                 var nbrs = neighbourMap[i];
 
                 for (int j = 0; j < nbrs.Count; j++)
                 {
-                    n += nbrs[j];
+                    v.normal += nbrs[j];
                 }
 
-                n.Normalize();
-                normals[i] = n;
+                v.normal.Normalize();
             }
-
-            mesh.normals = normals;
         }
 
-        public static Mesh CreateCollisionMesh(MeshData source, float collZ, float collExtent)
+        public static Mesh MeshDataToUnityMesh(MeshData source)
         {
+            var newVerts = new Vector3[source.vertices.Length];
+            var newNormals = new Vector3[source.vertices.Length];
+            var newUv = new Vector2[source.vertices.Length];
+
+            for (int i = 0; i < source.vertices.Length; i++)
+            {
+                var v = source.vertices[i];
+                var newV = new Vertex(v.position, v.normal, i);
+                newVerts[i] = v.position;
+                newNormals[i] = v.normal;
+                newUv[i] = v.uv;
+            }
+
+            Mesh result = new Mesh();
+            result.name = "Generated collision";
+            result.vertices = newVerts;
+            result.normals = newNormals;
+            result.uv = newUv;
+            result.subMeshCount = source.SubMeshCount;
+
+            for(int i=0; i<source.SubMeshCount; i++)
+            {
+                result.SetIndices(source.GetIndices(i), MeshTopology.Triangles, i);
+            }
+            
+            return result;
+        }
+
+        public static void CreateCollisionMesh(MeshData source, float collZ, float collExtent, out MeshData result)
+        {
+            result = null;
             Vector2 pnt = new Vector2(0, collZ);
             var middleNode = source.QuadTreeRootNode.GetNodeNearPoint(ref pnt);
             if(middleNode == null)
             {
-                return null;
+                return;
             }
             var middleVertex = middleNode.Objs[0] as Vertex;
-
-            Mesh m = new Mesh();
-            m.name = "Generated collision";
-
             
-            //var vertices = source.vertices;
-            //var normals = source.normals;
-            //var indices = source.GetIndices(0);;
 
             List<int> newVertIndices = new List<int>();
             List<Vertex> newVertices = new List<Vertex>();
@@ -411,39 +452,10 @@ namespace Assets.Scripts.LandGenerator
                 nextVertex = nextVertex.Left;
                 currentIndex += 6;
             }
-            
 
-            var newVerts = new Vector3[newVertices.Count];
-            var newNormals = new Vector3[newVertices.Count];
-
-            for (int i=0; i<newVertices.Count; i++)
-            {
-                var v = newVertices[i];
-                var newV = new Vertex(v.position, v.normal, i);
-                newVerts[i] = v.position;
-                newNormals[i] = v.normal;
-                newVertices[i] = newV;
-            }
-
-            /*for (int i = 0; i < vertices.Length; i++)
-            {
-                var v = vertices[i];
-
-                if (v.z >= collZ - collExtent && v.z <= collZ + collExtent)
-                {
-                    newVertIndices.Add(i);
-                }
-            }*/
-
-            
-
-            m.vertices = newVerts;
-            m.normals = newNormals;
-            m.SetIndices(newVertIndices.ToArray(), MeshTopology.Triangles, 0);
-            
-            return m;
-
-    
+            result = new MeshData();
+            result.vertices = newVertices.ToArray();
+            result.SetIndices(0, newVertIndices.ToArray());
         }
     }
 }
