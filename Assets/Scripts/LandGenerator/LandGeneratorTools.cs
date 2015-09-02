@@ -139,7 +139,7 @@ namespace Assets.Scripts.LandGenerator
             {
                 var vtx = meshData.vertices[i];
 
-                addNeighbours(vtx, width, ref meshData.vertices);
+                addNeighbours(vtx, width+1, ref meshData.vertices);
                 tempVect.x = vtx.position.x;
                 tempVect.y = vtx.position.z;
                 var node = meshData.QuadTreeRootNode.GetNodeNearPoint(ref tempVect);
