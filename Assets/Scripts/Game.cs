@@ -49,6 +49,8 @@ namespace Assets.Scripts
 
         public ILevelInfo LevelInfo { get; private set; }
 
+		public float CurrentLandingTime { get; private set; }
+
         private IGameSessionStorage gameSessionStorage;
         private IScoreCalculator scoreCalculator;
 
@@ -189,6 +191,7 @@ namespace Assets.Scripts
             PlayerSpaceship = playerSpawner.CreatePlayerAndRandomMove();   
             gameSessionStorage.RestoreSavedSession(this);
             GameSettings.ApplyDifficulty(this, difficultyStorage);
+			CurrentLandingTime = 0.0f;
             OnBeginCall ();
         }
 
@@ -246,6 +249,9 @@ namespace Assets.Scripts
 
         public void Update()
         {
+			if(PlayerSpaceship.IsPaused == false)
+				CurrentLandingTime += Time.deltaTime; 
+
             scoreCalculator.Update();
         }
 
@@ -258,6 +264,7 @@ namespace Assets.Scripts
         {
             PlayerSpaceship = null;
             playerSpawner.RemovePlayer ();
+			CurrentLandingTime = float.MaxValue;
         }
     }
 }

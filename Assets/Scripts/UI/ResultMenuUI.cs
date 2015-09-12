@@ -26,6 +26,9 @@ namespace Assets.Scripts.UI
         public UnityEngine.UI.Text PreciseLandingScoreLabel;
         public UnityEngine.UI.Text PreciseLandingScore;
 
+		public UnityEngine.UI.Text LandingTimeScoreLabel;
+		public UnityEngine.UI.Text LandingTimeScore;
+
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -48,6 +51,7 @@ namespace Assets.Scripts.UI
             SuccessLandingScore.text = "0";
             SoftLandingScore.text = "0";
             PreciseLandingScore.text = "0";
+			LandingTimeScore.text = "0";
 
             float growSpeed = 1.0f / ScoreGrowSpeed;
 
@@ -80,6 +84,16 @@ namespace Assets.Scripts.UI
                 PreciseLandingScore.text = currentPrecise.ToString();
                 yield return new WaitForSeconds(growSpeed);
             }
+
+			int landingTime = GameHelper.CurrentScore.LandingTimeScore;
+			int currentLandingTime = 0;
+
+			while (currentLandingTime < landingTime) 
+			{
+				currentLandingTime++;
+				LandingTimeScore.text = currentLandingTime.ToString();
+				yield return new WaitForSeconds(growSpeed);
+			}
         }
 
         public void OnStart()

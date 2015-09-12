@@ -9,5 +9,6 @@
         int SuccessLandingScore { get; }
         int SoftLandingScore { get; }
         int PreciseLandingScore { get; }
+		int LandingTimeScore { get; }
     }
 }

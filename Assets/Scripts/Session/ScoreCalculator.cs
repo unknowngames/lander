@@ -7,7 +7,7 @@ namespace Assets.Scripts.Session
         private readonly IGame game;
 
         private IGameSession lastSession;
-        private GameScore current = GameScore.Create(0,0,0,0,0);
+        private GameScore current = GameScore.Create(0,0,0,0,0,0);
 
 
         public ScoreCalculator(IGame game)
@@ -94,6 +94,13 @@ namespace Assets.Scripts.Session
                 UnityEngine.Debug.Log("Precise landing score: " + preciseLandingScore + " Distance: " + distanceFromCenter);
                 current.PreciseLandingScore = (int)preciseLandingScore;
                 totalScore += (int)preciseLandingScore;
+
+				// ?????? ????? ?? ????? ???????
+				int landingTimeScore = (int)(1200.0f / game.CurrentLandingTime);
+				current.LandingTimeScore = landingTimeScore;
+				totalScore += landingTimeScore;
+				UnityEngine.Debug.Log("Landing time: " + game.CurrentLandingTime + " Score " + landingTimeScore);
+
 
 
                 // расчет очков за успешную посадку
