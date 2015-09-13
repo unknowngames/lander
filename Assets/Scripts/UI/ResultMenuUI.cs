@@ -17,6 +17,9 @@ namespace Assets.Scripts.UI
         public GameObject FailPanel;
         public UnityEngine.UI.Text FailText;
 
+		public UnityEngine.UI.Text ElapsedTimeLabel;
+		public UnityEngine.UI.Text ElapsedTime;
+
         public UnityEngine.UI.Text SuccessLandingScoreLabel;
         public UnityEngine.UI.Text SuccessLandingScore;
 
@@ -28,6 +31,12 @@ namespace Assets.Scripts.UI
 
 		public UnityEngine.UI.Text LandingTimeScoreLabel;
 		public UnityEngine.UI.Text LandingTimeScore;
+
+		public UnityEngine.UI.Text FuelScoreLabel;
+		public UnityEngine.UI.Text FuelScore;
+
+		public UnityEngine.UI.Text TotalScoreLabel;
+		public UnityEngine.UI.Text TotalScore;
 
         protected override void OnEnable()
         {
@@ -52,6 +61,8 @@ namespace Assets.Scripts.UI
             SoftLandingScore.text = "0";
             PreciseLandingScore.text = "0";
 			LandingTimeScore.text = "0";
+
+			ElapsedTime.text = string.Format("{0:F2}", GameHelper.LandingTime) + " сек.";
 
             float growSpeed = 1.0f / ScoreGrowSpeed;
 
@@ -85,13 +96,23 @@ namespace Assets.Scripts.UI
                 yield return new WaitForSeconds(growSpeed);
             }
 
-			int landingTime = GameHelper.CurrentScore.LandingTimeScore;
+			int landingTimeScore = GameHelper.CurrentScore.LandingTimeScore;
 			int currentLandingTime = 0;
 
-			while (currentLandingTime < landingTime) 
+			while (currentLandingTime < landingTimeScore) 
 			{
 				currentLandingTime++;
 				LandingTimeScore.text = currentLandingTime.ToString();
+				yield return new WaitForSeconds(growSpeed);
+			}
+
+			int totalScore = landingTimeScore + success + precise + soft;
+			int currentTotalScore = 0;
+			
+			while (currentTotalScore < totalScore) 
+			{
+				currentTotalScore++;
+				TotalScore.text = currentTotalScore.ToString();
 				yield return new WaitForSeconds(growSpeed);
 			}
         }
