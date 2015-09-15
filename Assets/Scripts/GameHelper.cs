@@ -85,13 +85,5 @@ namespace Assets.Scripts
         {
             Game.Instance.FailMission(); 
         }
-
-		public static float LandingTime
-		{
-			get
-			{
-				return Game.Instance.CurrentLandingTime;
-			}
-		}
     }
 }

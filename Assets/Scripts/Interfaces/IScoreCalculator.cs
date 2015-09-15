@@ -4,6 +4,7 @@
     {
         IGameScore Current { get; }
         void SetInitialScore(IGameSession gameScore);
+		void Begin();
         void Update();
         IGameSession Calculate();
     }

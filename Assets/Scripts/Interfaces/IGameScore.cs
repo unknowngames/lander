@@ -10,5 +10,7 @@
         int SoftLandingScore { get; }
         int PreciseLandingScore { get; }
 		int LandingTimeScore { get; }
-    }
+		float LandingTime { get; }
+		float FuelConsumptionScore { get; }
+    } 
 }

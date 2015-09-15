@@ -1,4 +1,5 @@
 using Assets.Scripts.Interfaces;
+using UnityEngine;
 
 namespace Assets.Scripts.Session
 {
@@ -7,8 +8,10 @@ namespace Assets.Scripts.Session
         private readonly IGame game;
 
         private IGameSession lastSession;
-        private GameScore current = GameScore.Create(0,0,0,0,0,0);
-
+        private GameScore current = GameScore.Create(0,0,0,0,0,0,0);
+		private float initialFuel;
+		private float landingStartTime;
+		private float currentLandingTime = 0;
 
         public ScoreCalculator(IGame game)
         {
@@ -28,8 +31,17 @@ namespace Assets.Scripts.Session
 
         public void Update()
         {
-            //current.ScorePoints++;
+            if (game.PlayerSpaceship.IsPaused == false) 
+			{
+				currentLandingTime += Time.deltaTime;
+			}
         }
+
+		public void Begin()
+		{
+			initialFuel = game.PlayerSpaceship.RemainingFuel;
+			currentLandingTime = 0;
+		}
 
         public IGameSession Calculate()
         {
@@ -96,12 +108,18 @@ namespace Assets.Scripts.Session
                 totalScore += (int)preciseLandingScore;
 
 				// ?????? ????? ?? ????? ???????
-				int landingTimeScore = (int)(1200.0f / game.CurrentLandingTime);
+				int landingTimeScore = (int)(1200.0f / currentLandingTime);
 				current.LandingTimeScore = landingTimeScore;
 				totalScore += landingTimeScore;
-				UnityEngine.Debug.Log("Landing time: " + game.CurrentLandingTime + " Score " + landingTimeScore);
+				UnityEngine.Debug.Log("Landing time: " + currentLandingTime + " Score " + landingTimeScore);
 
 
+				// fuel score
+				float consumedFuel = initialFuel - game.PlayerSpaceship.RemainingFuel;
+				Debug.Log("Consumed fuel " + consumedFuel);
+				float fuelConsumptionScore = (2000.0f / consumedFuel);
+				totalScore += (int)fuelConsumptionScore;
+				current.FuelConsumptionScore = fuelConsumptionScore;
 
                 // расчет очков за успешную посадку
                 int successLandingScore = 50 * game.PlayerSpaceship.TouchdownTrigger.Zone.ScoreMultiplier;
@@ -109,6 +127,7 @@ namespace Assets.Scripts.Session
 
                 current.SuccessLandingScore = successLandingScore;
                 current.ScorePoints += totalScore;
+				current.LandingTime = currentLandingTime;
                 current.LandingsCount++;
 
                 newState.RemainingFuel += 50;

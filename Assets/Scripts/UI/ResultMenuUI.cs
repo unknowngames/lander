@@ -61,8 +61,9 @@ namespace Assets.Scripts.UI
             SoftLandingScore.text = "0";
             PreciseLandingScore.text = "0";
 			LandingTimeScore.text = "0";
+			FuelScore.text = "0";
 
-			ElapsedTime.text = string.Format("{0:F2}", GameHelper.LandingTime) + " сек.";
+			ElapsedTime.text = string.Format("{0:F2}", GameHelper.CurrentScore.LandingTime) + " сек.";
 
             float growSpeed = 1.0f / ScoreGrowSpeed;
 
@@ -103,6 +104,16 @@ namespace Assets.Scripts.UI
 			{
 				currentLandingTime++;
 				LandingTimeScore.text = currentLandingTime.ToString();
+				yield return new WaitForSeconds(growSpeed);
+			}
+
+			int cachedFuelScore = (int)GameHelper.CurrentScore.FuelConsumptionScore;
+			int currentFuelScore = 0;
+			
+			while (currentFuelScore < cachedFuelScore) 
+			{
+				currentFuelScore++;
+				FuelScore.text = currentFuelScore.ToString();
 				yield return new WaitForSeconds(growSpeed);
 			}
 
