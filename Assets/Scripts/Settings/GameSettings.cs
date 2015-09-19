@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Scripts.Interfaces;
-using Assets.Scripts.Spaceship;
 
 namespace Assets.Scripts.Settings
 {
@@ -27,6 +26,14 @@ namespace Assets.Scripts.Settings
                 }
             }
             return storage.Difficulties[0];
+        }
+
+        public static void SetDifficulty(IGameDifficultyStorage storage, IGameDifficulty difficulty)
+        {
+            if (storage.IsExist(difficulty.Name))
+            {
+                PlayerPrefsX.SetString(DifficultyKey, difficulty.Name);
+            }
         }
 
         public static void SetPlayerPrefabKey(string key)

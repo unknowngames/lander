@@ -1,15 +1,40 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Assets.Scripts.UI.HUD
 {
-    public class SpaceshipPlanetRotation : MonoBehaviour 
+    public class SpaceshipPlanetRotation : MonoBehaviour
     {
-        public float Speed = 5.0f;
-        public Transform Axis;
+        [SerializeField]
+        private float rotationInertia = 1.0f;
+        [SerializeField]
+        [FormerlySerializedAs("Speed")]
+        private float normalSpeed = 1.0f;
+        [SerializeField]
+        private float fastSpeed = 1.0f;
+        [SerializeField]
+        [FormerlySerializedAs("Axis")]
+        private Transform rotationAxis;
 
-        void LateUpdate () 
+        private float speed;
+        private bool isSpeedIncreased;
+
+        public void Update ()
         {
-            transform.Rotate(Axis.transform.forward, Time.deltaTime * Speed);
+            float maxSpeed = isSpeedIncreased ? fastSpeed : normalSpeed;
+            speed = Mathf.Lerp(speed, maxSpeed, Time.deltaTime * rotationInertia);
+
+            transform.Rotate(rotationAxis.transform.forward, Time.deltaTime * speed);
+        }
+
+        public void DoRotationFaster()
+        {
+            isSpeedIncreased = true;
+        }
+
+        public void DoRotationSlower()
+        {
+            isSpeedIncreased = false;
         }
     }
 }

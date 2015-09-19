@@ -27,5 +27,14 @@ namespace Assets.Scripts.UI
             menu.Show();
             current = menu;
         }
+
+        public void Hide(MenuUI menu)
+        {
+            if (current != null)
+            {
+                current.Hide();
+            }
+            current = null;
+        }
     }
 }

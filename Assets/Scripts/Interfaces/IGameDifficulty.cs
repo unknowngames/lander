@@ -2,6 +2,7 @@
 {
     public interface IGameDifficulty
     {
+        string Name { get; }
         void Apply(IGame game);
     }
 }

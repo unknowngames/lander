@@ -15,13 +15,13 @@ namespace Assets.Scripts.Settings
             get { return difficulties.Cast<IGameDifficulty>().ToArray(); }
         }
 
-        public IGameDifficulty this[string name]
+        public IGameDifficulty this[string difficultyName]
         {
             get
             {
-                foreach (ClassicGameDifficulty difficulty in difficulties)
+                foreach (IGameDifficulty difficulty in difficulties)
                 {
-                    if (difficulty.Name.Equals(name))
+                    if (difficulty.Name.Equals(difficultyName))
                     {
                         return difficulty;
                     }
@@ -30,9 +30,14 @@ namespace Assets.Scripts.Settings
             }
         }
 
+        IGameDifficulty IGameDifficultyStorage.this[int index]
+        {
+            get { return difficulties[index]; }
+        }
+
         public bool IsExist(string name)
         {
-            foreach (ClassicGameDifficulty difficulty in difficulties)
+            foreach (IGameDifficulty difficulty in difficulties)
             {
                 if (difficulty.Name.Equals(name))
                 {
@@ -40,6 +45,29 @@ namespace Assets.Scripts.Settings
                 }
             }
             return false;
+        }
+
+        public int GetIndex(string difficultyName)
+        {
+            for (int index = 0; index < difficulties.Length; index++)
+            {
+                IGameDifficulty difficulty = difficulties[index];
+                if (difficulty.Name.Equals(difficultyName))
+                {
+                    return index;
+                }
+            }
+            throw new KeyNotFoundException();
+        }
+
+        public int GetIndex(IGameDifficulty difficulty)
+        {
+            return GetIndex(difficulty.Name);
+        }
+
+        public int DifficultiesCount
+        {
+            get { return difficulties.Length; }
         }
     }
 }
