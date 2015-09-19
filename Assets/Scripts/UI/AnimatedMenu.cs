@@ -44,13 +44,15 @@ namespace Assets.Scripts.UI
         [ContextMenu("Show")]  
         public override void Show()
         {
-            Animator.SetBool("IsHidden", false);
+            Animator.SetBool("IsHidden", false);    
+            OnShow.Invoke();
         }
 
         [ContextMenu("Hide")]
         public override void Hide()
         {
             Animator.SetBool("IsHidden", true);
+            OnHide.Invoke();
         }          
     }
 }
