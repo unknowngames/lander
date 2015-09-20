@@ -11,5 +11,11 @@ namespace Assets.Scripts.Interfaces
         int GetIndex(IGameDifficulty difficulty);
 
         int DifficultiesCount { get; }
+
+        void ApplyDifficulty(IGame game);
+
+        IGameDifficulty GetSavedDifficulty();
+
+        void SetDifficulty(IGameDifficulty difficulty);
     }
 }

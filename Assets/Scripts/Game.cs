@@ -188,7 +188,7 @@ namespace Assets.Scripts
         {
             PlayerSpaceship = playerSpawner.CreatePlayerAndRandomMove();   
             gameSessionStorage.RestoreSavedSession(this);
-            GameSettings.ApplyDifficulty(this, difficultyStorage);
+            difficultyStorage.ApplyDifficulty(this);
 			scoreCalculator.Begin ();
             OnBeginCall ();
         }

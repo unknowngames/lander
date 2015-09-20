@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Common;
 using Assets.Scripts.Interfaces;
 using UnityEngine;
 
@@ -7,6 +8,8 @@ namespace Assets.Scripts.Settings
 {
     public class GameDifficultyStorage : ScriptableObject, IGameDifficultyStorage
     {
+        private const string DifficultyKey = "DifficultyKey";
+        
         [SerializeField]
         private ClassicGameDifficulty[] difficulties;
 
@@ -68,6 +71,33 @@ namespace Assets.Scripts.Settings
         public int DifficultiesCount
         {
             get { return difficulties.Length; }
+        }
+
+        public void ApplyDifficulty(IGame game)
+        {
+            IGameDifficulty savedDifficulty = GetSavedDifficulty();
+            savedDifficulty.Apply(game);
+        }
+
+        public IGameDifficulty GetSavedDifficulty()
+        {
+            if (PlayerPrefsX.HasKey(DifficultyKey))
+            {
+                string key = PlayerPrefsX.GetString(DifficultyKey);
+                if (IsExist(key))
+                {
+                    return this[key];
+                }
+            }
+            return Difficulties[0];
+        }
+
+        public void SetDifficulty(IGameDifficulty difficulty)
+        {
+            if (IsExist(difficulty.Name))
+            {
+                PlayerPrefsX.SetString(DifficultyKey, difficulty.Name);
+            }
         }
     }
 }
