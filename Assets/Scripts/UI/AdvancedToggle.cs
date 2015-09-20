@@ -23,15 +23,22 @@ namespace Assets.Scripts.UI
         [SerializeField]
         public Sprite offSprite;
 
-
-        public void OnEnable()
+        public bool IsOn
         {
+            get { return Toggle.isOn; }
+            set { Toggle.isOn = value; }
+        }
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
             Toggle.onValueChanged.AddListener(OnValueChanged);
             UpdateImage(Toggle.isOn);
         }
 
-        public void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
             Toggle.onValueChanged.RemoveListener(OnValueChanged);
         }
 
