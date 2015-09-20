@@ -1,8 +1,9 @@
 ﻿using Assets.Scripts.Interfaces;
+using UnityEngine;
 
 namespace Assets.Scripts.Session
 {
-    public class GameSessionStorage : IGameSessionStorage
+    public class GameSessionStorage : ScriptableObject, IGameSessionStorage
     {
         private IGameSession savedSession;
 
@@ -43,7 +44,7 @@ namespace Assets.Scripts.Session
             return GameSession.Create(state, score);
         }
 
-        public void RemoveSaveGame()
+        public void RemoveSavedGame()
         {
             GameSessionPlayerPrefsProxy.Remove();
             savedSession = null;

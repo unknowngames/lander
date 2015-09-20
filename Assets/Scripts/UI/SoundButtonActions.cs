@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.Scripts.Settings;
 using UnityEngine;
 using AudioSettings = Assets.Scripts.Settings.AudioSettings;
 
@@ -12,6 +13,7 @@ namespace Assets.Scripts.UI
     {
         [SerializeField]
         private AdvancedToggle advancedToggle;
+
         private AdvancedToggle AdvancedToggle
         {
             get { return advancedToggle ?? (advancedToggle = GetComponent<AdvancedToggle>()); }
