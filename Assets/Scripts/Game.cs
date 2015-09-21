@@ -39,6 +39,8 @@ namespace Assets.Scripts
 
         [SerializeField]
         private GameDifficultyStorage difficultyStorage;
+        [SerializeField]
+        private GameSessionStorage gameSessionStorage;
         
         public SpaceshipBehaviour PlayerSpaceship { get; private set; }
 
@@ -49,7 +51,6 @@ namespace Assets.Scripts
 
         public ILevelInfo LevelInfo { get; private set; }
 
-        private IGameSessionStorage gameSessionStorage;
         private IScoreCalculator scoreCalculator;
 
         private UnityEvent onBegin;
@@ -174,7 +175,6 @@ namespace Assets.Scripts
 
         public void Awake()
         {       
-            gameSessionStorage = new GameSessionStorage();
             scoreCalculator = new ScoreCalculator(this);
             LevelInfo = FindObjectOfType<LevelInfo>();
         }
@@ -188,7 +188,7 @@ namespace Assets.Scripts
         {
             PlayerSpaceship = playerSpawner.CreatePlayerAndRandomMove();   
             gameSessionStorage.RestoreSavedSession(this);
-            GameSettings.ApplyDifficulty(this, difficultyStorage);
+            difficultyStorage.ApplyDifficulty(this);
 			scoreCalculator.Begin ();
             OnBeginCall ();
         }
@@ -240,7 +240,7 @@ namespace Assets.Scripts
 
         public void FailMission()
         {
-            gameSessionStorage.RemoveSaveGame();
+            gameSessionStorage.RemoveSavedGame();
             SetPlayerPause(true);
             OnFinishCall();
         }

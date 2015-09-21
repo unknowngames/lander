@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Common;
 using Assets.Scripts.Interfaces;
 using UnityEngine;
 
@@ -7,6 +8,8 @@ namespace Assets.Scripts.Settings
 {
     public class PlayerPrefabsStorage : ScriptableObject, IPlayerPrefabStorage
     {
+        private const string PlayerPrefabKey = "PlayerPrefabKey";
+
         [SerializeField]
         private PlayerPrefab[] prefabs;
 
@@ -40,6 +43,22 @@ namespace Assets.Scripts.Settings
                 }
             }
             return false;
+        }
+
+        public static void SetPlayerPrefabKey(string key)
+        {
+            PlayerPrefsX.SetString(PlayerPrefabKey, key);
+        }
+
+        public static string GetSavedPlayerPrefabKey()
+        {
+            if (PlayerPrefsX.HasKey(PlayerPrefabKey))
+            {
+                string key = PlayerPrefsX.GetString(PlayerPrefabKey);
+                return key;
+            }
+
+            throw new KeyNotFoundException();
         }
     }
 }

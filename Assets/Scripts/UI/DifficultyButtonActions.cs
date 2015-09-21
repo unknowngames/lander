@@ -44,14 +44,14 @@ namespace Assets.Scripts.UI
 
         public void Start()
         {
-            CurrentDifficulty = GameSettings.GetSavedDifficulty(GameDifficultyStorage);
+            CurrentDifficulty = GameDifficultyStorage.GetSavedDifficulty();
         }
 
         public void OnDifficultyChangeClick()
         {
             CurrentDifficulty = NextDifficulty();
 
-            GameSettings.SetDifficulty(GameDifficultyStorage, CurrentDifficulty);
+            GameDifficultyStorage.SetDifficulty(CurrentDifficulty);
         }
     }
 }

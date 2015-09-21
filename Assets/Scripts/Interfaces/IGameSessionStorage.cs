@@ -6,6 +6,6 @@
         bool HasSavedSession { get; }
         void RestoreSavedSession(IGame game);
         void SaveGameSession(IGame game);
-        void RemoveSaveGame();
+        void RemoveSavedGame();
     }
 }
