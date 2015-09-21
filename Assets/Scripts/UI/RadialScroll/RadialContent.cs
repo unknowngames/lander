@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -12,6 +13,8 @@ namespace Assets.Scripts.UI.RadialScroll
         private RectTransform container;
         [SerializeField]
         private float maxAngle;
+        [SerializeField]
+        private float startAngle;
         [SerializeField]
         private float spacing;
         [SerializeField]
@@ -116,29 +119,38 @@ namespace Assets.Scripts.UI.RadialScroll
             if (itemsCount == 0)
             {
                 return;
-            }
+            } 
 
-            float totalWidth = CalculateTotalWidth();   
+            float totalWidth = CalculateTotalWidth();
+            float angleStep = MaxAngle / itemsCount;
             float radius = totalWidth*180.0f/(Mathf.PI*MaxAngle);
 
-            radius = Mathf.Max(radius, minRadius);
+            if (radius < minRadius)
+            {
+                radius = minRadius;
+            }
 
-            float radAngleStep = MaxAngle * Mathf.Deg2Rad/itemsCount;
-
-
+            float alpha = 2*Mathf.Asin(totalWidth/(2*itemsCount*radius))*Mathf.Rad2Deg;
+            if (alpha > startAngle)
+            {
+                alpha = 0.0f;
+            }
+            
             for (int index = 0; index < Items.Count; index++)
             {
                 ListItem item = Items[index];
 
-                float itemAngle = radAngleStep*index;
-                float cosAngle = Mathf.Cos(itemAngle);
-                float sinAngle = Mathf.Sin(itemAngle);
+                float itemAngle = (-angleStep * index + startAngle);
+                float radItemAngle = itemAngle*Mathf.Deg2Rad;
+                float cosAngle = Mathf.Cos(radItemAngle);
+                float sinAngle = Mathf.Sin(radItemAngle);
 
                 item.RectTransform.anchoredPosition = new Vector2(cosAngle*radius, sinAngle*radius);
             }                                                         
             
             container.sizeDelta = new Vector2(2 * radius, 2 * radius);
             container.anchoredPosition = new Vector2(0, -radius);
+            container.localEulerAngles = new Vector3(0.0f, 0.0f, alpha);
         }
 
         private float CalculateTotalWidth()
@@ -150,7 +162,7 @@ namespace Assets.Scripts.UI.RadialScroll
                 width += listItem.RectTransform.rect.width;
             }
 
-            width += spacing*Items.Count;
+            width += spacing*(Items.Count - 1);
 
             return width;
         }

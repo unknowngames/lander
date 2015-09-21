@@ -13,10 +13,15 @@ namespace Assets.Scripts.UI.RadialScroll
         [ContextMenu("Add")]
         public void Add()
         {
-            for (int i = 0; i < 10; i++)
+            ListItem newItem = Instantiate(item);
+            radialContent.Add(newItem);
+        }
+
+        public void OnGUI()
+        {
+            if (GUILayout.Button("Add"))
             {
-                ListItem newItem = Instantiate(item);
-                radialContent.Add(newItem);
+                Add();
             }
         }
     }
