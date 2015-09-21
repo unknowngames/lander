@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace Assets.Scripts.UI.RadialScroll
 {
-    public class RadialContent : UIBehaviour, IScrollListContent
+    public class RadialContent : UIBehaviour, IScrollListContent, IBeginDragHandler, IDragHandler
     {                                                                 
         public OnListItemClickEvent OnContentListItemClick = new OnListItemClickEvent();
 
@@ -20,7 +20,16 @@ namespace Assets.Scripts.UI.RadialScroll
         [SerializeField]
         private float minRadius;
 
+        [SerializeField]
+        private float minSwipeAngle;
+        [SerializeField]
+        private float maxSwipeAngle;
+
+        private float currentAngle;
+        private Vector2 position;
+        private Vector2 center;
         private List<ListItem> items = new List<ListItem>();
+        private bool swipeDone = false;
 
         public float MaxAngle
         {
@@ -122,7 +131,15 @@ namespace Assets.Scripts.UI.RadialScroll
             } 
 
             float totalWidth = CalculateTotalWidth();
-            float angleStep = MaxAngle / itemsCount;
+            float angleStep;
+            if (itemsCount == 1)
+            {
+                angleStep = 0.0f;
+            }
+            else
+            {
+                angleStep = MaxAngle/(itemsCount - 1);
+            }
             float radius = totalWidth*180.0f/(Mathf.PI*MaxAngle);
 
             if (radius < minRadius)
@@ -150,7 +167,13 @@ namespace Assets.Scripts.UI.RadialScroll
             
             container.sizeDelta = new Vector2(2 * radius, 2 * radius);
             container.anchoredPosition = new Vector2(0, -radius);
-            container.localEulerAngles = new Vector3(0.0f, 0.0f, alpha);
+            if (!swipeDone)
+            {
+                container.localEulerAngles = new Vector3(0.0f, 0.0f, alpha);
+            }
+
+            minSwipeAngle = alpha;
+            maxSwipeAngle = MaxAngle - alpha;
         }
 
         private float CalculateTotalWidth()
@@ -162,9 +185,60 @@ namespace Assets.Scripts.UI.RadialScroll
                 width += listItem.RectTransform.rect.width;
             }
 
-            width += spacing*(Items.Count - 1);
+            width += spacing*(Items.Count);
 
             return width;
+        }
+
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            center = container.position;
+            position = eventData.position;
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            Vector2 newPosition = eventData.position;
+
+            Vector2 v1 = position - center;
+            Vector2 v2 = newPosition - center;
+
+            float dAngle = Mathf.DeltaAngle(Mathf.Atan2(v1.y, v1.x) * Mathf.Rad2Deg, Mathf.Atan2(v2.y, v2.x) * Mathf.Rad2Deg);
+
+            if (Rotate(dAngle))
+            {
+                position = newPosition;
+            }
+        }
+
+        private bool Rotate(float deltaAngle)
+        {
+            return SetRotation(currentAngle + deltaAngle);
+        }
+
+        private bool SetRotation(float angle)
+        {
+            bool wasAdjustment = false;
+            float maxBorder = maxSwipeAngle;
+            float minBorder = minSwipeAngle;
+
+            if (angle > maxBorder)
+            {
+                angle = maxBorder;
+                wasAdjustment = true;
+            }
+
+            if (angle < minBorder)
+            {
+                angle = minBorder;
+                wasAdjustment = true;
+            }
+
+            currentAngle = angle;
+            container.localRotation = Quaternion.Euler(0.0f, 0.0f, angle);
+            swipeDone = true;
+
+            return !wasAdjustment;
         }
     }
 }
