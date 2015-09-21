@@ -12,6 +12,9 @@ namespace Assets.Scripts.Settings
         private string name;
 
         [SerializeField]
+        private Color colorCode;
+
+        [SerializeField]
         private float gravitationMultiplyer;
         [SerializeField]
         private float atmosphericDragMultiplyer;
@@ -48,6 +51,11 @@ namespace Assets.Scripts.Settings
         {
             get { return name; }
             private set { name = value; }
+        }
+
+        public Color ColorCode
+        {
+            get { return colorCode; }
         }
 
         public void Apply(IGame game)

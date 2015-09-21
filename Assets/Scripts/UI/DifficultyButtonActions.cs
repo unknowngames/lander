@@ -9,6 +9,8 @@ namespace Assets.Scripts.UI
     {
         [SerializeField]
         private Text difficultyText;
+        [SerializeField]
+        private Image colorCodeImage;
 
         [SerializeField]
         private GameDifficultyStorage gameDifficultyStorage;
@@ -30,6 +32,7 @@ namespace Assets.Scripts.UI
                 currentDifficultyIndex = GameDifficultyStorage.GetIndex(currentDifficulty);
 
                 difficultyText.text = currentDifficulty.Name;
+                colorCodeImage.color = currentDifficulty.ColorCode;
             }
         }
 

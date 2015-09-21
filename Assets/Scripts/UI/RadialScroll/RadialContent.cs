@@ -162,7 +162,8 @@ namespace Assets.Scripts.UI.RadialScroll
                 float cosAngle = Mathf.Cos(radItemAngle);
                 float sinAngle = Mathf.Sin(radItemAngle);
 
-                item.RectTransform.anchoredPosition = new Vector2(cosAngle*radius, sinAngle*radius);
+                item.RectTransform.anchoredPosition = new Vector2(cosAngle * radius, sinAngle * radius);
+                item.RectTransform.localEulerAngles = new Vector3(0.0f, 0.0f, itemAngle-MaxAngle);
             }                                                         
             
             container.sizeDelta = new Vector2(2 * radius, 2 * radius);
