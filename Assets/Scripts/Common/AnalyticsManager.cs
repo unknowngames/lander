@@ -32,7 +32,7 @@ namespace Assets.Scripts.Common
 		static string secret_key = "UnknownSecretkey";
 		static string endpoint_url = "UnknownUrl";
 
-		static string user_id = "UnknownUser";
+		static string user_id = "";
 		static string session_id = "UnknownSession";
 
 		//private static List<AnalyticsEvent> pendingEvents = new List<AnalyticsEvent>();
@@ -55,14 +55,28 @@ namespace Assets.Scripts.Common
 			endpoint_url = endpointUrl;
 		}
 
-		public static void SetUserID(string userID)
+		public static string UserID
 		{
-			user_id = userID;
+			get
+			{
+				return user_id;
+			}
+			set
+			{
+				user_id = value;
+			}
 		}
 
-		public static void SetSessionID(string sessionID)
+		public static string SessionID
 		{
-			session_id = sessionID;
+			get
+			{
+				return session_id;
+			}
+			set
+			{
+				session_id = value;
+			}
 		}
 
 		[ConsoleCommand]
