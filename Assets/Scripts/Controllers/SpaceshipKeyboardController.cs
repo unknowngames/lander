@@ -29,16 +29,16 @@ namespace Assets.Scripts.Controllers
 
         public void Update()
         {
-            bool throttleUp = Input.GetButtonUp("Throttle");
-            bool throttleDown = Input.GetButtonDown("Throttle");
+            bool throttleUp = UnityEngine.Input.GetButtonUp("Throttle");
+            bool throttleDown = UnityEngine.Input.GetButtonDown("Throttle");
 
-            bool rotationClockwiseUp = Input.GetButtonUp("RotationClockwise");
-            bool rotationClockwiseDown = Input.GetButtonDown("RotationClockwise");
+            bool rotationClockwiseUp = UnityEngine.Input.GetButtonUp("RotationClockwise");
+            bool rotationClockwiseDown = UnityEngine.Input.GetButtonDown("RotationClockwise");
 
-            bool rotationCounterClockwiseUp = Input.GetButtonUp("RotationCounterClockwise");
-            bool rotationCounterClockwiseDown = Input.GetButtonDown("RotationCounterClockwise");
-        
-            bool jump = Input.GetButton("Jump");
+            bool rotationCounterClockwiseUp = UnityEngine.Input.GetButtonUp("RotationCounterClockwise");
+            bool rotationCounterClockwiseDown = UnityEngine.Input.GetButtonDown("RotationCounterClockwise");
+
+            bool jump = UnityEngine.Input.GetButton("Jump");
 
 
             if (throttleDown)
