@@ -140,6 +140,19 @@ namespace Assets.Scripts.Http
 		//@PLATFORM_SPECIFIC
 		WWW _www;
 
+        public string Label
+        {
+            get; set;
+        }
+
+        public string Url
+        {
+            get
+            {
+                return _url;
+            }
+        }
+
 		public string ErrorText
 		{
 			get { return string.IsNullOrEmpty(_www.error) ? "" : _www.error; }
