@@ -12,6 +12,7 @@ namespace Assets.Scripts.UI.RadialScroll
         private BaseEventData LastEventData { get; set; }
         private float Duration { get; set; }
         private float Distance { get; set; }
+        private float DistanceDelta { get; set; }
 
         public SwipeState(PointerEventData pointerData, float startTime)
         {
@@ -21,7 +22,7 @@ namespace Assets.Scripts.UI.RadialScroll
             Position = pointerData.position;
             Duration = 0.0f;
             Distance = 0.0f;
-
+            DistanceDelta = 0.0f;
             LastEventData = pointerData;
         }
 
@@ -31,7 +32,7 @@ namespace Assets.Scripts.UI.RadialScroll
 
             Duration += deltaTime;
             Distance = (Position - StartPosition).magnitude;
-
+            DistanceDelta = (Position - pointerData.position).magnitude;
             Position = pointerData.position;
 
             LastEventData = pointerData;
@@ -57,6 +58,7 @@ namespace Assets.Scripts.UI.RadialScroll
 
             data.Direction = DetermineMoveDirection(Position - StartPosition);
             data.Distance = Distance;
+            data.DistanceDelta = DistanceDelta;
             data.Duration = Duration;
             data.Phase = Phase;
             data.Position = Position;
