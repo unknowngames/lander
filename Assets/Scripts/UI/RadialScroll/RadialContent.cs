@@ -22,8 +22,6 @@ namespace Assets.Scripts.UI.RadialScroll
 
         [SerializeField]
         private float angularDrag;
-        [SerializeField]
-        private float angularVelocityMultiplier;
         private float angularVelocity;
         private float lerpProgress;
         private float currentAngle;
@@ -97,7 +95,7 @@ namespace Assets.Scripts.UI.RadialScroll
             {
                 if (!Mathf.Approximately(angularVelocity, 0.0f))
                 {
-                    currentAngle = container.eulerAngles.z + angularVelocity * Time.deltaTime * angularVelocityMultiplier;
+                    currentAngle = container.eulerAngles.z + angularVelocity;
                     SetRotation(currentAngle);
 
                     angularVelocity = Mathf.Lerp(angularVelocity, 0.0f, lerpProgress);
@@ -171,6 +169,8 @@ namespace Assets.Scripts.UI.RadialScroll
                 return;
             }
 
+            float distance;
+            float dAngle;
             switch (swipeGestureData.Phase)
             {
                 case ESwipePhase.Start:
@@ -179,8 +179,25 @@ namespace Assets.Scripts.UI.RadialScroll
                     break;
                 case ESwipePhase.Move:
                     allowInertionMove = false;
-                    float distance = swipeGestureData.Distance;
-                    float dAngle = Mathf.Asin(distance / radius) * Mathf.Rad2Deg;
+                    distance = swipeGestureData.Distance;
+                    dAngle = Mathf.Asin(distance / radius) * Mathf.Rad2Deg;
+
+                    if (float.IsNaN(dAngle))
+                    {
+                        return;
+                    }
+
+                    if (swipeGestureData.Direction == MoveDirection.Right)
+                    {
+                        dAngle *= -1;
+                    }
+
+                    SetRotation(currentAngle + dAngle);
+                    break;
+                case ESwipePhase.End:
+
+                    distance = swipeGestureData.DistanceDelta;
+                    dAngle = Mathf.Asin(distance / radius) * Mathf.Rad2Deg;
 
                     if (float.IsNaN(dAngle))
                     {
@@ -193,9 +210,6 @@ namespace Assets.Scripts.UI.RadialScroll
                     }
 
                     angularVelocity = dAngle;
-                    SetRotation(currentAngle + dAngle);
-                    break;
-                case ESwipePhase.End:
                     allowInertionMove = true;
                     lerpProgress = 0.0f;
                     break;
