@@ -178,7 +178,7 @@ namespace Assets.Scripts.Common
 			Dictionary<string,string> customHeaders = new Dictionary<string, string> ();
 			customHeaders.Add ("Authorization", hexaHash);
 			var httpRequest = HttpApi.Request(url, jsonData, customHeaders);
-			
+            httpRequest.Label = event_id;
 			httpRequest.OnRequestDone += HandleOnRequestDone;
 			
 			return;
@@ -311,8 +311,10 @@ namespace Assets.Scripts.Common
 
 		static void HandleOnRequestDone (HttpRequest request)
 		{
-			Debug.Log (request.Text);
-		}
+#if UNITY_EDITOR
+            Debug.Log ("Analytics event response: " + request.Text + " ; Label:" + (string.IsNullOrEmpty(request.Label) ? "Unassigned" : request.Label ));
+#endif
+        }
 	}
 	
 	public struct AnalyticsEvent
