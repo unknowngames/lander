@@ -51,6 +51,8 @@ namespace Assets.Scripts
 
         public ILevelInfo LevelInfo { get; private set; }
 
+        public bool IsPaused { get; private set; }
+
         private IScoreCalculator scoreCalculator;
 
         private UnityEvent onBegin;
@@ -189,7 +191,8 @@ namespace Assets.Scripts
             PlayerSpaceship = playerSpawner.CreatePlayerAndRandomMove();   
             gameSessionStorage.RestoreSavedSession(this);
             difficultyStorage.ApplyDifficulty(this);
-			scoreCalculator.Begin ();
+            scoreCalculator.Begin();
+            IsPaused = false;
             OnBeginCall ();
         }
 
@@ -209,13 +212,13 @@ namespace Assets.Scripts
 
         public void Pause()
         {
-            SetPlayerPause(true);
+            IsPaused = true;
             OnPauseCall();
         }
 
         public void Unpause()
         {
-            SetPlayerPause(false);
+            IsPaused = false;
             OnUnpauseCall();
         }
 
@@ -234,25 +237,20 @@ namespace Assets.Scripts
         public void CompleteMission()
         {
             gameSessionStorage.SaveGameSession(this);
-            SetPlayerPause(true);
+            IsPaused = true;
             OnMissionCompletedCall();
         }
 
         public void FailMission()
         {
             gameSessionStorage.RemoveSavedGame();
-            SetPlayerPause(true);
+            IsPaused = true;
             OnFinishCall();
         }
 
         public void Update()
         {
             scoreCalculator.Update();
-        }
-
-        private void SetPlayerPause (bool state)
-        {
-            PlayerSpaceship.IsPaused = state;
         }
 
         private void Clean ()

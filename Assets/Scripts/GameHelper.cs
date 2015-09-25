@@ -50,6 +50,10 @@ namespace Assets.Scripts
         {
             get { return Game.Instance.LevelInfo; }
         }
+        public static bool IsPaused
+        {
+            get { return Game.Instance.IsPaused; }
+        }
 
         public static void Begin()
         {

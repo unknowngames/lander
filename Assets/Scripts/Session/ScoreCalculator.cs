@@ -31,7 +31,7 @@ namespace Assets.Scripts.Session
 
         public void Update()
         {
-            if (game.PlayerSpaceship.IsPaused == false) 
+            if (game.IsPaused == false) 
 			{
 				currentLandingTime += Time.deltaTime;
 			}

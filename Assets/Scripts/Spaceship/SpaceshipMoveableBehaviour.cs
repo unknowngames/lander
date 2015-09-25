@@ -124,9 +124,9 @@ namespace Assets.Scripts.Spaceship
                 return;
             }
 
-            if (Spaceship.IsPaused != isPaused)
+            if (GameHelper.IsPaused != isPaused)
             {
-                isPaused = Spaceship.IsPaused;
+                isPaused = GameHelper.IsPaused;
 
                 if (isPaused)
                 {

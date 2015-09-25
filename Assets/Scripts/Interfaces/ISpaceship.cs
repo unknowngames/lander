@@ -28,8 +28,6 @@ namespace Assets.Scripts.Interfaces
 
         TouchdownTrigger TouchdownTrigger { get; }
 
-        bool IsPaused { get; set; }
-
         void Reset ();
 
         ISpaceshipState Save();
