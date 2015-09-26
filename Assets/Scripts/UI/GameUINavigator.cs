@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using Assets.Scripts.Controllers;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -8,19 +6,13 @@ namespace Assets.Scripts.UI
 {
     public class GameUINavigator : UIBehaviour
     {                                                         
-        [SerializeField]
-        private PauseMenuUI pauseMenuUIPrefab;
-
+        [SerializeField]                           
         private PauseMenuUI pauseMenuUIInstance;
 
         [SerializeField]
-        private GameMenuUI gameMenuUIPrefab;
-
         private GameMenuUI gameMenuUIInstance;
 
         [SerializeField]
-        private ResultMenuUI resultMenuUIPrefab;
-
         private ResultMenuUI resultMenuUIInstance;
 
 
@@ -28,14 +20,9 @@ namespace Assets.Scripts.UI
         {
             base.Start();
 
-            pauseMenuUIInstance = Instantiate (pauseMenuUIPrefab);
-            pauseMenuUIInstance.transform.SetParent (transform, false);
-
-            resultMenuUIInstance = Instantiate(resultMenuUIPrefab);
-            resultMenuUIInstance.transform.SetParent(transform, false);
-                                                                       
-            gameMenuUIInstance = Instantiate(gameMenuUIPrefab);
-            gameMenuUIInstance.transform.SetParent(transform, false);
+            pauseMenuUIInstance.transform.localPosition = Vector3.zero;
+            gameMenuUIInstance.transform.localPosition = Vector3.zero;
+            resultMenuUIInstance.transform.localPosition = Vector3.zero;
 
             Show(gameMenuUIInstance);
         }

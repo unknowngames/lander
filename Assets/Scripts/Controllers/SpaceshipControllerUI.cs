@@ -1,8 +1,5 @@
-﻿using Assets.Scripts;
-using Assets.Scripts.Interfaces;
+﻿using Assets.Scripts.Interfaces;
 using Assets.Scripts.UI;
-using UnityEngine.EventSystems;
-using UnityEngine;
 
 namespace Assets.Scripts.Controllers
 {
@@ -26,9 +23,9 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        protected override void Start()
+        public override void Show()
         {
-            base.Start();
+            base.Show();
             SpaceshipController = new SpaceshipController(SpaceshipMoveable);
         }
 

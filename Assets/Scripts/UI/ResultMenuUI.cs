@@ -1,8 +1,4 @@
-﻿
-using System;
-using UnityEngine;
-using Random = UnityEngine.Random;
-
+﻿ using UnityEngine;
 namespace Assets.Scripts.UI
 {
     public class ResultMenuUI : MenuUI
@@ -38,9 +34,9 @@ namespace Assets.Scripts.UI
 		public UnityEngine.UI.Text TotalScoreLabel;
 		public UnityEngine.UI.Text TotalScore;
 
-        protected override void OnEnable()
+        public override void Show()
         {
-            base.OnEnable();
+            base.Show();
 
             if(GameHelper.CurrentScore.SuccessLandingScore > 0)
             {
