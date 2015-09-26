@@ -16,17 +16,17 @@ namespace Assets.Scripts.Session
         private int softLandingScorePoints = 0;
         private int preciseLandingScorePoints = 0;
 		private int landingTimeScorePoints = 0;
-		private float fuelConsumptionScore = 0;
+        private float fuelConsumptionScorePointsPoints = 0;
 
-        private GameScore(int scorePoints, int landingsCount, int successLandingScore, int softLandingScore, int preciseLandingScore, int landingTimeScore, float fuelConsumptionScore)
+        private GameScore(int scorePoints, int landingsCount)
         {
             this.scorePoints = scorePoints;
             this.landingsCount = landingsCount;
-			this.successLandingScorePoints = successLandingScore;
-			this.softLandingScorePoints = softLandingScore;
-			this.preciseLandingScorePoints = preciseLandingScore;
-			this.landingTimeScorePoints = landingTimeScore;
-			this.fuelConsumptionScore = fuelConsumptionScore;
+			successLandingScorePoints = 0;
+			softLandingScorePoints = 0;
+			preciseLandingScorePoints = 0;
+			landingTimeScorePoints = 0;
+            fuelConsumptionScorePointsPoints = 0;
         }
 
         public int ScorePoints
@@ -95,26 +95,26 @@ namespace Assets.Scripts.Session
 			}
 		}
 
-		public float FuelConsumptionScore
+        public float FuelConsumptionScorePoints
 		{
 			get
 			{
-				return fuelConsumptionScore;
+                return fuelConsumptionScorePointsPoints;
 			}
 			set
 			{
-				fuelConsumptionScore = value;
+                fuelConsumptionScorePointsPoints = value;
 			}
 		}
 
-        public static GameScore Create(int scorePoints, int landingsCount, int successLandingScore, int softLandingScore, int preciseLandingScore, int landingTimeScore, float fuelConsumptionScore)
+        public static GameScore Create(int scorePoints, int landingsCount)
         {
-            return new GameScore(scorePoints, landingsCount, successLandingScore, softLandingScore, preciseLandingScore, landingTimeScore, fuelConsumptionScore);
+            return new GameScore(scorePoints, landingsCount);
         }
 
         public static GameScore Create(IGameScore score)
         {
-            return new GameScore(score.ScorePoints, score.LandingsCount, score.SuccessLandingScore, score.SoftLandingScore, score.PreciseLandingScore, score.LandingTimeScore, score.FuelConsumptionScore);
+            return new GameScore(score.ScorePoints, score.LandingsCount);
         }
     }
 }

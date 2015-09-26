@@ -6,11 +6,16 @@
 
         int LandingsCount { get; }
 
-        int SuccessLandingScore { get; }
-        int SoftLandingScore { get; }
-        int PreciseLandingScore { get; }
-		int LandingTimeScore { get; }
-		float LandingTime { get; }
-		float FuelConsumptionScore { get; }
-    } 
+        float LandingTime { get; set; }
+
+        int SuccessLandingScore { get; set; }
+
+        int SoftLandingScore { get; set; }
+
+        int PreciseLandingScore { get; set; }
+
+        int LandingTimeScore { get; set; }
+
+        float FuelConsumptionScorePoints { get; set; }
+    }
 }

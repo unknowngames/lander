@@ -8,7 +8,7 @@ namespace Assets.Scripts.Session
         private readonly IGame game;
 
         private IGameSession lastSession;
-        private GameScore current = GameScore.Create(0,0,0,0,0,0,0);
+        private GameScore current = GameScore.Create(0,0);
 		private float initialFuel;
 		private float landingStartTime;
 		private float currentLandingTime = 0;
@@ -119,7 +119,7 @@ namespace Assets.Scripts.Session
 				Debug.Log("Consumed fuel " + consumedFuel);
 				float fuelConsumptionScore = (2000.0f / consumedFuel);
 				totalScore += (int)fuelConsumptionScore;
-				current.FuelConsumptionScore = fuelConsumptionScore;
+				current.FuelConsumptionScorePoints = fuelConsumptionScore;
 
                 // расчет очков за успешную посадку
                 int successLandingScore = 50 * game.PlayerSpaceship.TouchdownTrigger.Zone.ScoreMultiplier;

@@ -61,7 +61,8 @@ namespace Assets.Scripts.UI
             SoftLandingScore.text = "0";
             PreciseLandingScore.text = "0";
 			LandingTimeScore.text = "0";
-			FuelScore.text = "0";
+            FuelScore.text = "0";
+            TotalScore.text = "0";
 
 			ElapsedTime.text = string.Format("{0:F2}", GameHelper.CurrentScore.LandingTime) + " сек.";
 
@@ -107,7 +108,7 @@ namespace Assets.Scripts.UI
 				yield return new WaitForSeconds(growSpeed);
 			}
 
-			int cachedFuelScore = (int)GameHelper.CurrentScore.FuelConsumptionScore;
+			int cachedFuelScore = (int)GameHelper.CurrentScore.FuelConsumptionScorePoints;
 			int currentFuelScore = 0;
 			
 			while (currentFuelScore < cachedFuelScore) 

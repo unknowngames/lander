@@ -38,7 +38,7 @@ namespace Assets.Scripts.Session
 
         private IGameSession CreateNew(IGame game)
         {
-            IGameScore score = GameScore.Create(0, 0, 0, 0, 0, 0, 0);
+            IGameScore score = GameScore.Create(0, 0);
             ISpaceshipState state = game.PlayerSpaceship.Save();
 
             return GameSession.Create(state, score);
