@@ -49,7 +49,7 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites: []
-  spritePackingTag: HUD
+  spritePackingTag: hud
   userData: 
   assetBundleName: 
   assetBundleVariant: 
