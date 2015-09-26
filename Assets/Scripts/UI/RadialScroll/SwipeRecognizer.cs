@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace Assets.Scripts.UI.RadialScroll
 {
-    public class SwipeRecognizer : UIBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class SwipeRecognizer : UIBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerDownHandler, IPointerUpHandler
     {
         private static readonly ExecuteEvents.EventFunction<ISwipeGesture> swipeGestureHandler = Execute;
 
@@ -22,11 +22,22 @@ namespace Assets.Scripts.UI.RadialScroll
             int pointerId = eventData.pointerId;
             if (swipeStates.ContainsKey(pointerId))
             {
-                swipeStates.Remove(pointerId);
-            }
+                if (swipeStates[pointerId].Phase == ESwipePhase.Start)
+                {
+                }
+                else
+                {
+                    swipeStates.Remove(pointerId);
 
-            swipeStates.Add(pointerId, new SwipeState(eventData, Time.unscaledTime));
-            SendSwipeEvent(pointerId);
+                    swipeStates.Add(pointerId, new SwipeState(eventData, Time.unscaledTime));
+                    SendSwipeEvent(pointerId);
+                }
+            }
+            else
+            {    
+                swipeStates.Add(pointerId, new SwipeState(eventData, Time.unscaledTime));
+                SendSwipeEvent(pointerId);
+            }
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -46,6 +57,8 @@ namespace Assets.Scripts.UI.RadialScroll
             {
                 swipeStates[pointerId].End(eventData);
                 SendSwipeEvent(pointerId);
+
+                swipeStates.Remove(pointerId);
             }
         }
 
@@ -53,6 +66,39 @@ namespace Assets.Scripts.UI.RadialScroll
         {
             SwipeGestureData data = swipeStates[pointerId].GetSwipeGestureData();
             ExecuteEvents.ExecuteHierarchy(Handler, data, swipeGestureHandler);
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            int pointerId = eventData.pointerId;
+            if (!swipeStates.ContainsKey(pointerId))
+            {
+                swipeStates.Add(pointerId, new SwipeState(eventData, Time.unscaledTime));
+                SendSwipeEvent(pointerId);
+            }
+            else
+            {
+                if (swipeStates[pointerId].Phase == ESwipePhase.Start)
+                {
+                    return;
+                }
+                swipeStates.Remove(pointerId);
+
+                swipeStates.Add(pointerId, new SwipeState(eventData, Time.unscaledTime));
+                SendSwipeEvent(pointerId);
+            }
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            int pointerId = eventData.pointerId;
+            if (swipeStates.ContainsKey(pointerId))
+            {
+                swipeStates[pointerId].End(eventData);
+                SendSwipeEvent(pointerId);
+
+                swipeStates.Remove(pointerId);
+            }
         }
     }
 }

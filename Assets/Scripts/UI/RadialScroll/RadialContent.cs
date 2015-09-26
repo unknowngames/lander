@@ -17,7 +17,8 @@ namespace Assets.Scripts.UI.RadialScroll
         private float spacing;
         [SerializeField]
         private float radius;
-        
+
+        [SerializeField]
         private List<ListItem> items = new List<ListItem>();
 
         [SerializeField]
@@ -89,6 +90,13 @@ namespace Assets.Scripts.UI.RadialScroll
             items.Clear();
         }
 
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            
+            Rebuild();
+        }
+
         public void Update()
         {
             if (allowInertionMove)
@@ -107,7 +115,7 @@ namespace Assets.Scripts.UI.RadialScroll
                     allowInertionMove = false;
                 }
             }
-            Rebuild();
+            UpdateRotation();
         }
 
         private void SetRotation(float angle)

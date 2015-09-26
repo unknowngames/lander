@@ -5,8 +5,8 @@ namespace Assets.Scripts.UI.RadialScroll
 {
     public class SwipeState
     {
-        private int PointerId { get; set; }
-        private ESwipePhase Phase { get; set; }
+        public int PointerId { get; set; }
+        public ESwipePhase Phase { get; set; }
         private Vector2 Position { get; set; }
         private Vector2 StartPosition { get; set; }
         private BaseEventData LastEventData { get; set; }

@@ -38,7 +38,7 @@ namespace Assets.Scripts
             
             spaceshipBehaviourInstance.Reset ();
 
-            spaceshipBehaviourInstance.transform.position = spawnZone.GetRandomPosition();
+            spaceshipBehaviourInstance.transform.position = spawnZone.GetPosition();
 
             Quaternion rotation = Quaternion.FromToRotation(Vector3.up, -initialVelosity);  
             spaceshipBehaviourInstance.transform.rotation = rotation;
