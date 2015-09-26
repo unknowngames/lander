@@ -25,6 +25,11 @@ namespace Assets.Scripts.Common
             AnalyticsManager.SendDesignEvent(designEventId);
         }
 
+		public void ExecuteDesignEvent(string eventId)
+		{
+			AnalyticsManager.SendDesignEvent(eventId);
+		}
+
         void Start()
         {
             if(method == AnalyticsHandlerMethod.Start)
