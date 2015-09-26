@@ -55,12 +55,19 @@ namespace Assets.Scripts
 
         private IScoreCalculator scoreCalculator;
 
+		[SerializeField]
         private UnityEvent onBegin;
-        private UnityEvent onSuspended;
-        private UnityEvent onPause;
-        private UnityEvent onUnpause;
-        private UnityEvent onFinish;
-        private UnityEvent onMissionCompleted;
+		[SerializeField]
+		private UnityEvent onSuspended;
+		[SerializeField]
+		private UnityEvent onPause;
+		[SerializeField]
+		private UnityEvent onUnpause;
+		[SerializeField]
+		private UnityEvent onMissionFailed;
+		[SerializeField]
+		private UnityEvent onMissionCompleted;
+		[SerializeField]
         private UnityEvent onAbort;
 
         public UnityEvent OnBegin
@@ -95,11 +102,11 @@ namespace Assets.Scripts
             }
         }
 
-        public UnityEvent OnFinish
+        public UnityEvent OnMissionFailed
         {
             get
             {
-                return onFinish ?? (onFinish = new UnityEvent());
+                return onMissionFailed ?? (onMissionFailed = new UnityEvent());
             }
         }
 
@@ -151,11 +158,11 @@ namespace Assets.Scripts
             }
         }
 
-        private void OnFinishCall()
+        private void OnMissionFailedCall()
         {
-            if (OnFinish != null)
+            if (OnMissionFailed != null)
             {
-                OnFinish.Invoke();
+                OnMissionFailed.Invoke();
             }
         }
 
@@ -245,7 +252,7 @@ namespace Assets.Scripts
         {
             gameSessionStorage.RemoveSavedGame();
             IsPaused = true;
-            OnFinishCall();
+            OnMissionFailedCall();
         }
 
         public void Update()

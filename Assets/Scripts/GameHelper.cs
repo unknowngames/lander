@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Interfaces;
+using Assets.Scripts.Interfaces;
 using Assets.Scripts.Spaceship;
 using UnityEngine.Events;
 
@@ -23,7 +23,7 @@ namespace Assets.Scripts
 
         public static UnityEvent OnFinish
         {
-            get { return Game.Instance.OnFinish; }
+            get { return Game.Instance.OnMissionFailed; }
         }
 
         public static UnityEvent OnMissionCompleted

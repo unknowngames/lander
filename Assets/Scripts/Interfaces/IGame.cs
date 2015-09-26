@@ -9,7 +9,7 @@ namespace Assets.Scripts.Interfaces
         UnityEvent OnSuspended { get; }      
         UnityEvent OnPause { get; }
         UnityEvent OnUnpause { get; }
-        UnityEvent OnFinish { get; }
+        UnityEvent OnMissionFailed { get; }
         UnityEvent OnMissionCompleted { get; }
         UnityEvent OnAbort { get; }
 
