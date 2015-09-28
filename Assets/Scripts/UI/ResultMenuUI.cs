@@ -62,67 +62,79 @@ namespace Assets.Scripts.UI
 
 			ElapsedTime.text = string.Format("{0:F2}", GameHelper.CurrentScore.LandingTime) + " сек.";
 
-            float growSpeed = 1.0f / ScoreGrowSpeed;
+            float growSpeed = ScoreGrowSpeed;
 
             int success = GameHelper.CurrentScore.SuccessLandingScore;
             int currentSuccess = 0;
 
             while(currentSuccess < success)
             {
-                currentSuccess++;
+                currentSuccess += (int)(growSpeed * Time.deltaTime);
                 SuccessLandingScore.text = currentSuccess.ToString();
-                yield return new WaitForSeconds(growSpeed);
+                yield return null;
             }
+            currentSuccess = success;
+            SuccessLandingScore.text = currentSuccess.ToString();
 
             int soft = GameHelper.CurrentScore.SoftLandingScore;
             int currrentSoft = 0;
 
             while (currrentSoft < soft)
             {
-                currrentSoft++;
+                currrentSoft += (int)(growSpeed * Time.deltaTime);
                 SoftLandingScore.text = currrentSoft.ToString();
-                yield return new WaitForSeconds(growSpeed);
+                yield return null;
             }
+            currrentSoft = soft;
+            SoftLandingScore.text = currrentSoft.ToString();
 
             int precise = GameHelper.CurrentScore.PreciseLandingScore;
             int currentPrecise = 0;
 
             while (currentPrecise < precise)
             {
-                currentPrecise++;
+                currentPrecise += (int)(growSpeed * Time.deltaTime);
                 PreciseLandingScore.text = currentPrecise.ToString();
-                yield return new WaitForSeconds(growSpeed);
+                yield return null;
             }
+            currentPrecise = precise;
+            PreciseLandingScore.text = currentPrecise.ToString();
 
-			int landingTimeScore = GameHelper.CurrentScore.LandingTimeScore;
+            int landingTimeScore = GameHelper.CurrentScore.LandingTimeScore;
 			int currentLandingTime = 0;
 
 			while (currentLandingTime < landingTimeScore) 
 			{
-				currentLandingTime++;
+                currentLandingTime += (int)(growSpeed * Time.deltaTime);
 				LandingTimeScore.text = currentLandingTime.ToString();
-				yield return new WaitForSeconds(growSpeed);
+				yield return null;
 			}
+            currentLandingTime = landingTimeScore;
+            LandingTimeScore.text = currentLandingTime.ToString();
 
-			int cachedFuelScore = (int)GameHelper.CurrentScore.FuelConsumptionScorePoints;
+            int cachedFuelScore = (int)GameHelper.CurrentScore.FuelConsumptionScorePoints;
 			int currentFuelScore = 0;
 			
 			while (currentFuelScore < cachedFuelScore) 
 			{
-				currentFuelScore++;
+                currentFuelScore += (int)(growSpeed * Time.deltaTime);
 				FuelScore.text = currentFuelScore.ToString();
-				yield return new WaitForSeconds(growSpeed);
+				yield return null;
 			}
+            currentFuelScore = cachedFuelScore;
+            FuelScore.text = currentFuelScore.ToString();
 
-			int totalScore = landingTimeScore + success + precise + soft;
+            int totalScore = landingTimeScore + success + precise + soft;
 			int currentTotalScore = 0;
 			
 			while (currentTotalScore < totalScore) 
 			{
-				currentTotalScore++;
+                currentTotalScore += (int)(growSpeed * Time.deltaTime);
 				TotalScore.text = currentTotalScore.ToString();
-				yield return new WaitForSeconds(growSpeed);
+				yield return null;
 			}
+            currentTotalScore = totalScore;
+            TotalScore.text = currentTotalScore.ToString();
         }
 
         public void OnStart()
