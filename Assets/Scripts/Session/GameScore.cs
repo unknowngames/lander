@@ -41,6 +41,11 @@ namespace Assets.Scripts.Session
             set { landingsCount = value; }
         }
 
+        public float FuelBonus
+        {
+            get; set;
+        }
+
 		public float LandingTime 
 		{
 			get;

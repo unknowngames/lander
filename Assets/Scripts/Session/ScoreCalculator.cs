@@ -88,7 +88,7 @@ namespace Assets.Scripts.Session
                 UnityEngine.Debug.Log("Soft landed : " + isLandingSoft + " collisions: " + collisions.Count + " velocity magn: " + maxSoftCollision);
 
                 if (collisions.Count <= 1)
-                    softLandingScore += 10;
+                    softLandingScore += 1000;
 
                 current.SoftLandingScore = (int)softLandingScore;
                 totalScore += (int)softLandingScore;
@@ -120,7 +120,7 @@ namespace Assets.Scripts.Session
 				float fuelConsumptionScore = (200000.0f / consumedFuel);
 				totalScore += (int)fuelConsumptionScore;
 				current.FuelConsumptionScorePoints = fuelConsumptionScore;
-
+                
                 // расчет очков за успешную посадку
                 int successLandingScore = 5000 * game.PlayerSpaceship.TouchdownTrigger.Zone.ScoreMultiplier;
                 totalScore += successLandingScore;
@@ -132,7 +132,8 @@ namespace Assets.Scripts.Session
 
                 Debug.Log("Total score " + totalScore);
 
-                newState.RemainingFuel += totalScore / 100.0f;
+                current.FuelBonus = totalScore * game.FuelBonusFactor;
+                newState.RemainingFuel += current.FuelBonus;
             }
 
             if (game.PlayerSpaceship.IsCrashed)

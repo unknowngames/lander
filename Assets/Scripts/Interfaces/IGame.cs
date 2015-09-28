@@ -16,6 +16,7 @@ namespace Assets.Scripts.Interfaces
         SpaceshipBehaviour PlayerSpaceship { get; }  
         IGameScore CurrentScore { get; }
         ILevelInfo LevelInfo { get; }
+        float FuelBonusFactor { get; }
 
         bool IsPaused { get; }
 

@@ -17,5 +17,7 @@
         int LandingTimeScore { get; set; }
 
         float FuelConsumptionScorePoints { get; set; }
+
+        float FuelBonus { get; set; }
     }
 }

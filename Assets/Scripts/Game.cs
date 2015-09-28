@@ -44,6 +44,17 @@ namespace Assets.Scripts
         
         public SpaceshipBehaviour PlayerSpaceship { get; private set; }
 
+        [SerializeField]
+        private float fuelBonusFactor = 0.0066f;
+
+        public float FuelBonusFactor
+        {
+            get
+            {
+                return fuelBonusFactor;
+            }
+        }
+
         public IGameScore CurrentScore
         {
             get { return scoreCalculator.Current; }

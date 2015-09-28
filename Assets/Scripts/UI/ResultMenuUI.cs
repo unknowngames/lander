@@ -34,6 +34,9 @@ namespace Assets.Scripts.UI
 		public UnityEngine.UI.Text TotalScoreLabel;
 		public UnityEngine.UI.Text TotalScore;
 
+        public UnityEngine.UI.Text FuelBonusLabel;
+        public UnityEngine.UI.Text FuelBonus;
+
         public override void Show()
         {
             base.Show();
@@ -59,6 +62,7 @@ namespace Assets.Scripts.UI
 			LandingTimeScore.text = "0";
             FuelScore.text = "0";
             TotalScore.text = "0";
+            FuelBonus.text = "0";
 
 			ElapsedTime.text = string.Format("{0:F2}", GameHelper.CurrentScore.LandingTime) + " сек.";
 
@@ -124,7 +128,7 @@ namespace Assets.Scripts.UI
             currentFuelScore = cachedFuelScore;
             FuelScore.text = currentFuelScore.ToString();
 
-            int totalScore = landingTimeScore + success + precise + soft;
+            int totalScore = landingTimeScore + success + precise + soft + cachedFuelScore;
 			int currentTotalScore = 0;
 			
 			while (currentTotalScore < totalScore) 
@@ -135,6 +139,8 @@ namespace Assets.Scripts.UI
 			}
             currentTotalScore = totalScore;
             TotalScore.text = currentTotalScore.ToString();
+
+            FuelBonus.text = string.Format("{0:F1}", GameHelper.CurrentScore.FuelBonus);
         }
 
         public void OnStart()
