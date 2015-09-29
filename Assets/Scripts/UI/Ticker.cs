@@ -1,51 +1,97 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(RectTransform))]
-public class Ticker : MonoBehaviour
+namespace Assets.Scripts.UI
 {
-    [SerializeField]
-    private Text text;
-    [SerializeField]
-    private float velocity;
-
-    private RectTransform RectTransform
+    [RequireComponent(typeof (RectTransform))]
+    public class Ticker : UIBehaviour
     {
-        get { return (RectTransform)transform; }
-    }
+        [SerializeField]
+        private Text text;
 
-    public float Velocity
-    {
-        get { return velocity; }
-        set { velocity = value; }
-    }
+        [SerializeField]
+        private float velocity;
 
-    public string Text
-    {
-        get { return text.text; }
-        set { text.text = value; }
-    }
+        private RectTransform RectTransform
+        {
+            get { return (RectTransform) transform; }
+        }
 
-    private float preferredWidth;
-    private float xPosition;
+        public float Velocity
+        {
+            get { return velocity; }
+            set
+            {
+                if (!Mathf.Approximately(velocity, value))
+                {
+                    ResetPosition();
+                    velocity = value;
+                }
+            }
+        }
 
-    public void Update()
-    {
-        if (!Mathf.Approximately(preferredWidth,text.preferredWidth))
+        public string Text
+        {
+            get { return text.text; }
+            set
+            {
+                if (text.text != value)
+                {
+                    ResetPosition();
+                    text.text = value;
+                }
+            }
+        }
+
+        private float preferredWidth;
+        private float xPosition;
+
+        public void Update()
+        {
+            if (!Mathf.Approximately(preferredWidth, text.preferredWidth))
+            {
+                ResetPosition();
+            }
+
+            xPosition -= velocity*Time.deltaTime;
+            Move();
+
+            if (xPosition < -preferredWidth)
+            {
+                ResetPosition();
+            }
+        }
+
+        public void Show()
+        {
+            gameObject.SetActive(true);
+        }
+
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+
+        private void Move()
+        {
+
+            Vector3 localPosition = text.transform.localPosition;
+            localPosition.x = xPosition;
+            text.transform.localPosition = localPosition;
+        }
+
+        private void ResetPosition()
         {
             preferredWidth = text.preferredWidth;
             xPosition = RectTransform.rect.width;
         }
 
-        xPosition -= velocity*Time.deltaTime;
-
-        Vector3 localPosition = text.transform.localPosition;
-        localPosition.x = xPosition;                 
-        text.transform.localPosition = localPosition;
-
-        if (xPosition < -preferredWidth)
+        protected override void OnEnable()
         {
-            xPosition = RectTransform.rect.width;
+            base.OnEnable();
+
+            ResetPosition();
         }
     }
 }
