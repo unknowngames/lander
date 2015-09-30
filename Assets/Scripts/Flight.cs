@@ -6,11 +6,6 @@ using UnityEngine.Events;
 
 namespace Assets.Scripts
 {
-    //public class Tutorial1Flight : Flight
-    //{
-
-    //}
-
     [RequireComponent(typeof(PlayerSpawner))]
     public abstract class Flight : MonoBehaviour, IFlight
     {
@@ -132,6 +127,11 @@ namespace Assets.Scripts
             {
                 OnAbort.Invoke();
             }
+        }
+
+        public void Awake()
+        {
+            LevelInfo = FindObjectOfType<LevelInfo>();
         }
 
         public abstract void Begin();

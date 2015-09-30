@@ -1,12 +1,9 @@
-using Assets.Scripts.Interfaces;
-using Assets.Scripts.Session;
-using Assets.Scripts.Settings;
+﻿using Assets.Scripts.Interfaces;
 using UnityEngine;
 
 namespace Assets.Scripts
 {
-    [RequireComponent(typeof(ScoreCalculator))]
-    public class GameFlight : Flight
+    public class Tutorial1Flight : Flight
     {
         public void Start()
         {
@@ -16,13 +13,10 @@ namespace Assets.Scripts
         public override void Begin()
         {
             PlayerSpawner.Current.CreatePlayerAndRandomMove();
-            gameSessionStorage.RestoreSavedSession(this);
             difficultyStorage.ApplyDifficulty(this);
-            ScoreCalculator.Current.Begin();
             IsPaused = false;
             OnBeginCall();
         }
-
 
         public override void Abort()
         {
@@ -43,30 +37,28 @@ namespace Assets.Scripts
             OnUnpauseCall();
         }
 
-        public override IGameSession Save()
-        {
-            IGameSession gameScore = ScoreCalculator.Current.Calculate();
-            return gameScore;
-        }
-
-        public override void Restore(IGameSession session)
-        {
-            ScoreCalculator.Current.SetInitialScore(session);
-            PlayerSpawner.PlayerSpaceship.Restore(session.Spaceship);
-        }
-
         public override void CompleteFlight()
         {
-            gameSessionStorage.SaveGameSession(this);
             IsPaused = true;
             OnFlightCompletedCall();
         }
 
         public override void FailFlight()
         {
-            gameSessionStorage.RemoveSavedGame();
             IsPaused = true;
             OnFlightFailedCall();
+        }
+
+        public override IGameSession Save()
+        {
+            Debug.LogWarning("Did not use in tutorial");
+            throw new System.NotImplementedException();
+        }
+
+        public override void Restore(IGameSession session)
+        {
+            Debug.LogWarning("Did not use in tutorial");
+            throw new System.NotImplementedException();
         }
     }
 }
