@@ -55,17 +55,17 @@ namespace Assets.Scripts.Spaceship
 
         public float EnginePower
         {
-            get { return GameHelper.IsPaused || IsCrashed ? 0.0f : (RemainingFuel > 0.0f ? ThrottleLevel : 0.0f); }
+            get { return Flight.Current.IsPaused || IsCrashed ? 0.0f : (RemainingFuel > 0.0f ? ThrottleLevel : 0.0f); }
         }
 
         public float RightStabilizerEnginePower
         {
-            get { return GameHelper.IsPaused || IsCrashed ? 0.0f : RightStabilizerThrottleLevel; }
+            get { return Flight.Current.IsPaused || IsCrashed ? 0.0f : RightStabilizerThrottleLevel; }
         }
 
         public float LeftStabilizerEnginePower
         {
-            get { return GameHelper.IsPaused || IsCrashed ? 0.0f : LeftStabilizerThrottleLevel; }
+            get { return Flight.Current.IsPaused || IsCrashed ? 0.0f : LeftStabilizerThrottleLevel; }
         }
 
         public OnCrashEvent CrashEvent = new OnCrashEvent();
@@ -192,7 +192,7 @@ namespace Assets.Scripts.Spaceship
                 IsCrashed = true;
                 BlowUp();
 
-                GameHelper.FailMission();
+                Flight.Current.FailFlight();
                 CrashEvent.Invoke();
             }
         }
@@ -208,7 +208,7 @@ namespace Assets.Scripts.Spaceship
 
         private void Landed()
         {
-            GameHelper.CompleteMission();
+            Flight.Current.CompleteFlight();
             LandEvent.Invoke();
         }
 

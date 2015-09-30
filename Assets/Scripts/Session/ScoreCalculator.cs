@@ -3,35 +3,61 @@ using UnityEngine;
 
 namespace Assets.Scripts.Session
 {
-    public class ScoreCalculator : IScoreCalculator
+    public class ScoreCalculator : MonoBehaviour, IScoreCalculator
     {
-        private readonly IGame game;
+        public static ScoreCalculator Current { get; private set; }
 
         private IGameSession lastSession;
-        private GameScore current = GameScore.Create(0,0);
+        private GameScore currentScore = GameScore.Create(0,0);
 		private float initialFuel;
 		private float landingStartTime;
-		private float currentLandingTime = 0;
+        private float currentLandingTime = 0;
 
-        public ScoreCalculator(IGame game)
+        [SerializeField]
+        private float fuelBonusFactor = 0.0066f;
+
+        public float FuelBonusFactor
         {
-            this.game = game;
+            get
+            {
+                return fuelBonusFactor;
+            }
         }
 
-        public IGameScore Current
+        public IGameScore CurrentScore
         {
-            get { return current; }
+            get { return currentScore; }
         }
 
         public void SetInitialScore(IGameSession gameSession)
         {
             lastSession = gameSession;
-            current = GameScore.Create(lastSession.Score);
+            currentScore = GameScore.Create(lastSession.Score);
+        }
+
+        protected void OnEnable()
+        {
+            if (Current == null)
+            {
+                Current = this;
+            }
+            else
+            {
+                Debug.LogWarning("Multiple ScoreCalculator in scene... this is not supported");
+            }
+        }
+
+        protected void OnDisable()
+        {
+            if (Current == this)
+            {
+                Current = null;
+            }
         }
 
         public void Update()
         {
-            if (game.IsPaused == false) 
+            if (Flight.Current.IsPaused == false) 
 			{
 				currentLandingTime += Time.deltaTime;
 			}
@@ -39,16 +65,16 @@ namespace Assets.Scripts.Session
 
 		public void Begin()
 		{
-			initialFuel = game.PlayerSpaceship.RemainingFuel;
+            initialFuel = PlayerSpawner.PlayerSpaceship.RemainingFuel;
 			currentLandingTime = 0;
 		}
 
         public IGameSession Calculate()
         {
-            ISpaceshipState lastState = game.PlayerSpaceship.Save();
+            ISpaceshipState lastState = PlayerSpawner.PlayerSpaceship.Save();
             SpaceshipState newState = SpaceshipState.Create(lastState);
 
-            if (game.PlayerSpaceship.IsLanded)
+            if (PlayerSpawner.PlayerSpaceship.IsLanded)
             {
                 int totalScore = 0;
 
@@ -57,7 +83,7 @@ namespace Assets.Scripts.Session
                 // расчет бонуса за мягкую посадку
                 float softLandingScore = 0;
 
-                var collisions = game.PlayerSpaceship.Collisions;
+                var collisions = PlayerSpawner.PlayerSpaceship.Collisions;
                 bool isLandingSoft = true;
                 const float softCollisionVelocity = 0.5f;
                 float maxSoftCollision = 0.0f;
@@ -90,13 +116,13 @@ namespace Assets.Scripts.Session
                 if (collisions.Count <= 1)
                     softLandingScore += 1000;
 
-                current.SoftLandingScore = (int)softLandingScore;
+                currentScore.SoftLandingScore = (int)softLandingScore;
                 totalScore += (int)softLandingScore;
 
                 // расчет очков за точность посадки
                 float preciseLandingScore = 0;
 
-                float distanceFromCenter = UnityEngine.Mathf.Abs(game.PlayerSpaceship.transform.position.x - game.PlayerSpaceship.TouchdownTrigger.Zone.transform.position.x);
+                float distanceFromCenter = Mathf.Abs(PlayerSpawner.PlayerSpaceship.transform.position.x - PlayerSpawner.PlayerSpaceship.TouchdownTrigger.Zone.transform.position.x);
 
                 if (distanceFromCenter <= 0.5f)
                     preciseLandingScore += 2000.0f + 2000.0f * (1.0f - distanceFromCenter / 0.5f);
@@ -104,44 +130,44 @@ namespace Assets.Scripts.Session
                     preciseLandingScore += 1000.0f + 1000.0f * (1.0f - distanceFromCenter / 2.0f);
 
                 UnityEngine.Debug.Log("Precise landing score: " + preciseLandingScore + " Distance: " + distanceFromCenter);
-                current.PreciseLandingScore = (int)preciseLandingScore;
+                currentScore.PreciseLandingScore = (int)preciseLandingScore;
                 totalScore += (int)preciseLandingScore;
 
 				// расчет очков за время посадки
 				int landingTimeScore = (int)(120000.0f / currentLandingTime);
-				current.LandingTimeScore = landingTimeScore;
+				currentScore.LandingTimeScore = landingTimeScore;
 				totalScore += landingTimeScore;
 				UnityEngine.Debug.Log("Landing time: " + currentLandingTime + " Score " + landingTimeScore);
 
 
 				// fuel score
-				float consumedFuel = initialFuel - game.PlayerSpaceship.RemainingFuel;
+                float consumedFuel = initialFuel - PlayerSpawner.PlayerSpaceship.RemainingFuel;
 				Debug.Log("Consumed fuel " + consumedFuel);
 				float fuelConsumptionScore = (200000.0f / consumedFuel);
 				totalScore += (int)fuelConsumptionScore;
-				current.FuelConsumptionScorePoints = fuelConsumptionScore;
+				currentScore.FuelConsumptionScorePoints = fuelConsumptionScore;
                 
                 // расчет очков за успешную посадку
-                int successLandingScore = 5000 * game.PlayerSpaceship.TouchdownTrigger.Zone.ScoreMultiplier;
+                int successLandingScore = 5000 * PlayerSpawner.PlayerSpaceship.TouchdownTrigger.Zone.ScoreMultiplier;
                 totalScore += successLandingScore;
 
-                current.SuccessLandingScore = successLandingScore;
-                current.ScorePoints += totalScore;
-				current.LandingTime = currentLandingTime;
-                current.LandingsCount++;
+                currentScore.SuccessLandingScore = successLandingScore;
+                currentScore.ScorePoints += totalScore;
+				currentScore.LandingTime = currentLandingTime;
+                currentScore.LandingsCount++;
 
                 Debug.Log("Total score " + totalScore);
 
-                current.FuelBonus = totalScore * game.FuelBonusFactor;
-                newState.RemainingFuel += current.FuelBonus;
+                currentScore.FuelBonus = totalScore * FuelBonusFactor;
+                newState.RemainingFuel += currentScore.FuelBonus;
             }
 
-            if (game.PlayerSpaceship.IsCrashed)
+            if (PlayerSpawner.PlayerSpaceship.IsCrashed)
             {
-                current.ScorePoints += 5;
+                currentScore.ScorePoints += 5;
             }
 
-            return GameSession.Create(newState, current);
+            return GameSession.Create(newState, currentScore);
         }
     }
 }

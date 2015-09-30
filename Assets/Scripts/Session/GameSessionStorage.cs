@@ -20,26 +20,26 @@ namespace Assets.Scripts.Session
             get { return GameSessionPlayerPrefsProxy.HasSession; }
         }
 
-        public void SaveGameSession(IGame game)
+        public void SaveGameSession(IFlight flight)
         {
-            savedSession = game.Save();
+            savedSession = flight.Save();
             GameSessionPlayerPrefsProxy.Save(savedSession);
         }
 
-        public void RestoreSavedSession(IGame game)
+        public void RestoreSavedSession(IFlight flight)
         {
             if (savedSession == null)
             {
-                savedSession = HasSavedSession ? GameSessionPlayerPrefsProxy.Restore() : CreateNew(game);
+                savedSession = HasSavedSession ? GameSessionPlayerPrefsProxy.Restore() : CreateNew(flight);
             }
 
-            game.Restore(savedSession);
+            flight.Restore(savedSession);
         }
 
-        private IGameSession CreateNew(IGame game)
+        private IGameSession CreateNew(IFlight flight)
         {
             IGameScore score = GameScore.Create(0, 0);
-            ISpaceshipState state = game.PlayerSpaceship.Save();
+            ISpaceshipState state = PlayerSpawner.PlayerSpaceship.Save();
 
             return GameSession.Create(state, score);
         }

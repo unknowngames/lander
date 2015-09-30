@@ -6,8 +6,15 @@ using UnityEngine;
 namespace Assets.Scripts
 {
     [Serializable]
-    public class PlayerSpawner
+    public class PlayerSpawner : MonoBehaviour
     {
+        public static PlayerSpawner Current { get; private set; }
+
+        public static SpaceshipBehaviour PlayerSpaceship
+        {
+            get { return Current.spaceshipBehaviourInstance; }
+        }
+
         [SerializeField]
         private SpaceshipBehaviour spaceshipBehaviourPrefab;
 
@@ -31,38 +38,58 @@ namespace Assets.Scripts
 
         public SpaceshipBehaviour CreatePlayer(Vector3 initialVelosity)
         {
-            if (spaceshipBehaviourInstance == null)
+            if (PlayerSpaceship == null)
             {
-                spaceshipBehaviourInstance = UnityEngine.Object.Instantiate(spaceshipBehaviourPrefab);            
+                spaceshipBehaviourInstance = Instantiate(spaceshipBehaviourPrefab);            
             }
             
-            spaceshipBehaviourInstance.Reset ();
+            PlayerSpaceship.Reset ();
 
-            spaceshipBehaviourInstance.transform.position = spawnZone.GetPosition();
+            PlayerSpaceship.transform.position = spawnZone.GetPosition();
 
             Quaternion rotation = Quaternion.FromToRotation(Vector3.up, -initialVelosity);  
-            spaceshipBehaviourInstance.transform.rotation = rotation;
+            PlayerSpaceship.transform.rotation = rotation;
             
-            spaceshipBehaviourInstance.gameObject.SetActive (true);
+            PlayerSpaceship.gameObject.SetActive (true);
             
-			spaceshipBehaviourInstance.SetVelocity(initialVelosity);
+			PlayerSpaceship.SetVelocity(initialVelosity);
 
-            return spaceshipBehaviourInstance;
+            return PlayerSpaceship;
         }
 
         public void RemovePlayer()
         {
-            if (spaceshipBehaviourInstance != null)
+            if (PlayerSpaceship != null)
             {                
-                spaceshipBehaviourInstance.gameObject.SetActive(false);
+                PlayerSpaceship.gameObject.SetActive(false);
             }
         }
 
         public void DestroyPlayer()
         {
-            if (spaceshipBehaviourInstance != null)
+            if (PlayerSpaceship != null)
             {
-                UnityEngine.Object.Destroy (spaceshipBehaviourInstance.gameObject);
+                UnityEngine.Object.Destroy (PlayerSpaceship.gameObject);
+            }
+        }
+
+        protected void OnEnable()
+        {
+            if (Current == null)
+            {
+                Current = this;
+            }
+            else
+            {
+                Debug.LogWarning("Multiple PlayerSpawner in scene... this is not supported");
+            }
+        }
+
+        protected void OnDisable()
+        {
+            if (Current == this)
+            {
+                Current = null;
             }
         }
     }

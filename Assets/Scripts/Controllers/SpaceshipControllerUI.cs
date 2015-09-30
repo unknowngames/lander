@@ -5,9 +5,13 @@ namespace Assets.Scripts.Controllers
 {
     public abstract class SpaceshipControllerUI : MenuUI
     {
-        protected SpaceshipController SpaceshipController { get; private set; }        
-   
+        protected SpaceshipController SpaceshipController
+        {
+            get { return spaceshipController ?? (spaceshipController = new SpaceshipController(SpaceshipMoveable)); }
+        }
+
         private ISpaceshipMoveable spaceshipMoveable;
+        private SpaceshipController spaceshipController;
 
 
         public ISpaceshipMoveable SpaceshipMoveable
@@ -15,18 +19,8 @@ namespace Assets.Scripts.Controllers
             get
             {
                 return spaceshipMoveable ??
-                       (spaceshipMoveable = GameHelper.PlayerSpaceship.GetComponent<ISpaceshipMoveable>());
+                       (spaceshipMoveable = PlayerSpawner.PlayerSpaceship.GetComponent<ISpaceshipMoveable>());
             }
-            set
-            {
-                spaceshipMoveable = value;
-            }
-        }
-
-        public override void Show()
-        {
-            base.Show();
-            SpaceshipController = new SpaceshipController(SpaceshipMoveable);
         }
 
         public void OnRotationClockwiseChanged(float force)

@@ -2,7 +2,7 @@
 {
     public interface IScoreCalculator
     {
-        IGameScore Current { get; }
+        IGameScore CurrentScore { get; }
         void SetInitialScore(IGameSession gameScore);
 		void Begin();
         void Update();

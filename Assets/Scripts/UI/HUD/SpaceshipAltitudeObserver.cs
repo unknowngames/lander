@@ -12,9 +12,9 @@ namespace Assets.Scripts.UI.HUD
 
         public void Update()
         {
-            if (GameHelper.PlayerSpaceship != null)
-            {             
-                string format = System.String.Format("{0:F1}", GameHelper.PlayerSpaceship.FlyHeight);
+            if (PlayerSpawner.PlayerSpaceship != null)
+            {
+                string format = System.String.Format("{0:F1}", PlayerSpawner.PlayerSpaceship.FlyHeight);
                 if (altitudeText != null)
                 {
                     altitudeText.text = format;

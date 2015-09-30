@@ -6,6 +6,6 @@ namespace Assets.Scripts.Interfaces
     {
         string Name { get; }
         Color ColorCode { get; }
-        void Apply(IGame game);
+        void Apply(IFlight flight);
     }
 }

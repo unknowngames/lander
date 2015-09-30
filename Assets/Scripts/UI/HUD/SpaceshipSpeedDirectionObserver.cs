@@ -10,9 +10,9 @@ namespace Assets.Scripts.UI.HUD
 
         public void Update()
         {
-            if (GameHelper.PlayerSpaceship != null)
+            if (PlayerSpawner.PlayerSpaceship != null)
             {
-                Vector3 direction = GameHelper.PlayerSpaceship.Velosity;
+                Vector3 direction = PlayerSpawner.PlayerSpaceship.Velosity;
                 Quaternion horisontRotation = Quaternion.FromToRotation(Vector3.down, direction);
                 arrow.rotation = Quaternion.Slerp(arrow.rotation, horisontRotation, Time.deltaTime * 2);
             }

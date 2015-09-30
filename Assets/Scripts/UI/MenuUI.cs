@@ -11,16 +11,38 @@ namespace Assets.Scripts.UI
         public class OnShowEvent : UnityEvent { }
         [Serializable]
         public class OnHideEvent : UnityEvent { }
+        
+        [SerializeField]
+        private bool delayedShow;
+        [SerializeField]
+        private float delay;
 
         [SerializeField]
         private bool resetPositionAtStart;
+        [SerializeField]
+        private bool hideAtStart;
+
+        public bool DelayedShow
+        {
+            get { return delayedShow; }
+        }
+
+        public float Delay
+        {
+            get { return delay; }
+        }
 
         public OnShowEvent OnShow = new OnShowEvent();
         public OnHideEvent OnHide = new OnHideEvent();
 
-        protected override void Start()
+        protected override void Awake()
         {
-            base.Start();
+            base.Awake();
+
+            if (hideAtStart)
+            {
+                Hide();
+            }
 
             if (resetPositionAtStart)
             {

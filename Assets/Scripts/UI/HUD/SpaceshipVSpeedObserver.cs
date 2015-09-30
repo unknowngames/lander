@@ -11,9 +11,9 @@ namespace Assets.Scripts.UI.HUD
 
         public void Update()
         {
-            if (GameHelper.PlayerSpaceship != null)
+            if (PlayerSpawner.PlayerSpaceship != null)
             {
-                string format = System.String.Format("{0:F2}", Mathf.Abs(GameHelper.PlayerSpaceship.Velosity.y));
+                string format = System.String.Format("{0:F2}", Mathf.Abs(PlayerSpawner.PlayerSpaceship.Velosity.y));
                 if (vSpeedText != null)
                 {
                     vSpeedText.text = format;

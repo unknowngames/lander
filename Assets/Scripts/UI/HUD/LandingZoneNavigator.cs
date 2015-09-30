@@ -61,7 +61,7 @@ namespace Assets.Scripts.UI.HUD
 
 			foreach (GameObject zone in landingZones) 
 			{
-				float dist = (GameHelper.PlayerSpaceship.transform.position - zone.transform.position).sqrMagnitude;
+                float dist = (PlayerSpawner.PlayerSpaceship.transform.position - zone.transform.position).sqrMagnitude;
 
 				if(dist <= sqrRadius)
 					objectsInSearchRadius.Add(zone);
@@ -80,9 +80,9 @@ namespace Assets.Scripts.UI.HUD
 
 			System.Array.Sort (	landingZones, 
 			                   delegate (GameObject obj1, GameObject obj2) 
-			{ 
-				float dist1 = (GameHelper.PlayerSpaceship.transform.position - obj1.transform.position).sqrMagnitude;
-				float dist2 = (GameHelper.PlayerSpaceship.transform.position - obj2.transform.position).sqrMagnitude;
+			{
+                float dist1 = (PlayerSpawner.PlayerSpaceship.transform.position - obj1.transform.position).sqrMagnitude;
+                float dist2 = (PlayerSpawner.PlayerSpaceship.transform.position - obj2.transform.position).sqrMagnitude;
 
 			    if (dist1 > dist2)
 			    {
@@ -107,7 +107,7 @@ namespace Assets.Scripts.UI.HUD
 				{
 					GameObject zone = landingZones[i];
 
-					Vector3 dir = zone.transform.position - GameHelper.PlayerSpaceship.transform.position;
+                    Vector3 dir = zone.transform.position - PlayerSpawner.PlayerSpaceship.transform.position;
 					float sqrDist = dir.sqrMagnitude;
 
 					dir.z = 0;

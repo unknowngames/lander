@@ -58,17 +58,17 @@ namespace Assets.Scripts.Settings
             get { return colorCode; }
         }
 
-        public void Apply(IGame game)
+        public void Apply(IFlight flight)
         {
-            ILevelInfo levelInfo = game.LevelInfo;
+            ILevelInfo levelInfo = flight.LevelInfo;
 
             Physics.gravity = new Vector3(0, levelInfo.Gravitation * gravitationMultiplyer, 0);
             
-            Rigidbody rigidbody = game.PlayerSpaceship.GetComponent<Rigidbody>();
+            Rigidbody rigidbody = PlayerSpawner.PlayerSpaceship.GetComponent<Rigidbody>();
             rigidbody.drag = levelInfo.AtmosphericDrag * AtmosphericDragMultiplyer;
             rigidbody.angularDrag = levelInfo.AtmosphericDrag * AtmosphericDragMultiplyer;
 
-            SpaceshipMoveableBehaviour moveableBehaviour = game.PlayerSpaceship.GetComponent<SpaceshipMoveableBehaviour>();
+            SpaceshipMoveableBehaviour moveableBehaviour = PlayerSpawner.PlayerSpaceship.GetComponent<SpaceshipMoveableBehaviour>();
             moveableBehaviour.AutoStabilize = hasAutoStabilize;
         }
     }

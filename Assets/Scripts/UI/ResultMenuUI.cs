@@ -1,4 +1,5 @@
-﻿ using UnityEngine;
+﻿ using Assets.Scripts.Session;
+ using UnityEngine;
 namespace Assets.Scripts.UI
 {
     public class ResultMenuUI : MenuUI
@@ -41,7 +42,7 @@ namespace Assets.Scripts.UI
         {
             base.Show();
 
-            if(GameHelper.CurrentScore.SuccessLandingScore > 0)
+            if (ScoreCalculator.Current.CurrentScore.SuccessLandingScore > 0)
             {
                 SuccessPanel.SetActive(true);
                 FailPanel.SetActive(false);
@@ -64,11 +65,11 @@ namespace Assets.Scripts.UI
             TotalScore.text = "0";
             FuelBonus.text = "0";
 
-			ElapsedTime.text = string.Format("{0:F2}", GameHelper.CurrentScore.LandingTime) + " сек.";
+            ElapsedTime.text = string.Format("{0:F2}", ScoreCalculator.Current.CurrentScore.LandingTime) + " сек.";
 
             float growSpeed = ScoreGrowSpeed;
 
-            int success = GameHelper.CurrentScore.SuccessLandingScore;
+            int success = ScoreCalculator.Current.CurrentScore.SuccessLandingScore;
             int currentSuccess = 0;
 
             while(currentSuccess < success)
@@ -80,7 +81,7 @@ namespace Assets.Scripts.UI
             currentSuccess = success;
             SuccessLandingScore.text = currentSuccess.ToString();
 
-            int soft = GameHelper.CurrentScore.SoftLandingScore;
+            int soft = ScoreCalculator.Current.CurrentScore.SoftLandingScore;
             int currrentSoft = 0;
 
             while (currrentSoft < soft)
@@ -92,7 +93,7 @@ namespace Assets.Scripts.UI
             currrentSoft = soft;
             SoftLandingScore.text = currrentSoft.ToString();
 
-            int precise = GameHelper.CurrentScore.PreciseLandingScore;
+            int precise = ScoreCalculator.Current.CurrentScore.PreciseLandingScore;
             int currentPrecise = 0;
 
             while (currentPrecise < precise)
@@ -104,7 +105,7 @@ namespace Assets.Scripts.UI
             currentPrecise = precise;
             PreciseLandingScore.text = currentPrecise.ToString();
 
-            int landingTimeScore = GameHelper.CurrentScore.LandingTimeScore;
+            int landingTimeScore = ScoreCalculator.Current.CurrentScore.LandingTimeScore;
 			int currentLandingTime = 0;
 
 			while (currentLandingTime < landingTimeScore) 
@@ -116,7 +117,7 @@ namespace Assets.Scripts.UI
             currentLandingTime = landingTimeScore;
             LandingTimeScore.text = currentLandingTime.ToString();
 
-            int cachedFuelScore = (int)GameHelper.CurrentScore.FuelConsumptionScorePoints;
+            int cachedFuelScore = (int)ScoreCalculator.Current.CurrentScore.FuelConsumptionScorePoints;
 			int currentFuelScore = 0;
 			
 			while (currentFuelScore < cachedFuelScore) 
@@ -140,17 +141,7 @@ namespace Assets.Scripts.UI
             currentTotalScore = totalScore;
             TotalScore.text = currentTotalScore.ToString();
 
-            FuelBonus.text = string.Format("{0:F1}", GameHelper.CurrentScore.FuelBonus);
-        }
-
-        public void OnStart()
-        {      
-            GameHelper.Begin ();
-        }
-
-        public void OnAbort()
-        {
-            GameHelper.Abort();
+            FuelBonus.text = string.Format("{0:F1}", ScoreCalculator.Current.CurrentScore.FuelBonus);
         }
     }
 }

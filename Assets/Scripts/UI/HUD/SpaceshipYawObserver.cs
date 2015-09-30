@@ -10,9 +10,9 @@ namespace Assets.Scripts.UI.HUD
 
         public void Update ()
         {
-            if (GameHelper.PlayerSpaceship != null)
+            if (PlayerSpawner.PlayerSpaceship != null)
             {
-                Quaternion rotation = GameHelper.PlayerSpaceship.Rotation;
+                Quaternion rotation = PlayerSpawner.PlayerSpaceship.Rotation;
                 float yaw = rotation.eulerAngles.z;
 
                 Quaternion horisontRotation = Quaternion.Euler(0, 0, yaw);

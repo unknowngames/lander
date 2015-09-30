@@ -14,9 +14,9 @@ namespace Assets.Scripts.Common
 
         public void Update()
         {
-            if (GameHelper.PlayerSpaceship != null)
+            if (PlayerSpawner.PlayerSpaceship != null)
             {
-                Target = GameHelper.PlayerSpaceship.transform;
+                Target = PlayerSpawner.PlayerSpaceship.transform;
             }
 
             if (Target == null)

@@ -124,9 +124,9 @@ namespace Assets.Scripts.Spaceship
                 return;
             }
 
-            if (GameHelper.IsPaused != isPaused)
+            if (Flight.Current.IsPaused != isPaused)
             {
-                isPaused = GameHelper.IsPaused;
+                isPaused = Flight.Current.IsPaused;
 
                 if (isPaused)
                 {
@@ -157,7 +157,7 @@ namespace Assets.Scripts.Spaceship
             if (Spaceship.RemainingFuel > 0.0f)
             {
                 float throttle = Mathf.Pow (ThrottleLevel, 0.25f);
-                cachedRigidbody.AddForce (transform.up * throttle * -GameHelper.LevelInfo.Gravitation * cachedRigidbody.mass * tw);
+                cachedRigidbody.AddForce(transform.up * throttle * -Flight.Current.LevelInfo.Gravitation * cachedRigidbody.mass * tw);
 
                 Spaceship.RemainingFuel -= Time.fixedDeltaTime * throttle * 2;
             }

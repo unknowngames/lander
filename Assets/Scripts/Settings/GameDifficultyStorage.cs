@@ -73,10 +73,10 @@ namespace Assets.Scripts.Settings
             get { return difficulties.Length; }
         }
 
-        public void ApplyDifficulty(IGame game)
+        public void ApplyDifficulty(IFlight flight)
         {
             IGameDifficulty savedDifficulty = GetSavedDifficulty();
-            savedDifficulty.Apply(game);
+            savedDifficulty.Apply(flight);
         }
 
         public IGameDifficulty GetSavedDifficulty()

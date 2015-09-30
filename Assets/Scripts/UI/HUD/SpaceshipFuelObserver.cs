@@ -11,9 +11,9 @@ namespace Assets.Scripts.UI.HUD
 
         public void Update()
         {
-            if (GameHelper.PlayerSpaceship != null)
+            if (PlayerSpawner.PlayerSpaceship != null)
             {
-                string format = System.String.Format("{0:F0}", GameHelper.PlayerSpaceship.RemainingFuel);
+                string format = System.String.Format("{0:F0}", PlayerSpawner.PlayerSpaceship.RemainingFuel);
                 if (fuelText != null)
                 {
                     fuelText.text = format;

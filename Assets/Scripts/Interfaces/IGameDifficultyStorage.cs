@@ -12,7 +12,7 @@ namespace Assets.Scripts.Interfaces
 
         int DifficultiesCount { get; }
 
-        void ApplyDifficulty(IGame game);
+        void ApplyDifficulty(IFlight flight);
 
         IGameDifficulty GetSavedDifficulty();
 
