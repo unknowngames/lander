@@ -1,14 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Assets.Scripts.UI
 {
     public class HelpMenuUI : MenuUI
     {
+        [Serializable]
+        public class OnHelpHideEvent : UnityEvent{}
+
+        [SerializeField]
+        public OnHelpHideEvent HelpHideEvent = new OnHelpHideEvent();
+
         [SerializeField]
         private Ticker ticker;
 
         private Coroutine tickerCoroutine;
+        private bool isShown = false;
 
         protected override void Start()
         {         
@@ -16,7 +25,27 @@ namespace Assets.Scripts.UI
             HideHelp();
         }
 
-        public void ShowHelp(string text, float time)
+        public void ShowHelp(string text, int count)
+        {
+            HideHelp();
+
+            ticker.Text = text;
+            ticker.Show();
+
+            int shownTime = 0;
+            ticker.RewindEvent.AddListener(() =>
+            {
+                shownTime++;
+                if (shownTime >= count)
+                {
+                    HideHelp();
+                }
+            });
+
+            isShown = true;
+        }
+
+        public void ShowHelpDuringTime(string text, float time)
         {
             HideHelp();
 
@@ -27,22 +56,33 @@ namespace Assets.Scripts.UI
             {
                 tickerCoroutine = StartCoroutine(TickerTimerCoroutine(time));
             }
+
+            isShown = true;
         }
 
         public void ShowHelp(string text)
         {
-            ShowHelp(text, 0.0f);
+            ShowHelpDuringTime(text, 0.0f);
         }
 
         public void HideHelp()
         {
+            if (!isShown)
+            {
+                return;
+            }
+
             ticker.Hide();
+            ticker.RewindEvent.RemoveAllListeners();
 
             if (tickerCoroutine != null)
             {
                 StopCoroutine(tickerCoroutine);
                 tickerCoroutine = null;
             }
+            isShown = false;
+
+            HelpHideEvent.Invoke();
         }
 
         private IEnumerator TickerTimerCoroutine(float time)

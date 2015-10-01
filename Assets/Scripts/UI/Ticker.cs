@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -7,6 +9,12 @@ namespace Assets.Scripts.UI
     [RequireComponent(typeof (RectTransform))]
     public class Ticker : UIBehaviour
     {
+        [Serializable]
+        public class OnRewindEvent : UnityEvent{}
+
+        [SerializeField] 
+        public OnRewindEvent RewindEvent=new OnRewindEvent();
+
         [SerializeField]
         private Text text;
 
@@ -25,8 +33,8 @@ namespace Assets.Scripts.UI
             {
                 if (!Mathf.Approximately(velocity, value))
                 {
-                    ResetPosition();
                     velocity = value;
+                    ResetPosition();
                 }
             }
         }
@@ -38,8 +46,8 @@ namespace Assets.Scripts.UI
             {
                 if (text.text != value)
                 {
-                    ResetPosition();
                     text.text = value;
+                    ResetPosition();
                 }
             }
         }
@@ -60,6 +68,7 @@ namespace Assets.Scripts.UI
             if (xPosition < -preferredWidth)
             {
                 ResetPosition();
+                RewindEvent.Invoke();
             }
         }
 
@@ -75,16 +84,17 @@ namespace Assets.Scripts.UI
 
         private void Move()
         {
-
-            Vector3 localPosition = text.transform.localPosition;
-            localPosition.x = xPosition;
-            text.transform.localPosition = localPosition;
+            RectTransform textTransform = (RectTransform) text.transform;
+            Vector2 anchoredPosition = textTransform.anchoredPosition;
+            anchoredPosition.x = xPosition;
+            textTransform.anchoredPosition = anchoredPosition;
         }
 
         private void ResetPosition()
         {
             preferredWidth = text.preferredWidth;
             xPosition = RectTransform.rect.width;
+            Move();
         }
 
         protected override void OnEnable()

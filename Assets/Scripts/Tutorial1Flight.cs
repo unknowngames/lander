@@ -1,13 +1,25 @@
-﻿using Assets.Scripts.Interfaces;
+﻿using System;
+using Assets.Scripts.Interfaces;
 using UnityEngine;
 
 namespace Assets.Scripts
 {
     public class Tutorial1Flight : Flight
     {
+        [SerializeField] 
+        private Tutorual1Theory tutorual1Theory;
+
         public void Start()
         {
             Begin();
+            Pause();
+            tutorual1Theory.TutorialTheoryEndEvent.AddListener(OnTheoryEnd);
+            tutorual1Theory.Begin();
+        }
+
+        private void OnTheoryEnd()
+        {
+            Unpause();
         }
 
         public override void Begin()
