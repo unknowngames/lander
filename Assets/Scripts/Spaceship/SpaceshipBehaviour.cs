@@ -4,13 +4,15 @@ using Assets.Scripts.Common;
 using Assets.Scripts.Interfaces;
 using Assets.Scripts.Session;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Assets.Scripts.Spaceship
 {
     public class SpaceshipBehaviour : MonoBehaviour, ISpaceship
     {
-        [SerializeField] 
-        private float initialFuel;
+        [SerializeField]
+        [FormerlySerializedAs("initialFuel")]
+        private float maxFuel;
         [SerializeField] 
         private float safeSpeed;
 
@@ -26,6 +28,11 @@ namespace Assets.Scripts.Spaceship
         public string Name { get; set; }
         public float Mass { get; set; }
         public float RemainingFuel { get; set; }
+
+        public float MaxFuel
+        {
+            get { return maxFuel; }
+        }
 
         public float ThrottleLevel { get; set; }
         public float LeftStabilizerThrottleLevel { get; set; }
@@ -123,7 +130,7 @@ namespace Assets.Scripts.Spaceship
 
         public void Reset()
         {
-            RemainingFuel = initialFuel;
+            RemainingFuel = MaxFuel;
             ThrottleLevel = 0.0f;
             LeftStabilizerThrottleLevel = 0.0f;
             RightStabilizerThrottleLevel = 0.0f;

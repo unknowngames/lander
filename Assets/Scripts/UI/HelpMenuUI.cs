@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.UI
 {
@@ -16,16 +17,19 @@ namespace Assets.Scripts.UI
         [SerializeField]
         private Ticker ticker;
 
-        private Coroutine tickerCoroutine;
+        [SerializeField]
+        private Text staticText;
+
+        private Coroutine delayCoroutine;
         private bool isShown = false;
 
-        protected override void Start()
-        {         
-            base.Start();
-            HideHelp();
+        protected override void Awake()
+        {
+            base.Awake();
+            HideHelp(true);
         }
 
-        public void ShowHelp(string text, int count)
+        public void ShowTickerHelp(string text, int count)
         {
             HideHelp();
 
@@ -45,29 +49,52 @@ namespace Assets.Scripts.UI
             isShown = true;
         }
 
-        public void ShowHelpDuringTime(string text, float time)
+        public void ShowStaticHelpDuringTime(string text, float time)
+        {
+            ShowHelpDuringTime(text, time, false);
+        }
+
+        public void ShowTickerHelpDuringTime(string text, float time)
+        {
+            ShowHelpDuringTime(text, time, true);
+        }
+
+        private void ShowHelpDuringTime(string text, float time, bool useTicker)
         {
             HideHelp();
 
-            ticker.Text = text;
-            ticker.Show();
+            if (useTicker)
+            {
+                ticker.Text = text;
+                ticker.Show();
+            }
+            else
+            {
+                staticText.text = text;
+                staticText.enabled = true;
+            }
 
             if (time > 0.0f)
             {
-                tickerCoroutine = StartCoroutine(TickerTimerCoroutine(time));
+                delayCoroutine = StartCoroutine(DelayTimerCoroutine(time));
             }
 
             isShown = true;
         }
 
-        public void ShowHelp(string text)
+        public void ShowStaticHelp(string text)
         {
-            ShowHelpDuringTime(text, 0.0f);
+            ShowHelpDuringTime(text, 0.0f, false);
         }
 
-        public void HideHelp()
+        public void ShowTickerHelp(string text)
         {
-            if (!isShown)
+            ShowHelpDuringTime(text, 0.0f, true);
+        }
+
+        public void HideHelp(bool force=false)
+        {
+            if (!(force || isShown))
             {
                 return;
             }
@@ -75,37 +102,22 @@ namespace Assets.Scripts.UI
             ticker.Hide();
             ticker.RewindEvent.RemoveAllListeners();
 
-            if (tickerCoroutine != null)
+            staticText.text = "";
+            staticText.enabled = false;
+
+            if (delayCoroutine != null)
             {
-                StopCoroutine(tickerCoroutine);
-                tickerCoroutine = null;
+                StopCoroutine(delayCoroutine);
+                delayCoroutine = null;
             }
             isShown = false;
 
             HelpHideEvent.Invoke();
         }
 
-        private IEnumerator TickerTimerCoroutine(float time)
+        private IEnumerator DelayTimerCoroutine(float time)
         {                                                  
             yield return new WaitForSeconds(time);
-            HideHelp();
-        }
-
-        [ContextMenu("Show test 5 sec")]
-        public void ShowTest5Sec()
-        {
-            ShowHelp("1123123", 5);
-        }
-
-        [ContextMenu("Show test")]
-        public void ShowTest()
-        {
-            ShowHelp("1123123");
-        }
-
-        [ContextMenu("Hide test")]
-        public void HideTest()
-        {
             HideHelp();
         }
     }

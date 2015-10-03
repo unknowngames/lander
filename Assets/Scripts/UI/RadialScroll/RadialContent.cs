@@ -54,7 +54,6 @@ namespace Assets.Scripts.UI.RadialScroll
 
         public int Add(ListItem item)
         {
-            item.transform.SetParent(container, false);
             items.Add(item);
             item.OnClick.AddListener(OnContentListItemOnClick);
             Rebuild();
@@ -151,6 +150,8 @@ namespace Assets.Scripts.UI.RadialScroll
                 Vector2 itemPosition = new Vector2(x, y);
 
                 ((RectTransform) Items[i].transform).anchoredPosition = itemPosition;
+
+                Items[i].transform.SetParent(container, false);
             }
 
             container.sizeDelta = new Vector2(2*radius, 2*radius);

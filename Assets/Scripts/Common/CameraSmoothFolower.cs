@@ -37,11 +37,22 @@ namespace Assets.Scripts.Common
 
         private float FixedDeltaTime;
 
+        private bool isZoomed = false;
+
         GameObject[] zoomTargets;
 
 #if UNITY_EDITOR
         public bool debugViewDistance = false;
 #endif
+
+        public void DoZoom()
+        {
+            isZoomed = true;
+        }
+        public void UndoZoom()
+        {
+            isZoomed = false;
+        }
 
 
         public void Start()
@@ -60,13 +71,17 @@ namespace Assets.Scripts.Common
 
         public void Update ()
         {
-            if (PlayerSpawner.PlayerSpaceship != null)
+            if (Target == null)
             {
-                Target = PlayerSpawner.PlayerSpaceship.transform;
+                if (PlayerSpawner.PlayerSpaceship != null)
+                {
+                    Target = PlayerSpawner.PlayerSpaceship.transform;
+                }
             }
-
-            if(Target == null)
+            if (Target == null)
+            {
                 return;
+            }
 
             if(zoomTargets != null)
             {
@@ -96,7 +111,7 @@ namespace Assets.Scripts.Common
                 }
 
 #if UNITY_EDITOR
-                if (debugViewDistance)
+                if (debugViewDistance || isZoomed)
                 {
                     targetZoomDistance = zoomViewDistance;
                 }
@@ -111,10 +126,7 @@ namespace Assets.Scripts.Common
                 float scale = Mathf.Lerp(1.0f, FarScale, normalizedDistance);    
 
                 Target.transform.localScale = new Vector3(scale,scale,scale);
-            }
-            
-
-
+            }   
         }
 
         public void FixedUpdate ()

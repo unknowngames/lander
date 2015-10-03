@@ -34,7 +34,7 @@ namespace Assets.Scripts
         {
             Clean();
             OnAbortCall();
-            Application.LoadLevelAsync(0);
+            Application.LoadLevelAsync("MainMenuConcept");
         }
 
         public override void Pause()

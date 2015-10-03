@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using Assets.Scripts.Common;
 using Assets.Scripts.UI;
 using UnityEngine;
 using UnityEngine.Events;
@@ -17,13 +15,16 @@ namespace Assets.Scripts
 
         [Serializable]
         private class TutorialStep
-        {
+        {                                
             [SerializeField]
+            public HighlightedEntity HighlightTransform;
+
+            [SerializeField]
+            [Multiline]
             public string Text;
-            [SerializeField] 
-            public Vector2 HighlightPosition;
-            [SerializeField] 
-            public float HighlightRadius;
+
+            [SerializeField]
+            public float Delay;
         }
 
         [SerializeField] 
@@ -42,6 +43,11 @@ namespace Assets.Scripts
 
         private void OnHelpHideEvent()
         {
+            if (steps[currentStep].HighlightTransform != null)
+            {
+                steps[currentStep].HighlightTransform.Stop();
+            }
+
             currentStep++;
             ShowStep(currentStep);
         }
@@ -59,7 +65,11 @@ namespace Assets.Scripts
 
         private void ShowStep(TutorialStep tutorialStep)
         {
-            helpMenuUI.ShowHelp(tutorialStep.Text, 1);
+            helpMenuUI.ShowStaticHelpDuringTime(tutorialStep.Text, tutorialStep.Delay);
+            if (tutorialStep.HighlightTransform != null)
+            {
+                tutorialStep.HighlightTransform.Do();
+            }
         }
     }
 }

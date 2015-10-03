@@ -1,4 +1,3 @@
-using System.Collections;
 using Assets.Scripts.UI.HUD;
 using UnityEngine;
 
