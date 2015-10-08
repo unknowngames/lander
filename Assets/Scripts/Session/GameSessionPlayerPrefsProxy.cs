@@ -8,6 +8,10 @@ namespace Assets.Scripts.Session
         private const string RemainingFuelKey = "RemainingFuelKey";
         private const string ScorePointsKey = "ScorePointsKey";
         private const string LandingsCountKey = "LandingsCountKey";
+		private const string TrainingScoreKey = "TrainingScoreKey";
+		private const string CadetScoreKey = "CadetScoreKey";
+		private const string PrimeScoreKey = "PrimeScoreKey";
+		private const string CommanderScoreKey = "CommanderScoreKey";
 
         public static bool HasSession
         {

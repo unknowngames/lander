@@ -17,7 +17,7 @@ namespace Assets.Scripts.Social
         private string primeLeaderboardName = "PrimeScores";
 
         [SerializeField]
-        private string commandLeaderboardName = "CommandScores";
+        private string commandLeaderboardName = "CommanderScores";
 
         void Start()
         {
@@ -83,5 +83,60 @@ namespace Assets.Scripts.Social
         {
             throw new System.NotImplementedException();
         }
+
+		#region TEST
+		string test = "";
+		long currentRecord = -1;
+		IScore[] currentScores = null;
+
+
+		void OnGUI()
+		{
+			if (GUILayout.Button ("Show leaderboard", GUILayout.Width (200), GUILayout.Height (100))) 
+			{
+				UnityEngine.Social.ShowLeaderboardUI();
+			}
+
+			test = GUILayout.TextField (test);
+
+			if (GUILayout.Button ("write training record", GUILayout.Width (200), GUILayout.Height (100))) 
+			{
+				WriteTrainingRecord(int.Parse(test));
+			}
+
+			if (GUILayout.Button ("write cadet record", GUILayout.Width (200), GUILayout.Height (100))) 
+			{
+				WriteCadetRecord(int.Parse(test));
+			}
+
+			if (GUILayout.Button ("write prime record", GUILayout.Width (200), GUILayout.Height (100))) 
+			{
+				WritePrimeRecord(int.Parse(test));
+			}
+
+			if (GUILayout.Button ("write command record", GUILayout.Width (200), GUILayout.Height (100))) 
+			{
+				WriteCommandRecord(int.Parse(test));
+			}
+
+			if (GUILayout.Button ("read record", GUILayout.Width (200), GUILayout.Height (100))) 
+			{
+				UnityEngine.Social.LoadScores(trainingLeaderboardName, testProcessTrainingScores);
+			}
+
+			if (currentScores != null) 
+			{
+				foreach(IScore s in currentScores)
+				{
+					GUILayout.Label("Val: " + s.value + " UID: " + s.userID + " LBID: " + s.leaderboardID + " Rank:" + s.rank);
+				}
+			}
+		}
+
+		void testProcessTrainingScores(IScore[] scores)
+		{
+			currentScores = scores;
+		}
+		#endregion
     }
 }
