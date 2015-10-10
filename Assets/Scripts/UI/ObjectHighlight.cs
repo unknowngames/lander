@@ -3,19 +3,23 @@ using UnityEngine;
 
 namespace Assets.Scripts.UI
 {
+    [RequireComponent(typeof(CameraTarget))]
     public class ObjectHighlight : HighlightedEntity
     {
         [SerializeField]
-        private CameraSmoothFolower smoothFolower;
+        private CameraController cameraController;
+
+        private CameraTarget cachedTarget;
 
         public override void Do()
         {
-            smoothFolower.Target = transform;
+            cachedTarget = cameraController.TargetTransform;
+            cameraController.SetTarget(GetComponent<CameraTarget>());
         }
 
         public override void Stop()
         {
-            smoothFolower.Target = null;
+            cameraController.SetTarget(cachedTarget);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Interfaces;
+﻿using Assets.Scripts.Common;
+using Assets.Scripts.Interfaces;
 using Assets.Scripts.Session;
 using Assets.Scripts.Settings;
 using UnityEngine;
@@ -10,6 +11,9 @@ namespace Assets.Scripts
     public abstract class Flight : MonoBehaviour, IFlight
     {
         public static Flight Current { get; private set; }
+
+        [SerializeField]
+        protected CameraController cameraController;
 
         [SerializeField]
         protected GameDifficultyStorage difficultyStorage;
@@ -134,7 +138,18 @@ namespace Assets.Scripts
             LevelInfo = FindObjectOfType<LevelInfo>();
         }
 
-        public abstract void Begin();
+        public virtual void OnBeginTune()
+        {
+        }
+
+        public void Begin()
+        {                   
+            PlayerSpawner.Current.CreatePlayerAndRandomMove();
+            difficultyStorage.ApplyDifficulty(this);
+            IsPaused = false;
+            cameraController.SetTarget(PlayerSpawner.PlayerSpaceship.GetComponent<CameraTarget>(), true);
+            OnBeginCall();
+        }
 
         public abstract void Abort();
 

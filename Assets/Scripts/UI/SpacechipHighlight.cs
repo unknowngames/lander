@@ -10,12 +10,12 @@ namespace Assets.Scripts.UI
 
         public override void Do()
         {
-            smoothFolower.DoZoom();
+            //smoothFolower.DoZoom();
         }
 
         public override void Stop()
         {
-            smoothFolower.UndoZoom();
+            //smoothFolower.UndoZoom();
         }
     }
 }

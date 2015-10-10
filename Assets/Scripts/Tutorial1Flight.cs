@@ -20,15 +20,7 @@ namespace Assets.Scripts
         private void OnTheoryEnd()
         {
             Unpause();
-        }
-
-        public override void Begin()
-        {
-            PlayerSpawner.Current.CreatePlayerAndRandomMove();
-            difficultyStorage.ApplyDifficulty(this);
-            IsPaused = false;
-            OnBeginCall();
-        }
+        }                 
 
         public override void Abort()
         {

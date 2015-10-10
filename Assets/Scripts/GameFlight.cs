@@ -1,6 +1,5 @@
 using Assets.Scripts.Interfaces;
 using Assets.Scripts.Session;
-using Assets.Scripts.Settings;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -13,14 +12,10 @@ namespace Assets.Scripts
             Begin();
         }
 
-        public override void Begin()
+        public override void OnBeginTune()
         {
-            PlayerSpawner.Current.CreatePlayerAndRandomMove();
             gameSessionStorage.RestoreSavedSession(this);
-            difficultyStorage.ApplyDifficulty(this);
             ScoreCalculator.Current.Begin();
-            IsPaused = false;
-            OnBeginCall();
         }
 
 

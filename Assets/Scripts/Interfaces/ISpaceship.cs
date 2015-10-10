@@ -10,6 +10,7 @@ namespace Assets.Scripts.Interfaces
         Quaternion Rotation { get; }
         Vector3 Velosity { get; }
         Vector3 AngularVelosity { get; }
+        float FlyHeight { get; }
 
         float Mass { get; set; }
         float RemainingFuel { get; set; }
