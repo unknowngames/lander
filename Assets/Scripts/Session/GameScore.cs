@@ -112,6 +112,30 @@ namespace Assets.Scripts.Session
 			}
 		}
 
+		public float TrainingTopScore 
+		{
+			get;
+			set;
+		}
+
+		public float CadetTopScore 
+		{
+			get;
+			set;
+		}
+
+		public float PrimeTopScore 
+		{
+			get;
+			set;
+		}
+
+		public float CommanderTopScore 
+		{
+			get;
+			set;
+		}
+
         public static GameScore Create(int scorePoints, int landingsCount)
         {
             return new GameScore(scorePoints, landingsCount);

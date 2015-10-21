@@ -19,5 +19,10 @@
         float FuelConsumptionScorePoints { get; set; }
 
         float FuelBonus { get; set; }
+
+		float TrainingTopScore { get; }
+		float CadetTopScore { get; }
+		float PrimeTopScore { get; }
+		float CommanderTopScore { get; }
     }
 }
