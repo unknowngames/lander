@@ -8,10 +8,7 @@ namespace Assets.Scripts.Session
         private const string RemainingFuelKey = "RemainingFuelKey";
         private const string ScorePointsKey = "ScorePointsKey";
         private const string LandingsCountKey = "LandingsCountKey";
-		private const string TrainingScoreKey = "TrainingScoreKey";
-		private const string CadetScoreKey = "CadetScoreKey";
-		private const string PrimeScoreKey = "PrimeScoreKey";
-		private const string CommanderScoreKey = "CommanderScoreKey";
+		private const string TopScoreKey = "TopScoreKey";
 
         public static bool HasSession
         {
@@ -33,6 +30,21 @@ namespace Assets.Scripts.Session
             PlayerPrefsX.SetInt(ScorePointsKey, scorePoints);
             PlayerPrefsX.SetInt(LandingsCountKey, landingsCount);
         }
+
+		public static void SaveTopScore(string difficultyName, long score)
+		{
+			PlayerPrefsX.SetString (difficultyName + TopScoreKey, score.ToString ());
+		}
+
+		public static long GetTopScore(string difficultyName)
+		{
+			var strResult = PlayerPrefsX.GetString (difficultyName + TopScoreKey);
+			long result;
+			if (long.TryParse (strResult, out result))
+				return result;
+			else
+				return long.MinValue;
+		}
 
         public static IGameSession Restore()
         {

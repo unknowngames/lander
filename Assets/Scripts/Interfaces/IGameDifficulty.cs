@@ -7,5 +7,6 @@ namespace Assets.Scripts.Interfaces
         string Name { get; }
         Color ColorCode { get; }
         void Apply(IFlight flight);
+		string LeaderboardID { get; }
     }
 }

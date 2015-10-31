@@ -21,6 +21,9 @@ namespace Assets.Scripts.Settings
         [SerializeField]
         private bool hasAutoStabilize;
 
+		[SerializeField]
+		private string leaderboardID;
+
         private ClassicGameDifficulty(float gravitationMultiplyer, float atmosphericDragMultiplyer, bool hasAutoStabilize, string name)
         {
             GravitationMultiplyer = gravitationMultiplyer;
@@ -57,6 +60,11 @@ namespace Assets.Scripts.Settings
         {
             get { return colorCode; }
         }
+
+		public string LeaderboardID
+		{
+			get { return leaderboardID; }
+		}
 
         public void Apply(IFlight flight)
         {

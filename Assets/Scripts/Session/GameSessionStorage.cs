@@ -36,6 +36,16 @@ namespace Assets.Scripts.Session
             flight.Restore(savedSession);
         }
 
+		public long GetTopScore(string difficultyName)
+		{
+			return GameSessionPlayerPrefsProxy.GetTopScore (difficultyName);
+		}
+
+		public void SetTopScore(string difficultyName, long score)
+		{
+			GameSessionPlayerPrefsProxy.SaveTopScore (difficultyName, score);
+		}
+
         private IGameSession CreateNew(IFlight flight)
         {
             IGameScore score = GameScore.Create(0, 0);

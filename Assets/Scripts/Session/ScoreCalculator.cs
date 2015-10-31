@@ -29,6 +29,7 @@ namespace Assets.Scripts.Session
             get { return currentScore; }
         }
 
+		// called every flight
         public void SetInitialScore(IGameSession gameSession)
         {
             lastSession = gameSession;
@@ -152,6 +153,7 @@ namespace Assets.Scripts.Session
                 totalScore += successLandingScore;
 
                 currentScore.SuccessLandingScore = successLandingScore;
+				currentScore.LastFlightScorePoints += totalScore;
                 currentScore.ScorePoints += totalScore;
 				currentScore.LandingTime = currentLandingTime;
                 currentScore.LandingsCount++;

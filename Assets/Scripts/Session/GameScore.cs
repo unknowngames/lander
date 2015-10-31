@@ -35,6 +35,12 @@ namespace Assets.Scripts.Session
             set { scorePoints = value; }
         }
 
+		public int LastFlightScorePoints 
+		{
+			get;
+			set;
+		}
+
         public int LandingsCount
         {
             get { return landingsCount; }
@@ -112,30 +118,6 @@ namespace Assets.Scripts.Session
 			}
 		}
 
-		public float TrainingTopScore 
-		{
-			get;
-			set;
-		}
-
-		public float CadetTopScore 
-		{
-			get;
-			set;
-		}
-
-		public float PrimeTopScore 
-		{
-			get;
-			set;
-		}
-
-		public float CommanderTopScore 
-		{
-			get;
-			set;
-		}
-
         public static GameScore Create(int scorePoints, int landingsCount)
         {
             return new GameScore(scorePoints, landingsCount);
@@ -143,7 +125,8 @@ namespace Assets.Scripts.Session
 
         public static GameScore Create(IGameScore score)
         {
-            return new GameScore(score.ScorePoints, score.LandingsCount);
+			var result = new GameScore(score.ScorePoints, score.LandingsCount);
+			return result;
         }
     }
 }

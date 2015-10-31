@@ -45,9 +45,30 @@ namespace Assets.Scripts
 
         public override IGameSession Save()
         {
-            IGameSession gameScore = ScoreCalculator.Current.Calculate();
-            return gameScore;
+            IGameSession gameSession = ScoreCalculator.Current.Calculate();
+
+			var currentScore = gameSession.Score.LastFlightScorePoints;
+			var difficulty = difficultyStorage.GetSavedDifficulty ();
+			if (IsTopScoreBeaten (currentScore)) 
+			{
+				gameSessionStorage.SetTopScore(difficulty.Name, currentScore);
+			}
+			UnityEngine.Social.ReportScore (currentScore, difficulty.LeaderboardID, processReportScore);
+
+			return gameSession;
         }
+
+		void processReportScore(bool success)
+		{
+			Debug.Log ("Report top score status: " + success);
+		}
+
+		public bool IsTopScoreBeaten(long score)
+		{
+			var difficulty = difficultyStorage.GetSavedDifficulty ();
+			long currentScore = gameSessionStorage.GetTopScore (difficulty.Name);
+			return score > currentScore;
+		}
 
         public override void Restore(IGameSession session)
         {
