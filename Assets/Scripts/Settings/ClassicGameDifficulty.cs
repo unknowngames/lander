@@ -22,7 +22,10 @@ namespace Assets.Scripts.Settings
         private bool hasAutoStabilize;
 
 		[SerializeField]
-		private string leaderboardID;
+		private string googlePlayLeaderboardID;
+
+		[SerializeField]
+		private string gameCenterLeaderboardID;
 
         private ClassicGameDifficulty(float gravitationMultiplyer, float atmosphericDragMultiplyer, bool hasAutoStabilize, string name)
         {
@@ -63,7 +66,16 @@ namespace Assets.Scripts.Settings
 
 		public string LeaderboardID
 		{
-			get { return leaderboardID; }
+			get 
+			{
+#if UNITY_ANDROID
+				return googlePlayLeaderboardID; 
+#elif UNITY_IOS
+				return gameCenterLeaderboardID;
+#else
+				throw new System.NotImplementedException();
+#endif
+			}
 		}
 
         public void Apply(IFlight flight)
