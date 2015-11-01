@@ -8,12 +8,20 @@ namespace Assets.Scripts.UI
         [SerializeField]
         private SpaceshipPlanetRotation planetRotation;
 
+		[SerializeField]
+		private UnityEngine.UI.Text topScoreLabel;
+
+		[SerializeField]
+		private Settings.GameDifficultyStorage difficultyStorage;
+
         [SerializeField]
         private bool reallyLoadLevel = true;
 
         public void Start()
         {
             planetRotation.DoRotationSlower();
+			string topScoreLabelText = "Текущий рекорд: ";
+			topScoreLabel.text = topScoreLabelText + Session.GameSessionPlayerPrefsProxy.GetTopScore (difficultyStorage.GetSavedDifficulty ().Name).ToString();
         }
 
         public void OnStart()

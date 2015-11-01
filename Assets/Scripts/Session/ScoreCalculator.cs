@@ -8,7 +8,7 @@ namespace Assets.Scripts.Session
         public static ScoreCalculator Current { get; private set; }
 
         private IGameSession lastSession;
-        private GameScore currentScore = GameScore.Create(0,0);
+        private GameScore currentScore = GameScore.Create(0,0,0);
 		private float initialFuel;
 		private float landingStartTime;
         private float currentLandingTime = 0;

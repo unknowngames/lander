@@ -18,16 +18,24 @@ namespace Assets.Scripts.Session
 		private int landingTimeScorePoints = 0;
         private float fuelConsumptionScorePointsPoints = 0;
 
-        private GameScore(int scorePoints, int landingsCount)
+        private GameScore(int scorePoints, int landingsCount, long currentTopScore)
         {
             this.scorePoints = scorePoints;
             this.landingsCount = landingsCount;
+			CurrentTopScore = currentTopScore;
+
 			successLandingScorePoints = 0;
 			softLandingScorePoints = 0;
 			preciseLandingScorePoints = 0;
 			landingTimeScorePoints = 0;
             fuelConsumptionScorePointsPoints = 0;
         }
+
+		public long CurrentTopScore 
+		{
+			get;
+			private set;
+		}
 
         public int ScorePoints
         {
@@ -39,6 +47,14 @@ namespace Assets.Scripts.Session
 		{
 			get;
 			set;
+		}
+
+		public bool IsTopScoreBeaten 
+		{
+			get
+			{
+				return CurrentTopScore < ScorePoints;
+			}
 		}
 
         public int LandingsCount
@@ -118,14 +134,14 @@ namespace Assets.Scripts.Session
 			}
 		}
 
-        public static GameScore Create(int scorePoints, int landingsCount)
+        public static GameScore Create(int scorePoints, int landingsCount, long currentTopScore)
         {
-            return new GameScore(scorePoints, landingsCount);
+            return new GameScore(scorePoints, landingsCount, currentTopScore);
         }
 
         public static GameScore Create(IGameScore score)
         {
-			var result = new GameScore(score.ScorePoints, score.LandingsCount);
+			var result = new GameScore(score.ScorePoints, score.LandingsCount, score.CurrentTopScore);
 			return result;
         }
     }

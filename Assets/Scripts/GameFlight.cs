@@ -16,7 +16,7 @@ namespace Assets.Scripts
         public override void Begin()
         {
             PlayerSpawner.Current.CreatePlayerAndRandomMove();
-            gameSessionStorage.RestoreSavedSession(this);
+            gameSessionStorage.RestoreSavedSession(this, difficultyStorage.GetSavedDifficulty().Name);
             difficultyStorage.ApplyDifficulty(this);
             ScoreCalculator.Current.Begin();
             IsPaused = false;
@@ -49,9 +49,9 @@ namespace Assets.Scripts
 
 			var currentScore = gameSession.Score.LastFlightScorePoints;
 			var difficulty = difficultyStorage.GetSavedDifficulty ();
-			if (IsTopScoreBeaten (currentScore)) 
+			if (gameSession.Score.IsTopScoreBeaten) 
 			{
-				gameSessionStorage.SetTopScore(difficulty.Name, currentScore);
+				gameSessionStorage.SetTopScore(difficulty.Name, gameSession.Score.ScorePoints);
 			}
 			UnityEngine.Social.ReportScore (currentScore, difficulty.LeaderboardID, processReportScore);
 
@@ -61,13 +61,6 @@ namespace Assets.Scripts
 		void processReportScore(bool success)
 		{
 			Debug.Log ("Report top score status: " + success);
-		}
-
-		public bool IsTopScoreBeaten(long score)
-		{
-			var difficulty = difficultyStorage.GetSavedDifficulty ();
-			long currentScore = gameSessionStorage.GetTopScore (difficulty.Name);
-			return score > currentScore;
 		}
 
         public override void Restore(IGameSession session)

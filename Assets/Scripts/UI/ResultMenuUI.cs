@@ -38,6 +38,9 @@ namespace Assets.Scripts.UI
         public UnityEngine.UI.Text FuelBonusLabel;
         public UnityEngine.UI.Text FuelBonus;
 
+		public UnityEngine.UI.Text NewRecordLabel;
+		public UnityEngine.UI.Text NewRecord;
+
         public override void Show()
         {
             base.Show();
@@ -54,6 +57,13 @@ namespace Assets.Scripts.UI
                 SuccessPanel.SetActive(false);
             }
         }
+
+		public override void Hide ()
+		{
+			base.Hide ();
+
+			NewRecordLabel.gameObject.SetActive (false);
+		}
 
         System.Collections.IEnumerator scoreGrow()
         {
@@ -129,7 +139,7 @@ namespace Assets.Scripts.UI
             currentFuelScore = cachedFuelScore;
             FuelScore.text = currentFuelScore.ToString();
 
-            int totalScore = landingTimeScore + success + precise + soft + cachedFuelScore;
+			int totalScore = ScoreCalculator.Current.CurrentScore.LastFlightScorePoints;
 			int currentTotalScore = 0;
 			
 			while (currentTotalScore < totalScore) 
@@ -142,6 +152,9 @@ namespace Assets.Scripts.UI
             TotalScore.text = currentTotalScore.ToString();
 
             FuelBonus.text = string.Format("{0:F1}", ScoreCalculator.Current.CurrentScore.FuelBonus);
+
+			NewRecordLabel.gameObject.SetActive (ScoreCalculator.Current.CurrentScore.IsTopScoreBeaten);
+			NewRecord.text = ScoreCalculator.Current.CurrentScore.ScorePoints.ToString();
         }
     }
 }

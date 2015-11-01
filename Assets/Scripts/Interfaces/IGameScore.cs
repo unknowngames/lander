@@ -6,6 +6,8 @@
 
         int LandingsCount { get; }
 
+		long CurrentTopScore { get; }
+
         float LandingTime { get; set; }
 
         int SuccessLandingScore { get; set; }
@@ -21,5 +23,7 @@
         float FuelBonus { get; set; }
 
 		int LastFlightScorePoints { get; }
+
+		bool IsTopScoreBeaten { get; }
     }
 }

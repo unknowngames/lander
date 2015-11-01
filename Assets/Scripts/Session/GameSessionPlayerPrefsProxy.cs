@@ -46,13 +46,14 @@ namespace Assets.Scripts.Session
 				return long.MinValue;
 		}
 
-        public static IGameSession Restore()
+        public static IGameSession Restore(string difficultyName)
         {
             float remainingFuel = PlayerPrefsX.GetFloat(RemainingFuelKey);
             int scorePoints = PlayerPrefsX.GetInt(ScorePointsKey);
             int landingsCount = PlayerPrefsX.GetInt(LandingsCountKey);
+			long currentTopScore = GetTopScore (difficultyName);
 
-            return GameSession.Create(SpaceshipState.Create(remainingFuel), GameScore.Create(scorePoints, landingsCount));
+            return GameSession.Create(SpaceshipState.Create(remainingFuel), GameScore.Create(scorePoints, landingsCount, currentTopScore));
         }
 
         public static void Remove()

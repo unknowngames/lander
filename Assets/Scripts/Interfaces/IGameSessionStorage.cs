@@ -4,7 +4,7 @@
     {
         IGameSession Current { get; }
         bool HasSavedSession { get; }
-        void RestoreSavedSession(IFlight flight);
+        void RestoreSavedSession(IFlight flight, string difficultyName);
         void SaveGameSession(IFlight flight);
         void RemoveSavedGame();
     }
